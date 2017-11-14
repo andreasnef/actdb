@@ -1,0 +1,95 @@
+extends layout
+
+block content
+ if profile
+     each value, i in profile
+      div#profileTitle
+       h3.
+         #{value.code} #{value.description} 
+
+      div#wrapper
+
+          h4 Basic Info
+
+          - if (value.type)
+              p
+                span.title Type of file: 
+                span #{value.type}
+          
+          - if(value.description)
+              p
+                span.title Description of the file:  
+                span #{value.description}
+    
+        
+          - if (value.date) 
+           p
+             - var date = moment(value.date).utc().format('MMMM Do, YYYY');
+             span.title Date of the Interview: 
+             span #{date}
+          
+          -if (value.language)
+           p 
+            span.title Language of the File: 
+            span #{value.language}
+                      
+          - if (value.file)
+           p
+            span.title File: 
+            - var file = value.file
+            a(href="/files/"+file target="_blank") #{file}
+            
+          - if (value.notes)
+           p
+            span.title Notes: 
+            span #{value.notes}
+            
+      div#wrapper  
+          - if (value.related.events)
+           p
+            span.title Related Events: 
+            each event, i in value.related.events
+             a(href="#" onclick="loadProfile('events','"+event+"');") #{event} 
+          - if (value.related.sites)
+           p
+            span.title Related Sites: 
+            each site, i in value.related.sites
+             a(href="#" onclick="loadProfile('sites','"+site+"');") #{site} 
+          - if (value.related.locations)
+           p
+            span.title Related Locations: 
+            each location, i in value.related.locations
+             a(href="#" onclick="loadProfile('locations','"+location+"');") #{location} 
+          - if (value.related.mps)
+           p
+            span.title Related Missing Persons: 
+            each mp, i in value.related.mps
+             a(href="#" onclick="loadProfile('missing','"+mp+"');") #{mp} 
+          - if (value.contacts)
+           p
+            span.title Related Contacts: 
+            each contact, i in value.contacts
+             a(href="#" onclick="loadProfile('contacts','"+contact+"');") #{contact}
+          - if (value.interviews)
+           p
+            span.title Related Interviews: 
+            each interview, i in value.interviews
+             a(href="#" onclick="loadProfile('interviews','"+interview+"');") #{interview}       
+
+
+          div(class='btn menu')
+            a(href="/newprofile/?type=file&code="+value.code) Edit
+
+          div(class='btn menu')
+           form#removeFile(name="removeFile", method="post", action="/removeFile")
+                    input(type="hidden" name="code" value=value.code)
+                    input(type="hidden" name="file" value=file)
+                    input(type="hidden" name="type" value="files")
+                    input(type="hidden" name="related_events" value=value.related.events)
+                    input(type="hidden" name="related_sites" value=value.related.sites)
+                    input(type="hidden" name="related_locations" value=value.related.locations)
+                    input(type="hidden" name="related_mps" value=value.related.mps)
+                    input(type="hidden" name="related_interviews" value=value.interviews)
+                    input(type="hidden" name="related_contacts" value=value.contacts)
+                    
+                    button#submit_event(class="buttons", type="submit") Delete  

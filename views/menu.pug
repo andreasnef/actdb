@@ -1,0 +1,35 @@
+extends layout
+
+block content
+ div#logo
+  img.className#IdName(src="/stylesheets/images/Act-logo.png" alt="Act Logo" height="53" width="156")
+ div#menu 
+  //img.className#IdName(src="/stylesheets/images/Act-logo.png" alt="Act Logo" height="64" width="187" align="left")
+  div(class='btn menu')
+    a(href='/missing') Missing
+  div(class='btn menu')
+    a(href='/locations') Locations
+  div(class='btn menu')
+    a(href='/sites') Sites
+  div(class='btn menu')
+    a(href='/events') Events
+  div(class='btn menu')
+    a(href='/interviews') Interviews
+  div(class='btn menu')
+    a(href='/contacts') Contacts    
+  div(class='btn menu')
+    a(href='/files') Files 
+  div(class='btn menu')
+    a(href='/map') Map         
+  div(class='btn menu')
+    a(href="#" onclick="toggle_visibility('userOptions');") #{user} 
+
+ 
+  
+  div#userOptions(class='dropMenu')
+    a(href='logins' target="_blank") Login registry
+    //br
+    //a(href='/logout') Logout
+    form#logout(name="logout", method="post", action="/logout")
+        button#logout(type="submit") Logout
+  

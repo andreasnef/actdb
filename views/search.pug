@@ -1,0 +1,28 @@
+block content
+    
+h3.
+    Search
+div    
+  if (empty=='yes')        
+    p There is no result with that criteria
+  form#form_search(name="search", method="post", action="/search")
+
+    select#search_type(name="collection", value=collection)
+        option(value="") Select
+        option(value='missing') Missing People
+        option(value='locations') Locations
+        option(value='sites') Sites
+        option(value='events') Events
+        option(value='parties') Parties
+
+
+    select#search_criteria(name="criteria", value=criteria)
+        option(value="") Select
+        option(value='code') Code
+        option(value='keyword') Keyword
+
+
+    span &nbsp;
+    input#input_search(type="text", placeholder="Keyword", name="search_text", value=search_text)
+
+    button#logout(type="submit") Search

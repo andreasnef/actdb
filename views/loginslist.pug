@@ -1,0 +1,28 @@
+extends layout
+
+block content
+  h3. 
+     Logins
+  
+  a(href="/home") Go back to Index
+  
+  table(id="loginsList")
+      thead    
+        tr#headtag
+            th User
+            th Date
+            th IP
+            
+      tbody        
+            each login, i in collList
+                tr
+                    td=login.user
+                    td=moment(login.date).format('MMMM Do, YYYY, h:mm:ss a')
+                    //td=login.date
+                    td=login.ip
+                    
+  
+  script.
+    $('#loginsList').DataTable( {
+        paging: true
+        } );        

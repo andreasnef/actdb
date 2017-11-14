@@ -1,0 +1,131 @@
+extends layout
+
+block content
+ include menu
+ br
+ div
+  div#table  
+   div(class='btn menu')
+    a(href="#" onclick="toggle_visibility('newCheckpoint');") Add a New CheckPoint
+    div#newCheckpoint(class='dropMenu')    
+     a(href="/newprofile/?type=location&nextrecord="+nextcheckpoint) Lebanese CheckPoint
+     br
+     a(href="/newprofile/?type=location&nextrecord="+nextscheckpoint) Syrian CheckPoint
+     br
+     a(href="/newprofile/?type=location&nextrecord="+nexticheckpoint) Iraeli CheckPoint
+   div(class='btn menu')
+    a(href="#" onclick="toggle_visibility('newDC');") Add a New Detention Centre 
+    div#newDC(class='dropMenu')
+     a(href="/newprofile/?type=location&nextrecord="+nextcenter) Lebanese Detention Centre
+     br
+     a(href="/newprofile/?type=location&nextrecord="+nextscenter) Syrian Detention Centre
+     br
+     a(href="/newprofile/?type=location&nextrecord="+nexticenter) Israeli Detention Centre
+   div(class='btn menu')
+    a(href="#" onclick="toggle_visibility('newBarrack');") Add a New Barrack
+    div#newBarrack(class='dropMenu')
+     a(href="/newprofile/?type=location&nextrecord="+nextbarrack) Lebanese Barrack
+     br
+     a(href="/newprofile/?type=location&nextrecord="+nextsbarrack) Syrian Barrack
+     br
+     a(href="/newprofile/?type=location&nextrecord="+nextibarrack) Israeli Barrack
+
+   
+   - var barracks = [];
+   - var checkpoints = [];
+   - var centers = [];
+   
+    each location, i in collList
+          
+          - if(location.category == "Barrack"){
+            - barracks.push(location);
+          - }
+          - if(location.category == "CheckPoint"){
+            - checkpoints.push(location);
+          - }
+          - if(location.category == "Detention Centre"){
+            - centers.push(location);
+          - }
+          
+    h3.
+        Checkpoints
+    
+    table(id="cList")
+      thead    
+        tr#headtag
+            th Code
+            th Name
+            th District
+            th Governorate
+            th Group
+            
+      tbody        
+            each checkpoint in checkpoints
+                tr
+                    td
+                        a(href="#" onclick="loadProfile('locations','"+checkpoint.code+"');") #{checkpoint.code}
+                    td=checkpoint.name.en
+                    td=checkpoint.location.district
+                    td=checkpoint.location.governorate
+                    td=checkpoint.groups_responsible
+    
+    br
+    h3.
+        Detention Centers
+    
+    table(id="dList")
+      thead    
+        tr#headtag
+            th Code
+            th Name
+            th District
+            th Governorate
+            th Group
+            
+      tbody        
+            each center in centers
+                tr
+                    td
+                        a(href="#" onclick="loadProfile('locations','"+center.code+"');") #{center.code}
+                    td=center.name.en
+                    td=center.location.district
+                    td=center.location.governorate
+                    td=center.groups_responsible
+                    
+    br
+    h3.
+        Barracks
+        
+    table(id="bList")
+      thead    
+        tr#headtag
+            th Code
+            th Name
+            th District
+            th Governorate
+            th Group
+            
+      tbody        
+            each barrack in barracks
+                tr
+                    td
+                        a(href="#" onclick="loadProfile('locations',"+barrack.code+"');") #{barrack.code}
+                    td=barrack.name.en
+                    td=barrack.location.district
+                    td=barrack.location.governorate
+                    td=barrack.groups_responsible
+                    
+  div#sideProfile
+    
+  script.
+        $('#cList').DataTable( {
+        paging: true
+        } );  
+        
+        $('#dList').DataTable( {
+        paging: true
+        } );
+        
+        $('#bList').DataTable( {
+        paging: true
+        } );   

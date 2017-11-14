@@ -1,0 +1,154 @@
+extends layout
+
+block content
+  include menu
+  br
+  div   
+   div#table
+    div(class='btn menu')
+     a(href="/newprofile/?type=site&nextrecord="+nextrecord) Add a New Site
+    div(class='btn menu')
+       a(href="#" onclick="toggle_visibility('divSearch');") Advance Search of Sites
+      
+
+    div#divSearch(class='dropMenu')
+          form#form_search(name="searchsites", method="post", action="/searchsites")
+              span District
+              br
+              select#input_location_district(name="location_district", value=location_district)
+                option(value="") Select
+                - var districts = ["Akkar", "Baalbek", "Hermel", "Beirut", "Rashaya", "Western Beqaa", "Zahle", "Aley", "Baabda", "Chouf", "Jbeil", "Keserwan", "Matn", "Batroun", "Bsharri", "Koura", "Miniyeh-Danniyeh", "Tripoli", "Zgharta", "Bint Jbeil", "Hasbaya", "Marjeyoun", "Nabatiyeh", "Sidon", "Jezzine", "Tyre"];
+                each district in districts
+                  option(value=district) #{district}
+              br
+              span Governorate
+              br
+              select#input_location_governorate(name="location_governorate", value=location_governorate)
+                option(value="") Select
+                - var governorates = ["Akkar", "Baalbek-Hermel", "Beirut", "Beqaa", "Mount Lebanon", "Nabatieh", "North", "South"];
+                each governorate in governorates
+                   option(value=governorate) #{governorate}
+
+              br
+              
+              input#input_km(type="text", placeholder="distance in meters", name="meters", value=meters)
+              span &nbsp;
+              span from 
+              span &nbsp;
+              input#input_latitude(type="text", placeholder="latitude", name="latitude", value=latitude)
+              span &nbsp;
+              span ,
+              span &nbsp;
+              input#input_longitude(type="text", placeholder="longitude", name="longitude", value=longitude)
+              br
+              span Type
+              br
+              select#input_type(name="type", value=type)
+               option(value="") Select
+               - var types = ["Bridge", "Buried underground", "Cave", "Cemetries", "Dumpsters", "Garbage heap", "Hospital", "Ocean", "Open land", "River",  "Unknown",   "Well"];
+               each type in types
+                option(value=type) #{type}
+              br
+              input#input_keyword(type="text", placeholder="keyword", name="keyword", value=keyword)
+              br
+              span Risk Index:
+              br
+              select(name="risk_index", value=risk_index)
+                   option(value="") Select
+                   -for(var i = 0;i<6;i++){
+                        option(value=i) #{i}
+                   -}
+
+              br
+              span Sensitivity Index:
+              br
+              select(name="sensitivity_index", value=sensitivity_index)
+                   option(value="") Select
+                   -for(var i = 0;i<6;i++){
+                        option(value=i) #{i}
+                   -}
+
+              br
+
+              span Credibility Index:
+              br
+              select(name="credibility_index", value=credibility_index)
+                   option(value="") Select
+                   -for(var i = 0;i<6;i++){
+                        option(value=i) #{i}
+                   -}
+
+              br
+              span Exhumed Status
+              br
+              select#input_exhumed_status(name="exhumed_status", value=exhumed_status)
+               option(value="") Select
+                - var status = ["Accidental-Partial", "Exhumed-No Identification", "Exhumed-Partial Identification", "Exhumed-Identified", "No exhumation"];
+                each type in status
+                 option(value=type) #{type}
+              br
+
+              span Perpetrators
+              br
+              select#input_perpetrators(name="perpetrators", value=perpetrators)
+                option(value="") Select
+                if (parties)
+                 each party, i in parties
+                    option(value=party.name.en) #{party.name.en}
+              br
+              span Related Event
+              br
+              select#input_perpetrators(name="related_event", value=related_event)
+                option(value="") Select
+                if (events)
+                 each event, i in events
+                     option(value=event.code) #{event.code} - #{event.name.en}
+              br            
+              span Related Location
+              br
+              select#input_perpetrators(name="related_location", value=related_location)
+                option(value="") Select
+                if (locations)
+                 each location, i in locations
+                     option(value=location.code) #{location.code} - #{location.name.en} (#{location.groups_responsible}) 
+              br
+              span Related Missing Person
+              br
+              select#input_perpetrators(name="related_mps", value=related_mps)
+                option(value="") Select
+                if (mps)
+                 each mp, i in mps
+                     option(value=mp.code) #{mp.code} - #{mp.name.en}
+              br
+              br
+              div(class='btn menu')
+               button#search(type="submit" class="buttons") Search 
+  
+    h3. 
+      Sites
+     
+    table(id="sitesList")
+      thead    
+        tr#headtag
+            th Code
+            th Name
+            th District
+            th Governorate
+            th Exhumation Status
+            
+      tbody        
+            each site, i in collList
+                tr
+                    td
+                        a(href="#" onclick="loadProfile('sites','"+site.code+"');") #{site.code}
+                    td=site.name.en
+                    td=site.location.district
+                    td=site.location.governorate
+                    td=site.exhumed.status
+                    
+   div#sideProfile
+  
+   script.
+    $('#sitesList').DataTable( {
+        paging: true
+        } );

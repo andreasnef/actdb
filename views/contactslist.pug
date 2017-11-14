@@ -1,0 +1,41 @@
+extends layout
+
+block content
+  include menu
+  br
+  div   
+   div#table
+    div(class='btn menu')
+     a(href="/newprofile/?type=contact&nextrecord="+nextrecord) Add a New Contact
+  
+    h3. 
+      Contacts
+     
+    table(id="contactsList")
+      thead    
+        tr#headtag
+            th Code
+            th Name in Arabic
+            th Name in English
+            th Category
+            
+            
+      tbody        
+            each contact, i in collList
+                tr
+                    td
+                        a(href="#" onclick="loadProfile('contacts','"+contact.code+"');") #{contact.code}
+                    if (contact.confidential == "Yes")
+                        td= "Confidential"
+                        td= "Confidential"
+                    else   
+                        td=contact.name.ar.last+" "+contact.name.ar.first
+                        td=contact.name.en.first +" "+contact.name.en.last
+                    td=contact.category
+                    
+   div#sideProfile
+  
+   script.
+    $('#contactsList').DataTable( {
+        paging: true
+        } );

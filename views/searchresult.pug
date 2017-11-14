@@ -1,0 +1,20 @@
+extends layout
+
+block content
+ div#wrapper  
+  h3. 
+     Result of the search
+     
+  a(href="/home") Go back to Index
+  
+  div#wrapper
+      ul
+       if (collection == "missing")
+        each result, i in searchResult
+          li#missing_list_item
+            a(href="/profile/?type="+collection+"&code="+result.code target="_blank") #{result.code} - #{result.name.en.last}, #{result.name.en.first} #{result.name.en.middle} / #{result.name.ar.last}, #{result.name.ar.first} #{result.name.ar.middle}
+       else
+        each result, i in searchResult
+          li#missing_list_item
+            a(href="/profile/?type="+collection+"&code="+result.code target="_blank") #{result.code} - #{result.name.en} / #{result.name.ar}
+       

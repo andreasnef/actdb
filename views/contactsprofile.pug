@@ -1,0 +1,152 @@
+extends layout
+
+block content
+ if profile
+     each value, i in profile
+      div#profileTitle
+       h3.
+         #{value.name.ar.last}, #{value.name.ar.first}
+         - #{value.code}
+
+      div#wrapper
+
+          h4 Basic Info
+          
+          p
+            span.title Confidential: 
+            span #{value.confidential}
+          
+          p
+            span.title Name in Arabic:  
+            span #{value.name.ar.last}, #{value.name.ar.first}
+          
+          p 
+            span.title Name in English: 
+            span #{value.name.en.last}, #{value.name.en.first}
+    
+          - if (value.alias)
+           p
+            span.title Alias: 
+            span #{value.alias}
+          - if (value.fathers_name)
+           p
+            span.title Father's Name: 
+            span #{value.fathers_name}
+          - if (value.mothers_name)
+           p
+            span.title Mother's Name: 
+            span #{value.mothers_name}
+          - if (value.sex)
+           p
+            span.title Sex: 
+            span #{value.sex}
+          - if (value.birth.date) 
+           p
+             - var birthdate = moment(value.birth.date).utc().format('MMMM Do, YYYY');
+             span.title Birth: 
+             span #{birthdate}
+
+          - if (value.birth.place) 
+           p
+            span.title Birth Place: 
+            span #{value.birth.place} 
+          
+          -if (value.residence)
+           p 
+            span.title Residence: 
+            span #{value.residence}
+          - if (value.nationality)
+           p
+            span.title Nationality: 
+            span #{value.nationality}
+          
+          - if (value.profession)
+           p
+            span.title Profession: 
+            span #{value.profession}
+            
+          - if (value.status_war)
+           p
+            span.title Status during the war: 
+            span #{value.status_war}
+            
+          - if (value.relationship_missing)
+           p
+            span.title Relationship with the missing person: 
+            span #{value.relationship_missing}
+            
+          - if (value.political_affiliation)
+           p
+            span.title Political Affiliation: 
+            span #{value.political_affiliation}
+            
+          - if (value.area_present)
+           p
+            span.title Area present during the war: 
+            span #{value.area_present}
+          - if (value.languages)
+           p 
+            span.title Spoken Languages: 
+            span #{value.languages}
+          br 
+
+      div#wrapper  
+          - if (value.related.events)
+           p
+            span.title Related Events: 
+            each event, i in value.related.events
+             a(href="#" onclick="loadProfile('events','"+event+"');") #{event} 
+          - if (value.related.sites)
+           p
+            span.title Related Sites: 
+            each site, i in value.related.sites
+             a(href="#" onclick="loadProfile('sites','"+site+"');") #{site} 
+          - if (value.related.locations)
+           p
+            span.title Related Locations: 
+            each location, i in value.related.locations
+             a(href="#" onclick="loadProfile('locations','"+location+"');") #{location} 
+          - if (value.related.mps)
+           p
+            span.title Related Missing Persons: 
+            each mp, i in value.related.mps
+             a(href="#" onclick="loadProfile('missing','"+mp+"');") #{mp} 
+
+          - if (value.interviews)
+           p
+            span.title Interviews: 
+            each interview, i in value.interviews
+             a(href="#" onclick="loadProfile('interviews','"+interview+"');") #{interview}
+          
+          - if (value.phone_1 || value.phone_2)
+           p 
+            span.title Phones: 
+            span #{value.phone_1}  #{value.phone_2}
+          
+          - if (value.email)
+           p 
+            span.title Email: 
+            span #{value.email}
+          - if (value.preferred_channel)
+           p
+            span.title Preferred channel: 
+            span #{value.preferred_channel}
+          - if (value.icrc)
+           p 
+            span.title ICRC: 
+            span #{value.icrc}
+          - if (value.family_associations)
+           p 
+            span.title Family Asociations: 
+            span #{value.family_associations}
+          - if (value.contacted_act)
+           p 
+            span.title Contacted by Act: 
+            span #{value.contacted_act}
+          - if (value.notes)
+           p 
+            span.title Notes: 
+            span #{value.notes}
+
+          div(class='btn menu')
+            a(href="/newprofile/?type=contact&code="+value.code) Edit

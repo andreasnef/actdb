@@ -1,0 +1,323 @@
+extends layout
+
+block content
+ if profile
+     each value, i in profile
+      div#profileTitle
+       h3.
+         #{value.name.ar.last}, #{value.name.ar.first} #{value.name.ar.middle}
+         - #{value.code}
+
+      div
+
+          h4 Basic Info
+          
+          - if (value.picture && value.picture!= "YES")
+             div#pic
+                 img.className#IdName(src="/images/"+value.picture height="182")
+          - else if (value.picture == "YES") 
+            p 
+             span Picture exists but hasn't been uploaded
+                    
+
+          span.title Name in Arabic:  
+          span #{value.name.ar.last}, #{value.name.ar.first} #{value.name.ar.middle} 
+          
+          - if (value.name.ar.alt_name) 
+           p
+            span.title Alternative Spelling: 
+            span #{value.name.ar.alt_name}
+          p 
+            span.title Name in English: 
+            span #{value.name.en.last}, #{value.name.en.first} #{value.name.en.middle} 
+          - if (value.name.en.alt_name) 
+           p
+            span.title Alternative Spelling: 
+            span #{value.name.en.alt_name}
+          - if (value.alias)
+           p
+            span.title Alias: 
+            span #{value.alias}
+          - if (value.mothers_name)
+           p
+            span.title Mother's Name: 
+            span #{value.mothers_name}
+          - if (value.sex)
+           p
+            span.title Sex: 
+            span #{value.sex}
+          - if (value.birth.date) 
+           p
+             - var birthdate = moment(value.birth.date).utc().format('MMMM Do, YYYY');
+             span.title Birth: 
+             span #{birthdate}
+          - if (value.birth.alt_date) 
+           p
+            - var alternbirth = moment(value.birth.alt_date).utc().format('MMMM Do, YYYY');
+            span.title Alternative Birth Date: 
+            span #{alternbirth}
+          - if (value.birth.place) 
+           p
+            span.title Birth Place: 
+            span #{value.birth.place} 
+          - if (value.birth.sejl)   
+           p
+            span.title Sejl: 
+            span #{value.birth.sejl} 
+          
+          - if (value.age)
+           p
+           span.title Age: 
+           span #{value.age}
+          -if (value.residence)
+           p 
+            span.title Residence: 
+            span #{value.residence}
+          - if (value.nationality)
+           p
+            span.title Nationality: 
+            span #{value.nationality}
+          - if (value.marital_status)
+           p
+            span.title Marital Status: 
+            span #{value.marital_status}
+          - if (value.children)
+           p
+            span.title Children: 
+            span #{value.children}
+          - if (value.profession)
+           p
+            span.title Profession: 
+            span #{value.profession}
+          - if (value.confession)
+           p
+            span.title Confession: 
+            span #{value.confession}
+          - if (value.political_affiliation)
+           p 
+            span.title Political Affiliation: 
+            span #{value.political_affiliation}
+          - if (value.description)
+           p
+            span.title Description: 
+            span #{value.description}
+          br 
+
+      div 
+          h4 Context of Disappearance:
+          - if (value.disappearance.date) 
+           - var disappdate = moment(value.disappearance.date).utc().format('MMMM Do, YYYY');
+           p
+            span.title Date: 
+            span #{disappdate}
+          - if (value.disappearance.alt_date) 
+           - var altdisappdate = moment(value.disappearance.alt_date).utc().format('MMMM Do, YYYY');
+           p
+            span.title Alternative Date: 
+            span #{altdisappdate}
+          
+          - if (value.disappearance.place.en)
+           p
+            span.title Place: 
+            span #{value.disappearance.place.en} - #{value.disappearance.place.ar}, #{value.disappearance.place.district}, #{value.disappearance.place.governorate}
+          - if (value.disappearance.place.alt_place)
+           p
+            span.title Alternative Place: 
+            span #{value.disappearance.place.alt_place}
+          - if (value.disappearance.location.latitude && value.disappearance.location.longitude)
+           div#map
+            <div class="mapouter"><div class="gmap_canvas"><iframe width="300" height="250" id="gmap_canvas" src="https://maps.google.com/maps?q=#{value.disappearance.location.latitude}%2C%20#{value.disappearance.location.longitude}&t=&z=14&ie=UTF8&iwloc=&output=embed" frameborder="0" scrolling="no" marginheight="0" marginwidth="0"></iframe>google maps <a href="http://www.pureblack.de/google-maps/">pure black</a></div><style>.mapouter{overflow:hidden;height:250px;width:300px;}.gmap_canvas {background:none!important;height:500px;width:600px;}</style></div>
+           br    
+           p
+            span.title Coordinates: 
+            span #{value.disappearance.location.latitude},#{value.disappearance.location.longitude}
+          - if (value.disappearance.circumstances)
+           p
+            span.title Circumstances: 
+            span #{value.disappearance.circumstances}
+          br
+
+      div
+          h4 Last seen: 
+
+          - if (value.last_seen.reported)
+           p
+            span.title Reported Last Seen: 
+            span #{value.last_seen.reported}
+          - if (value.last_seen.location)
+           p
+            span.title Location: 
+            span #{value.last_seen.location}
+          - if (value.last_seen.date) 
+           - var lastSeenDate = moment(value.last_seen.date).utc().format('MMMM Do, YYYY');
+           p
+            span.title Date: 
+            span #{lastSeenDate}
+          - if (value.last_seen.country)
+           p
+            span.title Country: 
+            span #{value.last_seen.country}
+          - if(value.itinerary)
+           p
+            span.title Itinerary: 
+            span #{value.itinerary}
+          - if (value.perpetrators)
+           p
+            span.title Perpetrators: 
+            span #{value.perpetrators}
+          - if (value.related.events)
+           p
+            span.title Related Events: 
+            each event, i in value.related.events
+             a(href="#" onclick="loadProfile('events','"+event+"');") #{event} 
+          - if (value.related.sites)
+           p
+            span.title Related Sites: 
+            each site, i in value.related.sites
+             a(href="#" onclick="loadProfile('sites','"+site+"');") #{site} 
+          - if (value.related.locations)
+           p
+            span.title Related Locations: 
+            each location, i in value.related.locations
+             a(href="#" onclick="loadProfile('locations','"+location+"');") #{location} 
+          - if (value.related.mps)
+           p
+            span.title Related Missing Persons: 
+            each mp, i in value.related.mps
+             a(href="#" onclick="loadProfile('missing','"+mp+"');") #{mp} 
+
+          - if (value.fate)
+           p
+            span.title Fate: 
+            span #{value.fate}
+          - if (value.notes)
+           p
+            span.title Notes: 
+            span #{value.notes}
+          - if (value.sources)  
+           p
+            span.title Sources: 
+            span #{value.sources}
+          - if (value.interviews)
+           p 
+            span.title Interviews: 
+            each interview, i in value.interviews
+             a(href="#" onclick="loadProfile('interviews','"+interview+"');") #{interview} 
+
+          - if (value.files)
+           p
+            span.title Files: 
+            each file, i in value.files
+             a(href="#" onclick="loadProfile('files','"+file+"');") #{file}
+          br
+          
+      div
+          h4 Lists:
+          - if (value.lists.syria_2000 == "Yes")
+            p - المعتقلون اللبنانيون في سوريا حسب اللائحة التي نشرتها السلطات اللبنانية في 16 كانون الأول 2000
+          - if (value.lists.syria_2002 == "Yes") 
+            p - List of Lebanese detainees and victims of enforced disappearances delivered to the Syrian Minister of Interior 22 July 2002
+          - if (value.lists.syria_2005 == "Yes")
+            p - لائحة باسماء المفقودين الذين ترى "الهيئة" فائدة من الاستفسار عنهم لدى السلطات السورية نشرت بتاريخ 29 نيسان 2005 العدد 1905 - والسفير بتاريخ 29 نيسان 2005 
+          - if (value.lists.israel_2005 == "Yes")
+            p - لائحة باسماء المفقودين في السجون الاسرائيلية نشرت في المستقبل بتاريخ 29 نيسان 2005 العدد 1905- لائحة لجنة تلقي شكاوى المفقودين نشرت في السفير بتاريخ 29 نيسان 2005 
+          br
+            
+      div
+          h4 Fushat Amal: 
+          - if (value.fushatamal.published)
+           p
+            span.title Published: 
+            span #{value.fushatamal.published}
+          - if (value.fushatamal.auth_type)
+           p
+            span.title Type of Author: 
+            span #{value.fushatamal.auth_type}
+          - if (value.fushatamal.auth_notes)
+           p
+            span.title Notes: 
+            span #{value.fushatamal.auth_notes}
+          - if (value.fushatamal.auth_name || value.fushatamal.auth_last)
+           p 
+            span.title Name: 
+            span #{value.fushatamal.auth_name} #{value.fushatamal.auth_last}
+          - if (value.fushatamal.auth_email)
+           p 
+            span.title Email: 
+            span #{value.fushatamal.auth_email}
+          - if (value.fushatamal.auth_phone)
+           p 
+            span.title Phone: 
+            span #{value.fushatamal.auth_phone}
+          - if (value.fushatamal.auth_relationship)
+           p 
+            span.title Relationship: 
+            span #{value.fushatamal.auth_relationship}
+          br
+          
+      div
+          h4 Contact:
+          - if (value.contacts)
+           p
+            span.title Contacts: 
+            each contact, i in value.contacts
+             a(href="#" onclick="loadProfile('contacts','"+contact+"');") #{contact}
+             
+          - if (value.contact)      
+              - if (value.contact.name)
+               p
+                span.title Name: 
+                span #{value.contact.name}
+              - if (value.contact.date_birth) 
+               - var contact_birth = moment(value.contact.date_birth).utc().format('MMMM Do, YYYY');
+               p
+                span.title Date of Birth: 
+                span #{contact_birth}
+              - if (value.contact.address)    
+               p 
+                span.title Address: 
+                span #{value.contact.address}
+              - if (value.contact.relationship)
+               p 
+                span.title Relationship: 
+                span #{value.contact.relationship}
+              - if (value.contact.phone_1 || value.contact.phone_2)
+               p 
+                span.title Phones: 
+                span #{value.contact.phone_1}  #{value.contact.phone_2}
+              - if (value.contact.other_contact)
+               p 
+                span.title Other contacts: 
+                span #{value.contact.other_contact}
+              - if (value.contact.email)
+               p 
+                span.title Email: 
+                span #{value.contact.email}
+              - if (value.contact.icrc)
+               p 
+                span.title ICRC: 
+                span #{value.contact.icrc}
+              - if (value.contact.family_associations)
+               p 
+                span.title Family Asociations: 
+                span #{value.contact.family_associations}
+              - if (value.contact.contacted_act)
+               p 
+                span.title Contacted by Act: 
+                span #{value.contact.contacted_act}
+              - if (value.contact.notes)
+               p 
+                span.title Notes: 
+                span #{value.contact.notes}
+
+          div(class='btn menu')
+            a(href="/newprofile/?type=missing&mpcode="+value.code) Edit
+          div(class='btn menu') 
+            a(href="#" onclick="return toggle_visibility('addProfilePic');") Edit Profile Picture
+          div#addProfilePic
+            form#uploadPicture(name="uploadPicture", method="post", action="/uploadPicture" enctype="multipart/form-data")
+               input#file_pic(type="file", name="profilePic", value=profilePic)
+               input#text_pic(type="hidden", name="code", value=value.code)
+               button#submit_missing(type="submit" role='submit') submit
+               
+ script.      

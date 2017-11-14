@@ -1,0 +1,927 @@
+extends layout
+
+block content
+ include menu
+ div
+  br
+  br
+  
+  if errormessage
+     p #{errormessage} 
+     
+  if validationErrors 
+     each valError, i in validationErrors
+       li#valErrors_list_item
+         p #{valError.msg}  
+         
+  if editprofile
+    each value, i in editprofile
+        - _id = value._id
+        - code = value.code
+        - name_ar_first = value.name.ar.first
+        - name_ar_middle = value.name.ar.middle
+        - name_ar_last = value.name.ar.last
+        - name_ar_alt_name = value.name.ar.alt_name
+        - name_en_first = value.name.en.first
+        - name_en_middle = value.name.en.middle
+        - name_en_last = value.name.en.last
+        - name_en_alt_name = value.name.en.alt_name
+        - alias = value.alias
+        - mothers_name = value.mothers_name
+        - sex = value.sex
+        - birth_place = value.birth.place
+        - if (value.birth.date)
+            - var birthdate = new Date(value.birth.date);
+            - birth_date_day = ("0"+birthdate.getDate()).slice(-2);
+            - birth_date_month = ("0" + (birthdate.getMonth()+1)).slice(-2);
+            - birth_date_year = birthdate.getFullYear();
+        - if (value.birth.alt_date)
+            - var birthaltdate = new Date(value.birth.alt_date);
+            - birth_alt_date_day = ("0"+birthaltdate.getDate()).slice(-2);
+            - birth_alt_date_month = ("0" + (birthaltdate.getMonth()+1)).slice(-2);
+            - birth_alt_date_year = birthaltdate.getFullYear();
+        - birth_sejl = value.birth.sejl
+        - age = value.age
+        - residence = value.residence
+        - nationality = value.nationality
+        - marital_status = value.marital_status
+        - children = value.children
+        - profession = value.profession
+        - confession = value.confession
+        - political_affiliation = value.political_affiliation
+        - description = value.description
+        - if (value.disappearance.date)
+            - var disappearancedate = new Date(value.disappearance.date);
+            - disappearance_date_day = ("0"+disappearancedate.getDate()).slice(-2);
+            - disappearance_date_month = ("0" + (disappearancedate.getMonth()+1)).slice(-2);
+            - disappearance_date_year = disappearancedate.getFullYear();
+        - if (value.disappearance.alt_date)    
+            - var disappearancealtdate = new Date(value.disappearance.alt_date);
+            - disappearance_alt_date_day = ("0"+disappearancealtdate.getDate()).slice(-2);
+            - disappearance_alt_date_month = ("0" + (disappearancealtdate.getMonth()+1)).slice(-2);
+            - disappearance_alt_date_year = disappearancealtdate.getFullYear();
+        - disappearance_place_en = value.disappearance.place.en
+        - disappearance_place_ar = value.disappearance.place.ar
+        - disappearance_place_district = value.disappearance.place.district
+        - disappearance_place_governorate = value.disappearance.place.governorate
+        - disappearance_place_alt_place = value.disappearance.place.alt_place
+        - disappearance_location_latitude = value.disappearance.location.latitude
+        - disappearance_location_longitude = value.disappearance.location.longitude
+        - disappearance_circumstances = value.disappearance.circumstances
+        - last_seen_reported = value.last_seen.reported
+        - last_seen_location = value.last_seen.location
+        - last_seen_country = value.last_seen.country
+        - if (value.last_seen.date)
+            - var lastseendate = new Date(value.last_seen.date);
+            - last_seen_date_day = ("0"+lastseendate.getDate()).slice(-2);
+            - last_seen_date_month = ("0" + (lastseendate.getMonth()+1)).slice(-2);
+            - last_seen_date_year = lastseendate.getFullYear();
+        - itinerary = value.itinerary
+        - perpetrators = value.perpetrators
+        - related_events = value.related.events
+        - related_sites = value.related.sites
+        - related_locations = value.related.locations
+        - related_mps = value.related.mps
+        - fate = value.fate
+        - notes = value.notes
+        - sources = value.sources
+        - picture = value.picture
+        - lists_syria_2000 = value.lists.syria_2000
+        - lists_syria_2002 = value.lists.syria_2002
+        - lists_syria_2005 = value.lists.syria_2005
+        - lists_israel_2005 = value.lists.israel_2005
+        - fushatamal_published = value.fushatamal.published
+        - fushatamal_auth_type = value.fushatamal.auth_type
+        - fushatamal_auth_notes = value.fushatamal.auth_notes
+        - fushatamal_auth_name = value.fushatamal.auth_name
+        - fushatamal_auth_last = value.fushatamal.auth_last
+        - fushatamal_auth_email = value.fushatamal.auth_email
+        - fushatamal_auth_phone = value.fushatamal.auth_phone
+        - fushatamal_auth_relationship = value.fushatamal.auth_relationship
+        - contacts = value.contacts
+     
+  form#form_add_missing(name="addmissing", method="post", action="/addmissing")
+    div#wrapper
+     legend Add New missing
+     br
+     if (_id)
+        input#input_code(type="text", value=code, name="code" readonly)
+        input#input_edit(type="hidden", value=_id, name="_id")
+     else
+        input#input_code(type="text", value='MP'+nextrecord, name="code" readonly)
+    br
+    br
+     
+    div#wrapper 
+     legend Personal Information
+     br
+     span Name in Arabic
+     br
+     input#input_name_ar_first(type="text", placeholder="First", name="name_ar_first" value=name_ar_first)
+     span &nbsp;
+     input#input_name_ar_middle(type="text", placeholder="Middle", name="name_ar_middle", value=name_ar_middle)
+     span &nbsp;
+     input#input_name_ar_last(type="text", placeholder="Last", name="name_ar_last", value=name_ar_last)
+     br
+     input#input_name_ar_alt_name(type="text", placeholder="Alternative Name", name="name_ar_alt_name" value=name_ar_alt_name)
+     br
+     br
+     
+     span Name in English
+     br
+     input#input_name_en_first(type="text", placeholder="First", name="name_en_first", value=name_en_first)
+     span &nbsp;
+     input#input_name_en_middle(type="text", placeholder="Middle", name="name_en_middle", value=name_en_middle)
+     span &nbsp;
+     input#input_name_en_last(type="text", placeholder="Last", name="name_en_last", value=name_en_last)
+     br
+     input#input_name_en_alt_name(type="text", placeholder="Alternative Name", name="name_en_alt_name", value=name_en_alt_name)
+     br
+     br
+     input#input_alias(type="text", placeholder="Alias", name="alias", value=alias)
+     br
+     br
+     input#input_mothers_name(type="text", placeholder="Mother's Name", name="mothers_name", value=mothers_name)
+     br
+     br
+     
+     span Sex
+     br
+     - var sexes = ["M", "F"];
+        select#input_sex(name="sex", value=sex)
+          option(value="") Select
+          each se in sexes
+            if(sex==se)
+                option(value=se selected="selected") #{se}
+            else
+                option(value=se) #{se}
+     br
+     br
+     span Birth
+     br
+     input#input_birth_place(type="text", placeholder="Birth Place", name="birth_place", value=birth_place)
+     br
+     input#input_birth_sejl(type="text", placeholder="Sejl / Id Number", name="birth_sejl", value=birth_sejl)
+     br
+     span Date
+     br
+     select#birth_date_day(name="birth_date_day", value=birth_date_day)
+       option(value="") Select
+       -for(var i = 1;i<32;i++){
+          - i = ("0" + i).slice(-2)
+            if(birth_date_day==i)
+                option(value=i selected="selected") #{i}
+            else
+                option(value=i) #{i}    
+            
+       -}
+     span &nbsp;
+      select#input_birth_month(name="birth_date_month", value=birth_date_month)
+        option(value="") Select
+        if (birth_date_month=="01") 
+         option(value="01" selected="selected")  Jan 
+        else 
+         option(value="01")  Jan
+        if (birth_date_month=="02")
+         option(value="02" selected="selected")  Feb
+        else
+         option(value="02")  Feb    
+        if (birth_date_month=="03")
+         option(value="03" selected="selected")  Mar
+        else
+         option(value="03")  Mar
+        if (birth_date_month=="04")
+         option(value="04" selected="selected")  Apr
+        else
+         option(value="04")  Apr
+        if (birth_date_month=="05")
+         option(value="05" selected="selected")  May
+        else
+         option(value="05")  May
+        if (birth_date_month=="06")
+         option(value="06" selected="selected")  Jun
+        else
+         option(value="06")  Jun
+        if (birth_date_month=="07")
+         option(value="07" selected="selected")  Jul
+        else 
+         option(value="07")  Jul
+        if (birth_date_month=="08")
+         option(value="08" selected="selected")  Ago
+        else
+         option(value="08")  Ago
+        if (birth_date_month=="09")
+         option(value="09" selected="selected")  Sep
+        else
+         option(value="09")  Sep
+        if (birth_date_month=="10")
+         option(value="10" selected="selected")  Oct
+        else 
+         option(value="10")  Oct
+        if (birth_date_month=="11")
+         option(value="11" selected="selected")  Nov
+        else
+         option(value="11")  Nov
+        if (birth_date_month=="12")
+         option(value="12" selected="selected")  Dec
+        else
+         option(value="12")  Dec
+        span &nbsp;
+      select(name="birth_date_year", value=birth_date_year)
+       option(value="") Select
+       -for(var i = 1900;i<2006;i++){
+           if(birth_date_year==i)
+                option(value=i selected="selected") #{i}
+           else
+                option(value=i) #{i}
+       -}  
+     br
+     br
+     span Alternative Date
+     br
+     select(name="birth_alt_date_day", value=birth_alt_date_day)
+       option(value="") Select
+       -for(var i = 1;i<32;i++){
+          - i = ("0" + i).slice(-2)
+           if(birth_alt_date_day==i)
+                option(value=i selected="selected") #{i}
+           else
+                option(value=i) #{i}
+       -}
+     span &nbsp;
+      select#input_birth_month(name="birth_alt_date_month", value=birth_alt_date_month)
+        option(value="") Select
+        if (birth_alt_date_month=="01") 
+         option(value="01" selected="selected")  Jan 
+        else 
+         option(value="01")  Jan
+        if (birth_alt_date_month=="02")
+         option(value="02" selected="selected")  Feb
+        else
+         option(value="02")  Feb    
+        if (birth_alt_date_month=="03")
+         option(value="03" selected="selected")  Mar
+        else
+         option(value="03")  Mar
+        if (birth_alt_date_month=="04")
+         option(value="04" selected="selected")  Apr
+        else
+         option(value="04")  Apr
+        if (birth_alt_date_month=="05")
+         option(value="05" selected="selected")  May
+        else
+         option(value="05")  May
+        if (birth_alt_date_month=="06")
+         option(value="06" selected="selected")  Jun
+        else
+         option(value="06")  Jun
+        if (birth_alt_date_month=="07")
+         option(value="07" selected="selected")  Jul
+        else 
+         option(value="07")  Jul
+        if (birth_alt_date_month=="08")
+         option(value="08" selected="selected")  Ago
+        else
+         option(value="08")  Ago
+        if (birth_alt_date_month=="09")
+         option(value="09" selected="selected")  Sep
+        else
+         option(value="09")  Sep
+        if (birth_alt_date_month=="10")
+         option(value="10" selected="selected")  Oct
+        else 
+         option(value="10")  Oct
+        if (birth_alt_date_month=="11")
+         option(value="11" selected="selected")  Nov
+        else
+         option(value="11")  Nov
+        if (birth_alt_date_month=="12")
+         option(value="12" selected="selected")  Dec
+        else
+         option(value="12")  Dec
+        span &nbsp;
+     select(name="birth_alt_date_year", value=birth_alt_date_year)
+       option(value="") Select
+       -for(var i = 1900;i<2006;i++){
+           if(birth_alt_date_year==i)
+                option(value=i selected="selected") #{i}
+           else
+                option(value=i) #{i}
+       -} 
+     br
+     br
+     
+     input#input_age(type="text", placeholder="Age", name="age", value=age)
+     br
+     input#input_residence(type="text", placeholder="Residence", name="residence", value=residence)
+     br
+     input#input_nationality(type="text", placeholder="Nationality", name="nationality", value=nationality)
+     br
+     br
+     
+     span Marital Status
+     br
+     select#input_marital_status(name="marital_status", value=marital_status)
+        option(value="") Select
+        - var statuses = ["Single", "In a relationship", "Engaged", "Married", "Divorced", "Widow"];
+         each status in statuses
+           if(marital_status==status)
+                option(value=status selected="selected") #{status}
+           else
+                option(value=status) #{status}
+
+     br
+     br
+     
+     span Children
+     br
+     select#input_children(name="children", value=children) 
+        option(value="") Select
+        -for(var i = 0;i<15;i++){  
+           if(children==i && children!="")
+                option(value=i selected="selected") #{i}
+           else
+                option(value=i) #{i}
+        -}
+     br
+     br
+     
+     input#input_profession(type="text", placeholder="Profession", name="profession", value=profession)
+     br
+     input#input_confession(type="text", placeholder="Confession", name="confession", value=confession)
+     br
+     br
+     
+     span Political Affiliation
+     br
+     select#input_perpetrators(name="political_affiliation", value=political_affiliation)
+        option(value="") Select
+        if (parties)
+          each party, i in parties
+           if(political_affiliation==party.name.en)
+                option(value=party.name.en selected="selected") #{party.name.en}
+           else
+                option(value=party.name.en) #{party.name.en}
+     br
+     br
+     
+     span Description
+     br
+     textarea#input_description(type="text", placeholder="Description of the Missing Person", cols="120" rows="10", name="description", value=description)
+        | #{description}
+    br
+    br
+    div#wrapper 
+     legend Disappearance
+     br
+     span Date
+     br
+     select(name="disappearance_date_day", value=disappearance_date_day)
+       option(value="") Select
+       -for(var i = 1;i<32;i++){
+          - i = ("0" + i).slice(-2)
+           if(disappearance_date_day==i)
+                option(value=i selected="selected") #{i}
+           else
+                option(value=i) #{i}
+       -}
+     span &nbsp;
+     select#input_birth_month(name="disappearance_date_month", value=disappearance_date_month)
+        if (disappearance_date_month=="01") 
+         option(value="01" selected="selected")  Jan 
+        else 
+         option(value="01")  Jan
+        if (disappearance_date_month=="02")
+         option(value="02" selected="selected")  Feb
+        else
+         option(value="02")  Feb    
+        if (disappearance_date_month=="03")
+         option(value="03" selected="selected")  Mar
+        else
+         option(value="03")  Mar
+        if (disappearance_date_month=="04")
+         option(value="04" selected="selected")  Apr
+        else
+         option(value="04")  Apr
+        if (disappearance_date_month=="05")
+         option(value="05" selected="selected")  May
+        else
+         option(value="05")  May
+        if (disappearance_date_month=="06")
+         option(value="06" selected="selected")  Jun
+        else
+         option(value="06")  Jun
+        if (disappearance_date_month=="07")
+         option(value="07" selected="selected")  Jul
+        else 
+         option(value="07")  Jul
+        if (disappearance_date_month=="08")
+         option(value="08" selected="selected")  Ago
+        else
+         option(value="08")  Ago
+        if (disappearance_date_month=="09")
+         option(value="09" selected="selected")  Sep
+        else
+         option(value="09")  Sep
+        if (disappearance_date_month=="10")
+         option(value="10" selected="selected")  Oct
+        else 
+         option(value="10")  Oct
+        if (disappearance_date_month=="11")
+         option(value="11" selected="selected")  Nov
+        else
+         option(value="11")  Nov
+        if (disappearance_date_month=="12")
+         option(value="12" selected="selected")  Dec
+        else
+         option(value="12")  Dec
+        span &nbsp;
+     select(name="disappearance_date_year", value=disappearance_date_year)
+       option(value="") Select
+       -for(var i = 1973;i<2006;i++){
+           if(disappearance_date_year==i)
+                option(value=i selected="selected") #{i}
+           else
+                option(value=i) #{i}
+       -}  
+     br
+     br
+     span Alternative Date
+     br
+     select(name="disappearance_alt_date_day", value=disappearance_alt_date_day)
+       option(value="") Select
+       -for(var i = 1;i<32;i++){
+          - i = ("0" + i).slice(-2)
+           if(disappearance_alt_date_day==i)
+                option(value=i selected="selected") #{i}
+           else
+                option(value=i) #{i}
+       -}
+     span &nbsp;
+     select#disappearance_alt_date(name="disappearance_alt_date_month", value=disappearance_alt_date_month)
+        if (disappearance_alt_date_month=="01") 
+         option(value="01" selected="selected")  Jan 
+        else 
+         option(value="01")  Jan
+        if (disappearance_alt_date_month=="02")
+         option(value="02" selected="selected")  Feb
+        else
+         option(value="02")  Feb    
+        if (disappearance_alt_date_month=="03")
+         option(value="03" selected="selected")  Mar
+        else
+         option(value="03")  Mar
+        if (disappearance_alt_date_month=="04")
+         option(value="04" selected="selected")  Apr
+        else
+         option(value="04")  Apr
+        if (disappearance_alt_date_month=="05")
+         option(value="05" selected="selected")  May
+        else
+         option(value="05")  May
+        if (disappearance_alt_date_month=="06")
+         option(value="06" selected="selected")  Jun
+        else
+         option(value="06")  Jun
+        if (disappearance_alt_date_month=="07")
+         option(value="07" selected="selected")  Jul
+        else 
+         option(value="07")  Jul
+        if (disappearance_alt_date_month=="08")
+         option(value="08" selected="selected")  Ago
+        else
+         option(value="08")  Ago
+        if (disappearance_alt_date_month=="09")
+         option(value="09" selected="selected")  Sep
+        else
+         option(value="09")  Sep
+        if (disappearance_alt_date_month=="10")
+         option(value="10" selected="selected")  Oct
+        else 
+         option(value="10")  Oct
+        if (disappearance_alt_date_month=="11")
+         option(value="11" selected="selected")  Nov
+        else
+         option(value="11")  Nov
+        if (disappearance_alt_date_month=="12")
+         option(value="12" selected="selected")  Dec
+        else
+         option(value="12")  Dec
+        span &nbsp;
+     select(name="disappearance_alt_date_year", value=disappearance_alt_date_year)
+       option(value="") Select
+       -for(var i = 1973;i<2006;i++){
+           if(disappearance_alt_date_year==i)
+                option(value=i selected="selected") #{i}
+           else
+                option(value=i) #{i}
+       -} 
+     br
+     br
+     
+     input#input_disappearance_place_en(type="text", placeholder="Place (English)", name="disappearance_place_en", value=disappearance_place_en)
+     br
+     input#input_disappearance_place_ar(type="text", placeholder="Place (Arabic)", name="disappearance_place_ar", value=disappearance_place_ar)
+     br
+     span District
+     br
+     select#input_disappearance_place_district(name="disappearance_place_district", value=disappearance_place_district)
+        option(value="") Select
+        - var districts = ["Akkar", "Baalbek", "Hermel", "Beirut", "Rashaya", "Western Beqaa", "Zahle", "Aley", "Baabda", "Chouf", "Jbeil", "Keserwan", "Matn", "Batroun", "Bsharri", "Koura", "Miniyeh-Danniyeh", "Tripoli", "Zgharta", "Bint Jbeil", "Hasbaya", "Marjeyoun", "Nabatiyeh", "Sidon", "Jezzine", "Tyre"];
+        each district in districts
+           if(disappearance_place_district==district)
+                option(value=district selected="selected") #{district}
+           else
+                option(value=district) #{district}
+     br
+     span Governorate
+     br
+     select#input_disappearance_place_governorate(name="disappearance_place_governorate", value=disappearance_place_governorate)
+        option(value="") Select
+        - var governorates = ["Akkar", "Baalbek-Hermel", "Beirut", "Beqaa", "Mount Lebanon", "Nabatieh", "North", "South"];
+        each governorate in governorates
+           if(disappearance_place_governorate==governorate)
+                option(value=governorate selected="selected") #{governorate}
+           else
+                option(value=governorate) #{governorate}
+     br
+     input#input_disappearance_place_alt_place(type="text", placeholder="Alternative Place", name="disappearance_place_alt_place", value=disappearance_place_alt_place)
+     br
+     input#input_disappearance_location_latitude(type="text", placeholder="Latitude", name="disappearance_location_latitude", value=disappearance_location_latitude)
+     span &nbsp;
+     input#input_disappearance_location_longitude(type="text", placeholder="Longitude", name="disappearance_location_longitude", value=disappearance_location_longitude)
+     span &nbsp;
+     br
+     br
+     span Circumstances
+     br
+     textarea#input_disappearance_circumstances(type="text", placeholder="Description of the Circumstances", cols="120" rows="10", name="disappearance_circumstances")
+        | #{disappearance_circumstances}
+    br
+    br
+    div#wrapper 
+     legend Last Seen
+     br
+     span Reported Last Seen
+     br
+     select#input_last_seen_reported(name="last_seen_reported", value=last_seen_reported)
+        option(value="No") No
+        if(last_seen_reported=="Yes")
+         option(value="Yes" selected="selected")  Yes
+        else
+         option(value="Yes")  Yes
+     br
+     input#input_last_seen_location(type="text", placeholder="Location of Last Seen", name="last_seen_location", value=last_seen_location)
+     br
+     span Country
+     br
+     select#input_last_seen_country(name="last_seen_country", value=last_seen_country)
+        option(value="") Select
+        - var countries = ["Lebanon", "Syria", "Palestine", "Other"]
+        for country in countries
+          if(country==last_seen_country)    
+            option(value=country selected="selected") #{country}
+          else    
+            option(value=country) #{country}
+     br
+     span Date of Last Seen
+     br
+     select(name="last_seen_date_day", value=last_seen_date_day)
+       option(value="") Select
+       -for(var i = 1;i<32;i++){
+          - i = ("0" + i).slice(-2)
+           if(last_seen_date_day==i)
+                option(value=i selected="selected") #{i}
+           else
+                option(value=i) #{i}
+       -}
+     span &nbsp;
+     select#input_birth_month(name="last_seen_date_month", value=last_seen_date_month)
+        if (last_seen_date_month=="01") 
+         option(value="01" selected="selected")  Jan 
+        else 
+         option(value="01")  Jan
+        if (last_seen_date_month=="02")
+         option(value="02" selected="selected")  Feb
+        else
+         option(value="02")  Feb    
+        if (last_seen_date_month=="03")
+         option(value="03" selected="selected")  Mar
+        else
+         option(value="03")  Mar
+        if (last_seen_date_month=="04")
+         option(value="04" selected="selected")  Apr
+        else
+         option(value="04")  Apr
+        if (last_seen_date_month=="05")
+         option(value="05" selected="selected")  May
+        else
+         option(value="05")  May
+        if (last_seen_date_month=="06")
+         option(value="06" selected="selected")  Jun
+        else
+         option(value="06")  Jun
+        if (last_seen_date_month=="07")
+         option(value="07" selected="selected")  Jul
+        else 
+         option(value="07")  Jul
+        if (last_seen_date_month=="08")
+         option(value="08" selected="selected")  Ago
+        else
+         option(value="08")  Ago
+        if (last_seen_date_month=="09")
+         option(value="09" selected="selected")  Sep
+        else
+         option(value="09")  Sep
+        if (last_seen_date_month=="10")
+         option(value="10" selected="selected")  Oct
+        else 
+         option(value="10")  Oct
+        if (last_seen_date_month=="11")
+         option(value="11" selected="selected")  Nov
+        else
+         option(value="11")  Nov
+        if (last_seen_date_month=="12")
+         option(value="12" selected="selected")  Dec
+        else
+         option(value="12")  Dec
+        span &nbsp;
+     select(name="last_seen_date_year", value=last_seen_date_year)
+       option(value="") Select
+       -for(var i = 1973;i<2006;i++){
+           if(last_seen_date_year==i)
+                option(value=i selected="selected") #{i}
+           else
+                option(value=i) #{i}
+       -} 
+    br
+    br
+    div#wrapper
+     legend Itinerary Description
+     br
+     textarea#input_itinerary(type="text", placeholder="Itinerary Description", cols="120" rows="10", name="itinerary", value=itinerary)
+        | #{itinerary}
+     br
+     br
+     
+     span Perpetrators
+     span &nbsp;
+     if (parties)
+        each party, i in parties
+            div.checkbox-inline
+             if (perpetrators && perpetrators.includes(party.name.en))
+              input.checkbox-input(type='checkbox', name="perpetrators", value=party.name.en, checked)
+              label #{party.name.en}
+             else
+              input.checkbox-input(type='checkbox', name="perpetrators", value=party.name.en)
+              label #{party.name.en}
+          
+     br      
+    
+     //span Related Events 
+     a(href="#" onclick="return toggle_visibility('relatedEvents');") Related Events #{related_events} (click to modify)
+    
+     div#relatedEvents(class='dropMenu')
+      if (events)
+       table(id="eventsList")
+        thead    
+         tr#headtag
+            th Select
+            th Code
+            th Name
+        tbody     
+         each event, i in events
+          tr
+           td
+             if (related_events && related_events.includes(event.code))
+              input.checkbox-input(type='checkbox', name="related_events", value=event.code, checked)
+             else
+              input.checkbox-input(type='checkbox', name="related_events", value=event.code)
+           td=event.code
+           td=event.name.en
+
+     br
+    
+     //span Related Sites
+     a(href="#" onclick="return toggle_visibility('relatedSites');") Related Sites #{related_sites} (click to modify)
+    
+     div#relatedSites(class='dropMenu')
+      if (sites)
+       table(id="sitesList")
+        thead    
+         tr#headtag
+            th Select
+            th Code
+            th Name
+
+        tbody  
+         each site, i in sites
+          tr
+           td
+             if (related_sites && related_sites.includes(site.code))
+              input.checkbox-input(type='checkbox', name="related_sites", value=site.code, checked)
+             else
+              input.checkbox-input(type='checkbox', name="related_sites", value=site.code)
+             td=site.code
+             td=site.name.en
+     br
+
+     //span Related Locations
+     a(href="#" onclick="return toggle_visibility('relatedLocations');") Related Locations #{related_locations} (click to modify)
+    
+     div#relatedLocations(class='dropMenu')
+      if (locations)
+       table(id="locationsList")
+        thead    
+         tr#headtag
+            th Select
+            th Code
+            th Name
+            th Groups Responsible
+
+        tbody    
+         each location, i in locations
+          tr
+           td
+            if (related_locations && related_locations.includes(location.code))
+              input.checkbox-input(type='checkbox', name="related_locations", value=location.code, checked)
+            else
+              input.checkbox-input(type='checkbox', name="related_locations", value=location.code)
+            td=location.code
+            td=location.name.en
+            td=location.groups_responsible
+
+     br
+     //span Related Missing Persons
+     a(href="#" onclick="return toggle_visibility('relatedMps');") Related Missing Persons #{related_mps} (click to modify)
+    
+     div#relatedMps(class='dropMenu')
+      if (mps)
+       table(id="missingList")
+        thead    
+         tr#headtag
+            th Select
+            th Code
+            th Name in Arabic
+            th Name in English
+
+        tbody    
+         each mp, i in mps
+            tr
+             td
+              if (related_mps && related_mps.includes(mp.code))
+                input.checkbox-input(type='checkbox', name="related_mps", value=mp.code, checked)
+              else  
+                input.checkbox-input(type='checkbox', name="related_mps", value=mp.code)
+             td= mp.code
+             td= mp.name.ar.last+', '+mp.name.ar.first+' '+mp.name.ar.middle
+             td= mp.name.en.last+', '+mp.name.en.first+' '+mp.name.en.middle 
+    br
+    br
+    
+    div#wrapper
+     span Fate
+     br
+     select#input_fate(name="fate", value=fate)
+        - var fates = ["Unknown", "Presumed in Syria", "Presumed in Israel", "Presumed Dead", "Location of remains Presumed", "Confirmed dead", "Remains exhumed", "Released"];
+        each fat in fates
+           if(fat==fate)
+                option(value=fat selected="selected") #{fat}
+           else
+                option(value=fat) #{fat}
+    br
+    br
+    div#wrapper
+     span Notes
+     br
+     textarea#input_notes(type="text", placeholder="Any notes", cols="120" rows="10", name="notes", value=notes)
+        | #{notes}
+     br
+     br
+     
+     input#input_sources(type="text", placeholder="Sources", name="sources", value=sources)
+     br
+     br
+     
+     if (picture)
+      input#input_picture(type="text", placeholder="Picture", name="picture", value=picture readonly)
+    br
+    br
+    
+    div#wrapper
+     
+     legend Lists
+     br
+     span المعتقلون اللبنانيون في سوريا حسب اللائحة التي نشرتها السلطات اللبنانية في 16 كانون الأول 2000
+     span &nbsp;
+     select#select_lists_syria_2000(name="lists_syria_2000", value=lists_syria_2000)
+        option(value="No")  No
+        if(lists_syria_2000=="Yes")
+            option(value="Yes" selected="Selected")  Yes
+        else    
+            option(value="Yes")  Yes
+     br
+     span List of Lebanese detainees and victims of enforced disappearances delivered to the Syrian Minister of Interior 22 July 2002
+     span &nbsp;
+     select#select_lists_syria_2002(name="lists_syria_2002", value=lists_syria_2002)
+        option(value="No")  No
+        if(lists_syria_2002=="Yes")
+            option(value="Yes" selected="Selected")  Yes
+        else    
+            option(value="Yes")  Yes
+     br
+     span لائحة باسماء المفقودين الذين ترى "الهيئة" فائدة من الاستفسار عنهم لدى السلطات السورية نشرت بتاريخ 29 نيسان 2005 العدد 1905 - والسفير بتاريخ 29 نيسان 2005
+     span &nbsp;
+     select#select_lists_syria_2005(name="lists_syria_2005", value=lists_syria_2005)
+        option(value="No")  No
+        if(lists_syria_2005=="Yes")
+            option(value="Yes" selected="Selected")  Yes
+        else    
+            option(value="Yes")  Yes
+     br
+     span لائحة باسماء المفقودين في السجون الاسرائيلية نشرت في المستقبل بتاريخ 29 نيسان 2005 العدد 1905- لائحة لجنة تلقي شكاوى المفقودين نشرت في السفير بتاريخ 29 نيسان 2005
+     span &nbsp;
+     select#select_lists_israel_2005(name="lists_israel_2005", value=lists_israel_2005)
+        option(value="No")  No
+        if(lists_israel_2005=="Yes")
+            option(value="Yes" selected="Selected")  Yes
+        else    
+            option(value="Yes")  Yes
+    br
+    br
+    div#wrapper
+     legend Fushat Amal
+     br
+     br
+     span Published
+     br
+     select#select_fushatamal_published(name="fushatamal_published", value=fushatamal_published)
+        option(value="No")  No
+        option(value="Yes")  Yes
+     br
+     input#input_auth_type(type="text", placeholder="Author Type", name="fushatamal_auth_type", value=fushatamal_auth_type)
+     br
+     input#input_auth_notes(type="text", placeholder="Notes", name="fushatamal_auth_notes", value=fushatamal_auth_notes)
+     br
+     input#input_auth_name(type="text", placeholder="Author's Name", name="fushatamal_auth_name", value=fushatamal_auth_name)
+     br
+     input#input_auth_last(type="text", placeholder="Last Name", name="fushatamal_auth_last", value=fushatamal_auth_last)
+     br
+     input#input_auth_email(type="text", placeholder="Email", name="fushatamal_auth_email", value=fushatamal_auth_email)
+     br
+     input#input_auth_phone(type="text", placeholder="Phone", name="fushatamal_auth_phone", value=fushatamal_auth_phone)
+     br
+     input#input_fushatamal_auth_relationship(type="text", placeholder="Relationship", name="fushatamal_auth_relationship", value=fushatamal_auth_relationship)
+    br
+    br
+    div#wrapper 
+     legend Contact Information
+     br
+     if (contactslist)
+      table(id="contactsList")
+          thead    
+            tr#headtag
+                th Select
+                th Code
+                th Name in Arabic
+                th Name in English
+                th Category
+
+          tbody    
+            each contact, i in contactslist
+                tr
+                 td
+                  if (contacts && contacts.includes(contact.code))
+                    input.checkbox-input(type='checkbox', name="contacts", value=contact.code, checked)
+                  else  
+                    input.checkbox-input(type='checkbox', name="contacts", value=contact.code)
+                 td= contact.code
+                 td= contact.name.ar.last, contact.name.ar.first
+                 td= contact.name.en.first, contact.name.en.last
+                 td= contact.category
+
+    br
+    br
+    div#wrapper
+     div(class='btn menu')
+      button#submit_missing(type="submit" role='submit' class="buttons") submit
+     div(class='btn menu')
+      a(href="/missing") Go back to list of Missing
+    
+  
+  script.
+    $('#missingList').DataTable( {
+        paging: false
+    } );
+    $('#locationsList').DataTable( {
+        paging: false
+    } );
+    $('#eventsList').DataTable( {
+        paging: false
+    } );
+    $('#sitesList').DataTable( {
+        paging: false
+    } );
+    $('#contactsList').DataTable( {
+        paging: false
+    } );

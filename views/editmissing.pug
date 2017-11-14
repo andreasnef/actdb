@@ -1,0 +1,674 @@
+extends layout
+
+block content
+ div
+  h3= title
+  
+  if errormessage
+     p #{errormessage} 
+     
+  if validationErrors 
+     each valError, i in validationErrors
+       li#valErrors_list_item
+         p #{valError.msg}      
+     
+  form#form_add_missing(name="addmissing", method="post", action="/addmissing")
+    div#wrapper
+     span Code
+     span &nbsp;
+     input#input_code(type="text", value=newmp, name="mp_code" readonly) 
+    br
+    br
+     
+    div#wrapper 
+     span Name in Arabic
+     br
+     span First
+     span &nbsp;
+     input#input_name_ar_first(type="text", placeholder="First", name="name_ar_first" value=name_ar_first)
+     span &nbsp;
+     span Middle
+     span &nbsp;
+     input#input_name_ar_middle(type="text", placeholder="Middle", name="name_ar_middle", value=name_ar_middle)
+     span &nbsp;
+     span Last
+     span &nbsp;
+     input#input_name_ar_last(type="text", placeholder="Last", name="name_ar_last", value=name_ar_last)
+     span &nbsp;
+     span Alternative Name
+     span &nbsp;
+     input#input_name_ar_alt_name(type="text", placeholder="Last", name="name_ar_alt_name" value=name_ar_alt_name)
+     br
+     br
+     
+     span Name in English
+     br
+     span First
+     span &nbsp;
+     input#input_name_en_first(type="text", placeholder="First", name="name_en_first", value=name_en_first)
+     span &nbsp;
+     span Middle
+     span &nbsp;
+     input#input_name_en_middle(type="text", placeholder="Middle", name="name_en_middle", value=name_en_middle)
+     span &nbsp;
+     span Last
+     span &nbsp;
+     input#input_name_en_last(type="text", placeholder="Last", name="name_en_last", value=name_en_last)
+     span &nbsp;
+     span Alternative Name
+     span &nbsp;
+     input#input_name_en_alt_name(type="text", placeholder="Alternative Name", name="name_en_alt_name", value=name_en_alt_name)
+     br
+     br
+     
+     span Alias
+     span &nbsp;
+     input#input_alias(type="text", placeholder="Alias", name="alias", value=alias)
+     br
+     br
+     
+     span Mother's Name
+     span &nbsp;
+     input#input_mothers_name(type="text", placeholder="Mother's Name", name="mothers_name", value=mothers_name)
+     br
+     br
+     
+     span Sex
+     br
+     span Male
+     input#input_sex(type="radio", name="sex", value="Male")
+     span Female
+     input#input_sex(type="radio", name="sex", value="Female")
+    br
+    br
+    div#wrapper 
+     span Birth
+     br
+     span Place
+     span &nbsp;
+     span &nbsp;
+     input#input_birth_place(type="text", placeholder="Birth Place", name="birth_place", value=birth_place)
+     br
+     span Date
+     span &nbsp;
+     select(name="birth_date_day", value=birth_date_day)
+       option(value="") Select
+       -for(var i = 1;i<32;i++){
+          - i = ("0" + i).slice(-2)
+           option(value=i) #{i}
+       -}
+     span &nbsp;
+     select#input_birth_month(name="birth_date_month", value=birth_date_month)
+        option(value="") Select
+        option(value="01")  Jan
+        option(value="02")  Feb
+        option(value="03")  Mar
+        option(value="04")  Apr
+        option(value="05")  May
+        option(value="06")  Jun
+        option(value="07")  Jul
+        option(value="08")  Ago
+        option(value="09")  Sep
+        option(value="10")  Oct
+        option(value="11")  Nov
+        option(value="12")  Dec
+        span &nbsp;
+     select(name="birth_date_year", value=birth_date_year)
+       option(value="") Select
+       -for(var i = 1900;i<2006;i++){
+           option(value=i) #{i}
+       -}  
+     span &nbsp;
+     span Alternative Date
+     span &nbsp;
+     select(name="birth_alt_date_day", value=birth_alt_date_day)
+       option(value="") Select
+       -for(var i = 1;i<32;i++){
+          - i = ("0" + i).slice(-2)
+           option(value=i) #{i}
+       -}
+     span &nbsp;
+     select#input_birth_month(name="birth_alt_date_month", value=birth_alt_date_month)
+        option(value="") Select
+        option(value="01")  Jan
+        option(value="02")  Feb
+        option(value="03")  Mar
+        option(value="04")  Apr
+        option(value="05")  May
+        option(value="06")  Jun
+        option(value="07")  Jul
+        option(value="08")  Ago
+        option(value="09")  Sep
+        option(value="10")  Oct
+        option(value="11")  Nov
+        option(value="12")  Dec
+        span &nbsp;
+     select(name="birth_alt_date_year", value=birth_alt_date_year)
+       option(value="") Select
+       -for(var i = 1900;i<2006;i++){
+           option(value=i) #{i}
+       -} 
+     span &nbsp;
+     span Sejl
+     span &nbsp;
+     input#input_birth_sejl(type="text", placeholder="Sejl", name="birth_sejl", value=birth_sejl)
+     br
+     br
+     
+     span Age
+     span &nbsp;
+     input#input_age(type="text", placeholder="Age", name="age", value=age)
+    br
+    br
+    div#wrapper 
+     span Residence
+     span &nbsp;
+     input#input_residence(type="text", placeholder="Residence", name="residence", value=residence)
+     br
+     br
+     
+     span Nationality
+     span &nbsp;
+     input#input_nationality(type="text", placeholder="Nationality", name="nationality", value=nationality)
+     br
+     br
+     
+     span Marital Status
+     span &nbsp;
+     select#input_marital_status(name="marital_status", value=marital_status)
+        option(value="") Select
+        option(value="Single")  Single
+        option(value="In a relationship")  In a relationship
+        option(value="Engaged")  Engaged
+        option(value="Married")  Married
+        option(value="Divorced")  Divorced
+        option(value="Widow")  Widow
+     br
+     br
+     
+     span Children
+     span &nbsp;
+     select#input_children(name="children", value=children)
+       option(value="") Select
+       -for(var i = 0;i<15;i++){
+           option(value=i) #{i}
+       -}
+     br
+     br
+     
+     span Profession
+     span &nbsp;
+     input#input_profession(type="text", placeholder="Profession", name="profession", value=profession)
+     br
+     br
+     
+     span Confession
+     span &nbsp;
+     input#input_confession(type="text", placeholder="Confession", name="confession", value=confession)
+     br
+     br
+     
+     span Political Affiliation
+     span &nbsp;
+     select#input_perpetrators(name="political_affiliation", value=political_affiliation)
+        option(value="") Select
+        each party, i in parties
+           option(value=party.name.en) #{party.name.en}
+     br
+     br
+     
+     span Description
+     br
+     span &nbsp;
+     textarea#input_description(type="text", placeholder="Description of the Missing Person", cols="100" rows="10", name="description", value=description)
+    br
+    br
+    div#wrapper 
+     span Disappearance
+     br
+     span Date
+     span &nbsp;
+     select(name="disappearance_date_day", value=disappearance_date_day)
+       option(value="") Select
+       -for(var i = 1;i<32;i++){
+          - i = ("0" + i).slice(-2)
+           option(value=i) #{i}
+       -}
+     span &nbsp;
+     select#input_birth_month(name="disappearance_date_month", value=disappearance_date_month)
+        option(value="") Select
+        option(value="01")  Jan
+        option(value="02")  Feb
+        option(value="03")  Mar
+        option(value="04")  Apr
+        option(value="05")  May
+        option(value="06")  Jun
+        option(value="07")  Jul
+        option(value="08")  Ago
+        option(value="09")  Sep
+        option(value="10")  Oct
+        option(value="11")  Nov
+        option(value="12")  Dec
+        span &nbsp;
+     select(name="disappearance_date_year", value=disappearance_date_year)
+       option(value="") Select
+       -for(var i = 1973;i<2006;i++){
+           option(value=i) #{i}
+       -}  
+     span &nbsp;
+     span Alternative Date
+     span &nbsp;
+     select(name="disappearance_alt_date_day", value=disappearance_alt_date_day)
+       option(value="") Select
+       -for(var i = 1;i<32;i++){
+          - i = ("0" + i).slice(-2)
+           option(value=i) #{i}
+       -}
+     span &nbsp;
+     select#disappearance_alt_date(name="disappearance_alt_date_month", value=disappearance_alt_date_month)
+        option(value="") Select
+        option(value="01")  Jan
+        option(value="02")  Feb
+        option(value="03")  Mar
+        option(value="04")  Apr
+        option(value="05")  May
+        option(value="06")  Jun
+        option(value="07")  Jul
+        option(value="08")  Ago
+        option(value="09")  Sep
+        option(value="10")  Oct
+        option(value="11")  Nov
+        option(value="12")  Dec
+        span &nbsp;
+     select(name="disappearance_alt_date_year", value=disappearance_alt_date_year)
+       option(value="") Select
+       -for(var i = 1973;i<2006;i++){
+           option(value=i) #{i}
+       -} 
+     br
+     span Place (English)
+     span &nbsp;
+     input#input_disappearance_place_en(type="text", placeholder="Place (English)", name="disappearance_place_en", value=disappearance_place_en)
+     span &nbsp;
+     span Place (Arabic)
+     span &nbsp;
+     input#input_disappearance_place_ar(type="text", placeholder="Place (Arabic)", name="disappearance_place_ar", value=disappearance_place_ar)
+     span &nbsp;
+     span District
+     span &nbsp;
+     select#input_disappearance_place_district(name="disappearance_place_district", value=disappearance_place_district)
+        option(value="") Select
+        option(value="Akkar")  Akkar
+        option(value="Baalbek")  Baalbek
+        option(value="Hermel")  Hermel
+        option(value="Beirut")  Beirut
+        option(value="Rashaya")  Rashaya
+        option(value="Western Beqaa")  Western Beqaa
+        option(value="Zahle")  Zahle
+        option(value="Aley")  Aley
+        option(value="Baabda")  Baabda
+        option(value="Chouf")  Chouf
+        option(value="Jbeil")  Jbeil
+        option(value="Keserwan")  Keserwan
+        option(value="Matn")  Matn
+        option(value="Batroun")  Batroun
+        option(value="Bsharri")  Bsharri
+        option(value="Koura")  Koura
+        option(value="Miniyeh-Danniyeh")  Miniyeh-Danniyeh
+        option(value="Tripoli")  Tripoli
+        option(value="Zgharta")  Zgharta
+        option(value="Bint Jbeil")  Bint Jbeil
+        option(value="Hasbaya")  Hasbaya
+        option(value="Marjeyoun")  Marjeyoun
+        option(value="Nabatiyeh")  Nabatiyeh
+        option(value="Sidon")  Sidon
+        option(value="Jezzine")  Jezzine
+        option(value="Tyre")  Tyre
+     span &nbsp;
+     span Governorate
+     span &nbsp;
+     select#input_disappearance_place_governorate(name="disappearance_place_governorate", value=disappearance_place_governorate)
+        option(value="") Select
+        option(value="Akkar" id="Akkar")  Akkar
+        option(value="Baalbek-Hermel")  Baalbek-Hermel
+        option(value="Beirut")  Beirut
+        option(value="Beqaa")  Beqaa
+        option(value="Mount Lebanon")  Mount Lebanon
+        option(value="Nabatieh")  Nabatieh
+        option(value="North")  North
+        option(value="South")  South
+     span &nbsp;
+     span Alternative Place
+     span &nbsp;
+     input#input_disappearance_place_alt_place(type="text", placeholder="Alternative Place", name="disappearance_place_alt_place", value=disappearance_place_alt_place)
+     span &nbsp;
+     span Latitude
+     span &nbsp;
+     input#input_disappearance_location_latitude(type="text", placeholder="Latitude", name="disappearance_location_latitude", value=disappearance_location_latitude)
+     span &nbsp;
+     span Longitude
+     span &nbsp;
+     input#input_disappearance_location_longitude(type="text", placeholder="Longitude", name="disappearance_location_longitude", value=disappearance_location_longitude)
+     span &nbsp;
+     br
+     span Circumstances
+     br
+     span &nbsp;
+     textarea#input_disappearance_circumstances(type="text", placeholder="Description of the Circumstances", cols="100" rows="10", name="disappearance_circumstances", value=disappearance_circumstances)
+    br
+    br
+    div#wrapper 
+     span Last Seen
+     br
+     span Reported Last Seen
+     span &nbsp;
+     select#input_last_seen_reported(name="last_seen_reported", value=last_seen_reported)
+        option(value="No") No
+        option(value="Yes")  Yes
+     span &nbsp;
+     span Location of Last Seen
+     span &nbsp;
+     input#input_last_seen_location(type="text", placeholder="Location of Last Seen", name="last_seen_location", value=last_seen_location)
+     span &nbsp;
+     select#input_last_seen_country(name="last_seen_country", value=last_seen_country)
+        option(value="Lebanon") Lebanon
+        option(value="Syria")  Syria
+        option(value="Palestine")  Palestine
+        option(value="Other") Other
+     span &nbsp;
+     span Date of Last Seen
+     span &nbsp;
+     select(name="last_seen_date_day", value=last_seen_date_day)
+       option(value="") Select
+       -for(var i = 1;i<32;i++){
+          - i = ("0" + i).slice(-2)
+           option(value=i) #{i}
+       -}
+     span &nbsp;
+     select#input_birth_month(name="last_seen_date_month", value=last_seen_date_month)
+        option(value="") Select
+        option(value="01")  Jan
+        option(value="02")  Feb
+        option(value="03")  Mar
+        option(value="04")  Apr
+        option(value="05")  May
+        option(value="06")  Jun
+        option(value="07")  Jul
+        option(value="08")  Ago
+        option(value="09")  Sep
+        option(value="10")  Oct
+        option(value="11")  Nov
+        option(value="12")  Dec
+        span &nbsp;
+     select(name="last_seen_date_year", value=last_seen_date_year)
+       option(value="") Select
+       -for(var i = 1973;i<2006;i++){
+           option(value=i) #{i}
+       -} 
+    br
+    br
+    div#wrapper
+     span Itinerary Description
+     br
+     span &nbsp;
+     textarea#input_itinerary(type="text", placeholder="Itinerary Description", cols="100" rows="10", name="itinerary", value=itinerary)
+     br
+     br
+     
+     span Perpetrators
+     span &nbsp;
+     select#input_perpetrators(name="perpetrators", value=perpetrators)
+        option(value="") Select
+        each party, i in parties
+           option(value=party.name.en) #{party.name.en}
+    br
+    br
+    div#wrapper
+     
+     span Related
+     br
+     span Related Events
+     span &nbsp;
+     select#input_perpetrators(name="related_events", value=related_events)
+        option(value="") Select
+        each event, i in events
+           option(value=event.event_code)  #{event.event_code} - #{event.name.en}
+     span &nbsp;
+     span Related Sites
+     span &nbsp;
+     select#input_perpetrators(name="related_sites", value=related_sites)
+        option(value="") Select
+        each site, i in sites
+           option(value=site.site_code)  #{site.site_code} - #{site.name.en}
+     span &nbsp;
+     span Related Locations
+     span &nbsp;
+     select#input_perpetrators(name="related_locations", value=related_locations)
+        option(value="") Select
+        each location, i in locations
+           option(value=location.location_code)  #{location.location_code} - #{location.name.en} (#{location.groups_responsible})
+     span &nbsp;
+     span Related Missing Persons
+     span &nbsp;
+     select#input_perpetrators(name="related_mps", value=related_mps)
+        option(value="") Select
+        each mp, i in mps
+           option(value=mp.mp_code)  #{mp.mp_code}
+           option(value=mp.mp_code)  #{mp.mp_code}
+     
+    br
+    br
+    div#wrapper
+     span Fate
+     span &nbsp;
+     select#input_fate(name="fate", value=fate)
+        option(value="Unknown") Unknown
+        option(value="Presumed Dead")  Presumed Dead (unknown location of remains)
+        option(value="Presumed in Syria")  Presumed in Syria (Dead or alive)
+        option(value="Location of remains Presumed") Location of remains Presumed
+        option(value="Confirmed dead") Confirmed dead (remains not retrieved)
+        option(value="Remains exhumed") Remains exhumed
+    br
+    br
+    div#wrapper
+     span Notes
+     br
+     span &nbsp;
+     textarea#input_notes(type="text", placeholder="Any notes", cols="100" rows="10", name="notes", value=notes)
+     br
+     br
+     
+     span Sources
+     span &nbsp;
+     input#input_sources(type="text", placeholder="Sources", name="sources", value=sources)
+     br
+     br
+     
+     span Documents
+     span &nbsp;
+     input#input_documents(type="text", placeholder="Documents", name="documents", value=documents)
+     br
+     br
+     
+     span Picture
+     span &nbsp;
+     input#input_picture(type="text", placeholder="Picture", name="picture", value=picture)
+     br
+     br
+     
+     span Images
+     br
+     span File
+     span &nbsp;
+     input#input_images_file(type="text", placeholder="Images File", name="images_file", value=images_file)
+     span &nbsp;
+     span Description
+     span &nbsp;
+     input#input_images_description(type="text", placeholder="Image Description", name="images_description", value=images_description)
+    br
+    br
+    div#wrapper
+     
+     span Lists
+     br
+     span المعتقلون اللبنانيون في سوريا حسب اللائحة التي نشرتها السلطات اللبنانية في 16 كانون الأول 2000
+     span &nbsp;
+     select#select_lists_syria_2000(form="addmissing", name="lists_syria_2000", value=lists_syria_2000)
+        option(value="No")  No
+        option(value="Yes")  Yes
+     br
+     span List of Lebanese detainees and victims of enforced disappearances delivered to the Syrian Minister of Interior 22 July 2002
+     span &nbsp;
+     select#select_lists_syria_2000(form="addmissing", name="lists_syria_2002", value=lists_syria_2002)
+        option(value="No")  No
+        option(value="Yes")  Yes
+     br
+     span لائحة باسماء المفقودين الذين ترى "الهيئة" فائدة من الاستفسار عنهم لدى السلطات السورية نشرت بتاريخ 29 نيسان 2005 العدد 1905 - والسفير بتاريخ 29 نيسان 2005
+     span &nbsp;
+     select#select_lists_syria_2000(form="addmissing", name="lists_syria_2005", value=lists_syria_2005)
+        option(value="No")  No
+        option(value="Yes")  Yes
+     br
+     span لائحة باسماء المفقودين في السجون الاسرائيلية نشرت في المستقبل بتاريخ 29 نيسان 2005 العدد 1905- لائحة لجنة تلقي شكاوى المفقودين نشرت في السفير بتاريخ 29 نيسان 2005
+     span &nbsp;
+     select#select_lists_syria_2000(form="addmissing", name="lists_israel_2005", value=lists_israel_2005)
+        option(value="No")  No
+        option(value="Yes")  Yes
+    br
+    br
+    div#wrapper
+     span Fushat Amal
+     br
+     span Published
+     span &nbsp;
+     select#select_fushatamal_published(form="addmissing", name="fushatamal_published", value=fushatamal_published)
+        option(value="No")  No
+        option(value="Yes")  Yes
+     span &nbsp;
+     span Author Type
+     span &nbsp;
+     input#input_auth_type(type="text", placeholder="Author Type", name="fushatamal_auth_type", value=fushatamal_auth_type)
+     span &nbsp;
+     span Notes
+     span &nbsp;
+     input#input_auth_notes(type="text", placeholder="Notes", name="fushatamal_auth_notes", value=fushatamal_auth_notes)
+     span &nbsp;
+     span Author Name
+     span &nbsp;
+     input#input_auth_name(type="text", placeholder="Author's Name", name="fushatamal_auth_name", value=fushatamal_auth_name)
+     span &nbsp;
+     span Author Last Name
+     span &nbsp;
+     input#input_auth_last(type="text", placeholder="Last Name", name="fushatamal_auth_last", value=fushatamal_auth_last)
+     span &nbsp;
+     span Author Email
+     span &nbsp;
+     input#input_auth_email(type="text", placeholder="Email", name="fushatamal_auth_email", value=fushatamal_auth_email)
+     span &nbsp;
+     span Author Phone
+     span &nbsp;
+     input#input_auth_phone(type="text", placeholder="Phone", name="fushatamal_auth_phone", value=fushatamal_auth_phone)
+     span &nbsp;
+     span Relationship
+     span &nbsp;
+     input#input_fushatamal_auth_relationship(type="text", placeholder="Relationship", name="fushatamal_auth_relationship", value=fushatamal_auth_relationship)
+    br
+    br
+    div#wrapper 
+     span Contact Information
+     br
+     span Contact Name
+     span &nbsp;
+     input#input_contact_name(type="text", placeholder="Name", name="contact_name", value=contact_name)
+     span &nbsp;
+     span Date of Birth
+     span &nbsp;
+     input#input_contact_date_birth(type="text", placeholder="Date of Birth", name="contact_date_birth", value=contact_date_birth)
+     span &nbsp;
+     span Address
+     span &nbsp;
+     input#input_contact_address(type="text", placeholder="Address", name="contact_address", value=contact_address)
+     span &nbsp;
+     span Relationship
+     span &nbsp;
+     input#input_contact_relationship(type="text", placeholder="Relationship", name="contact_relationship", value=contact_relationship)
+     span &nbsp;
+     span First Contact Phone
+     span &nbsp;
+     input#input_contact_phone_1(type="text", placeholder="First Contact Phone", name="contact_phone_1", value=contact_phone_1)
+     span &nbsp;
+     span Second Contact Phone
+     span &nbsp;
+     input#input_contact_phone_2(type="text", placeholder="Second Contact Phone", name="contact_phone_2", value=contact_phone_2)
+     span &nbsp;
+     span Other contact names
+     span &nbsp;
+     input#input_contact_other_contact(type="text", placeholder="Other contacts", name="contact_other_contact", value=contact_other_contact)
+     span &nbsp;
+     span Email
+     span &nbsp;
+     input#input_contact_email(type="text", placeholder="Email", name="contact_email", value=contact_email)
+     span &nbsp;
+     span ICRC
+     span &nbsp;
+     input#input_contact_icrc(type="text", placeholder="ICRC", name="contact_icrc", value=contact_icrc)
+     span &nbsp;
+     span Family Associations
+     span &nbsp;
+     input#input_contact_family_associations(type="text", placeholder="Family Associations", name="contact_family_associations", value=contact_family_associations)
+     span &nbsp;
+     span Contacted by Act
+     span &nbsp;
+     input#input_contact_contacted_act(type="text", placeholder="Date of Birth", name="contact_contacted_act", value=contact_contacted_act)
+     span &nbsp;
+     span Notes
+     span &nbsp;
+     input#input_contact_notes(type="text", placeholder="Notes", name="contact_notes", value=contact_notes)
+      
+        
+    br
+    br
+    button#submit_missing(type="submit") submit
+    a(href="/missing")sex Go back to list of Missing
+    
+  //script(type='text/javascript' src='/routes/validators.js')
+  //script(src='gen_validatorv4.js' type='text/javascript')
+  //script (src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js")
+  script.
+   $("#input_disappearance_place_district").change(function() {
+    var dist = $(this).val();
+    if (dist == "Akkar"){
+        //Show/hide options
+        $('#Akkar').show();
+        $('#Baalbek-Hermel').hide();
+        $('#Beirut').hide();
+        $('#Beqaa').hide();
+        $('#Mount Lebanon').hide();
+        $('#North').hide();
+        $('#Nabatiye').hide();
+        $('#South').hide();
+        //iAgi++;
+        //iInt++;
+    } else if (dist == "Baalbek" || dist == "Hermel"){
+        $('#Akkar').hide();
+        $('#Baalbek-Hermel').show();
+        $('#Beirut').hide();
+        $('#Beqaa').hide();
+        $('#Mount Lebanon').hide();
+        $('#North').hide();
+        $('#Nabatiye').hide();
+        $('#South').hide();
+        //iStr++;
+        //iCha++;
+    }else{
+       $('#Akkar').show();
+        $('#Baalbek-Hermel').show();
+        $('#Beirut').show();
+        $('#Beqaa').show();
+        $('#Mount Lebanon').show();
+        $('#North').show();
+        $('#Nabatiye').show();
+        $('#South').show();
+    }
+    //this.disabled=true;
+   });

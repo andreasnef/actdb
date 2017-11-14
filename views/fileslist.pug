@@ -1,0 +1,39 @@
+extends layout
+
+block content
+  include menu
+  br
+  div   
+   div#table
+    div(class='btn menu')
+     a(href="/newprofile/?type=file&nextrecord="+nextrecord) Add a New File
+  
+    h3. 
+      Files
+     
+    table(id="filesList")
+      thead    
+        tr#headtag
+            th Code
+            th Description
+            th File
+            th Type
+            th Date
+            
+            
+      tbody        
+            each file, i in collList
+                tr
+                    td
+                        a(href="#" onclick="loadProfile('files','"+file.code+"');") #{file.code}
+                    td=file.description
+                    td=file.file
+                    td=file.type
+                    td=moment(file.date).format('MMMM Do, YYYY')
+                    
+   div#sideProfile
+  
+   script.
+    $('#filesList').DataTable( {
+        paging: true
+        } );

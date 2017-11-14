@@ -1,0 +1,110 @@
+extends layout
+
+block content
+ if profile
+     each value, i in profile
+      div#profileTitle
+       h3.
+         #{value.code} from #{value.interviewee} 
+
+      div
+
+          h4 Basic Info
+          
+          - if (value.interviewee)
+              p
+                span.title Interviewee: 
+                - var contact = value.interviewee
+                - var contactCode = contact.split("-")[0]
+                a(href="#" onclick="loadProfile('contacts','"+contactCode+"');") #{value.interviewee}
+
+          - if (value.type)
+              p
+                span.title Type of material: 
+                span #{value.type}
+          
+          - if(value.subject)
+              p
+                span.title Subject of the interview:  
+                span #{value.subject}
+    
+          - if (value.interviewer)
+           p
+            span.title Interviewer: 
+            span #{value.interviewer}
+            
+          - if (value.organization)
+           p
+            span.title Organization: 
+            span #{value.organization}
+            
+          - if (value.date) 
+           p
+             - var date = moment(value.date).utc().format('MMMM Do, YYYY');
+             span.title Date of the Interview: 
+             span #{date}
+
+          - if (value.place) 
+           p
+            span.title Place of the Interview: 
+            span #{value.place} 
+          
+          -if (value.language)
+           p 
+            span.title Language of the Interview: 
+            span #{value.language}
+            
+          - if (value.duration)
+           p
+            span.title Duration: 
+            span #{value.duration}
+          
+          - if (value.files)
+           p
+            span.title Attached files: 
+            - var files = value.files
+            each file in files 
+                //a(href="#" onclick="loadProfile('files','"+file+"');") #{file} 
+                a(href="/files/"+file target="_blank") #{file} 
+                //-  form#removeFile(name="removeFile", method="post", action="/removeFile")
+                //-     input(type="hidden" name="code" value=value.code)
+                //-     input(type="hidden" name="file" value=file)
+                //-     input(type="hidden" name="type" value="interviews")
+                    
+                //-     button#submit_event(type="submit") Delete
+            
+          - if (value.transcript)
+           p
+            span.title Transcript: 
+            span #{value.transcript}
+            
+          - if (value.notes)
+           p
+            span.title Notes: 
+            span #{value.notes}
+            
+      div
+          - if ((value.related.events.length))
+           p
+            span.title Related Events: 
+            each event, i in value.related.events
+             a(href="#" onclick="loadProfile('events','"+event+"');") #{event} 
+          - if (value.related.sites)
+           p
+            span.title Related Sites: 
+            each site, i in value.related.sites
+             a(href="#" onclick="loadProfile('sites','"+site+"');") #{site} 
+          - if (value.related.locations)
+           p
+            span.title Related Locations: 
+            each location, i in value.related.locations
+             a(href="#" onclick="loadProfile('locations','"+location+"');") #{location} 
+          - if (value.related.mps)
+           p
+            span.title Related Missing Persons: 
+            each mp, i in value.related.mps
+             a(href="#" onclick="loadProfile('missing','"+mp+"');") #{mp} 
+
+
+          div(class='btn menu')
+            a(href="/newprofile/?type=interview&code="+value.code) Edit

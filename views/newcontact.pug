@@ -1,0 +1,464 @@
+extends layout
+
+block content
+ include menu
+ div
+  h3= title
+  
+  if errormessage
+     p #{errormessage} 
+     
+  if validationErrors 
+     each valError, i in validationErrors
+       li#valErrors_list_item
+         p #{valError.msg}  
+         
+  if editprofile
+    each value, i in editprofile
+        - _id = value._id
+        - code = value.code
+        - confidential = value.confidential
+        - category = value.category
+        - name_ar_first = value.name.ar.first
+        - name_ar_last = value.name.ar.last
+        - name_en_first = value.name.en.first
+        - name_en_last = value.name.en.last  
+        - alias = value.alias
+        - fathers_name = value.fathers_name
+        - mothers_name = value.mothers_name
+        - sex = value.sex
+        - birth_place = value.birth.place
+        - var birthdate = new Date(value.birth.date);
+        - birth_date_day = ("0"+birthdate.getDate()).slice(-2);
+        - birth_date_month = ("0" + (birthdate.getMonth()+1)).slice(-2);
+        - birth_date_year = birthdate.getFullYear();
+        - residence = value.residence
+        - nationality = value.nationality
+        - profession = value.profession
+        - status_war = value.status_war
+        - relationship_missing =value.relationship_missing
+        - political_affiliation = value.political_affiliation
+        - area_present = value.area_present
+        - languages = value.languages
+        - related_events = value.related.events
+        - related_sites = value.related.sites
+        - related_locations = value.related.locations
+        - related_mps = value.related.mps
+        - interviews = value.interviews
+        - phone_1 = value.phone_1
+        - phone_2 = value.phone_2
+        - email = value.email
+        - preferred_channel = value.preferred_channel
+        - icrc = value.icrc
+        - family_associations = value.family_associations
+        - contacted_act = value.contacted_act
+        - notes = value.notes
+        
+     
+  form#form_add_contact(name="addcontact", method="post", action="/addcontact")
+    div#wrapper
+     if (editprofile)
+        input#input_code(type="text", value=code, name="code" readonly)
+        input#input_edit(type="hidden", value=_id, name="_id")
+     else
+        input#input_code(type="text", value="CON"+nextrecord, name="code" readonly)
+     br
+     br
+     span Confidential
+     span &nbsp;
+     if (confidential && confidential=="Yes")
+        input(type='radio', name="confidential", value="Yes", checked)
+        label Yes
+        input(type='radio', name="confidential", value="No") 
+        label No
+              
+     else
+       input(type='radio', name="confidential", value="Yes")
+       label Yes
+       input(type='radio', name="confidential", value="No", checked) 
+       label No
+    br
+    br
+    div#wrapper 
+     span Category
+     br
+     - var categories = ["Family Member", "Victim", "Former Fighter", "Reporter", "Photographer", "Witness", "Neighbour", "Other"];
+     select#input_type(name="category", value=category)
+      option(value="") Select
+      each cat in categories
+        if(category==cat)
+            option(value=cat selected="selected") #{cat}
+        else
+            option(value=cat) #{cat} 
+     
+     br
+     br
+     div#wrapper 
+     span Name in Arabic
+     br
+     input#input_name_ar_first(type="text", placeholder="First", name="name_ar_first" value=name_ar_first)
+     br
+     input#input_name_ar_last(type="text", placeholder="Last", name="name_ar_last", value=name_ar_last)
+     span &nbsp;
+     br
+     br
+     span Name in English
+     br
+     input#input_name_en_first(type="text", placeholder="First", name="name_en_first", value=name_en_first)
+     br
+     input#input_name_en_last(type="text", placeholder="Last", name="name_en_last", value=name_en_last)
+     span &nbsp;
+     br
+     br
+     input#input_alias(type="text", placeholder="Alias", name="alias", value=alias)
+     br
+     br
+     input#input_mothers_name(type="text", placeholder="Father's Name", name="fathers_name", value=fathers_name)
+     br
+     br
+     input#input_mothers_name(type="text", placeholder="Mother's Name", name="mothers_name", value=mothers_name)
+     br
+     br
+     
+     span Sex
+     br
+     - var sexes = ["M", "F"];
+      div(class="styled-select semi-square")
+        select#input_sex(name="sex", value=sex, class="styled-select semi-square")
+          option(value="") Select
+          each se in sexes
+            if(sex==se)
+                option(value=se selected="selected") #{se}
+            else
+                option(value=se) #{se}
+    br
+    
+    div#wrapper 
+     legend Birth
+     br
+     input#input_birth_place(type="text", placeholder="Birth Place", name="birth_place", value=birth_place)
+     br
+     br
+     span Date
+      br
+      select#birth_date_day(name="birth_date_day", value=birth_date_day)
+       option(value="") Select
+       -for(var i = 1;i<32;i++){
+          - i = ("0" + i).slice(-2)
+            if(birth_date_day==i)
+                option(value=i selected="selected") #{i}
+            else
+                option(value=i) #{i}    
+            
+       -}
+     span &nbsp;
+      select#input_birth_month(name="birth_date_month", value=birth_date_month)
+        option(value="") Select
+        if (birth_date_month=="01") 
+         option(value="01" selected="selected")  Jan 
+        else 
+         option(value="01")  Jan
+        if (birth_date_month=="02")
+         option(value="02" selected="selected")  Feb
+        else
+         option(value="02")  Feb    
+        if (birth_date_month=="03")
+         option(value="03" selected="selected")  Mar
+        else
+         option(value="03")  Mar
+        if (birth_date_month=="04")
+         option(value="04" selected="selected")  Apr
+        else
+         option(value="04")  Apr
+        if (birth_date_month=="05")
+         option(value="05" selected="selected")  May
+        else
+         option(value="05")  May
+        if (birth_date_month=="06")
+         option(value="06" selected="selected")  Jun
+        else
+         option(value="06")  Jun
+        if (birth_date_month=="07")
+         option(value="07" selected="selected")  Jul
+        else 
+         option(value="07")  Jul
+        if (birth_date_month=="08")
+         option(value="08" selected="selected")  Ago
+        else
+         option(value="08")  Ago
+        if (birth_date_month=="09")
+         option(value="09" selected="selected")  Sep
+        else
+         option(value="09")  Sep
+        if (birth_date_month=="10")
+         option(value="10" selected="selected")  Oct
+        else 
+         option(value="10")  Oct
+        if (birth_date_month=="11")
+         option(value="11" selected="selected")  Nov
+        else
+         option(value="11")  Nov
+        if (birth_date_month=="12")
+         option(value="12" selected="selected")  Dec
+        else
+         option(value="12")  Dec
+        span &nbsp;
+      select(name="birth_date_year", value=birth_date_year)
+       option(value="") Select
+       -for(var i = 1900;i<2006;i++){
+           if(birth_date_year==i)
+                option(value=i selected="selected") #{i}
+           else
+                option(value=i) #{i}
+       -}  
+    br 
+    div#wrapper 
+     input#input_residence(type="text", placeholder="Residence", name="residence", value=residence)
+     br
+     input#input_nationality(type="text", placeholder="Nationality", name="nationality", value=nationality)
+     br
+     input#input_profession(type="text", placeholder="Profession", name="profession", value=profession)
+     br
+     input#input_status(type="text", placeholder="Status during war", name="status_war", value=status_war)
+     br
+     input#input_status(type="text", placeholder="Relationship with the Missing", name="relationship_missing", value=relationship_missing)
+     br
+     br
+     span Political Affiliation
+     br
+     select#input_perpetrators(name="political_affiliation", value=political_affiliation)
+        option(value="") Select
+        if (parties)
+          each party, i in parties
+           if(political_affiliation==party.name.en)
+                option(value=party.name.en selected="selected") #{party.name.en}
+           else
+                option(value=party.name.en) #{party.name.en}
+     br
+     br
+     input#input_status(type="text", placeholder="Area present during the war", name="area_present", value=area_present)
+     br
+     br
+     span Spoken Languages
+     br
+     - var languageslist = ["Arabic", "English", "French", "Other"];
+     each language, i in languageslist
+            div.checkbox-inline
+             if (languages && languages.includes(language))
+              input.checkbox-input(type='checkbox', name="languages", value=language, checked)
+              label #{language}
+             else
+              input.checkbox-input(type='checkbox', name="languages", value=language)
+              label #{language}
+     
+     br
+     div#wrapper
+     //span Related Events 
+     a(href="#" onclick="return toggle_visibility('relatedEvents');") Related Events #{related_events} (click to modify)
+    
+     div#relatedEvents(class='dropMenu')
+      if (events)
+       table(id="eventsList")
+        thead    
+         tr#headtag
+            th Select
+            th Code
+            th Name
+        tbody     
+         each event, i in events
+          tr
+           td
+             if (related_events && related_events.includes(event.code))
+              input.checkbox-input(type='checkbox', name="related_events", value=event.code, checked)
+             else
+              input.checkbox-input(type='checkbox', name="related_events", value=event.code)
+           td=event.code
+           td=event.name.en
+
+     br
+    
+     //span Related Sites
+     a(href="#" onclick="return toggle_visibility('relatedSites');") Related Sites #{related_sites} (click to modify)
+    
+     div#relatedSites(class='dropMenu')
+      if (sites)
+       table(id="sitesList")
+        thead    
+         tr#headtag
+            th Select
+            th Code
+            th Name
+
+        tbody  
+         each site, i in sites
+          tr
+           td
+             if (related_sites && related_sites.includes(site.code))
+              input.checkbox-input(type='checkbox', name="related_sites", value=site.code, checked)
+             else
+              input.checkbox-input(type='checkbox', name="related_sites", value=site.code)
+             td=site.code
+             td=site.name.en
+     br
+
+     //span Related Locations
+     a(href="#" onclick="return toggle_visibility('relatedLocations');") Related Locations #{related_locations} (click to modify)
+    
+     div#relatedLocations(class='dropMenu')
+      if (locations)
+       table(id="locationsList")
+        thead    
+         tr#headtag
+            th Select
+            th Code
+            th Name
+            th Groups Responsible
+
+        tbody    
+         each location, i in locations
+          tr
+           td
+            if (related_locations && related_locations.includes(location.code))
+              input.checkbox-input(type='checkbox', name="related_locations", value=location.code, checked)
+            else
+              input.checkbox-input(type='checkbox', name="related_locations", value=location.code)
+            td=location.code
+            td=location.name.en
+            td=location.groups_responsible
+
+     br
+     //span Related Missing Persons
+     a(href="#" onclick="return toggle_visibility('relatedMps');") Related Missing Persons #{related_mps} (click to modify)
+    
+     div#relatedMps(class='dropMenu')
+      if (mps)
+       table(id="missingList")
+        thead    
+         tr#headtag
+            th Select
+            th Code
+            th Name in Arabic
+            th Name in English
+
+        tbody    
+         each mp, i in mps
+            tr
+             td
+              if (related_mps && related_mps.includes(mp.code))
+                input.checkbox-input(type='checkbox', name="related_mps", value=mp.code, checked)
+              else  
+                input.checkbox-input(type='checkbox', name="related_mps", value=mp.code)
+             td= mp.code
+             td= mp.name.ar.last+', '+mp.name.ar.first+' '+mp.name.ar.middle
+             td= mp.name.en.last+', '+mp.name.en.first+' '+mp.name.en.middle 
+     br
+     //Related Interviews
+     a(href="#" onclick="return toggle_visibility('relatedInterviews');") Interviews #{interviews} (click to modify)
+    
+     div#relatedInterviews(class='dropMenu')
+      if (interviewslist)
+       table(id="interviewsList")
+        thead    
+         tr#headtag
+            th Select
+            th Code
+            th Interviewee
+            th Date
+
+        tbody    
+         each interview, i in interviewslist
+            tr
+             td
+              if (interviews && interviews.includes(interview.code))
+                input.checkbox-input(type='checkbox', name="interviews", value=interview.code, checked)
+              else  
+                input.checkbox-input(type='checkbox', name="interviews", value=interview.code)
+             td= interview.code
+             td= interview.interviewee
+             td= interview.date 
+     br
+     br
+     
+     input#input_phone_1(type="text", placeholder="First Contact Phone", name="phone_1", value=phone_1)
+     br
+     input#input_phone_2(type="text", placeholder="Second Contact Phone", name="phone_2", value=phone_2)
+     br
+     input#input_email(type="text", placeholder="Email", name="email", value=email)
+     br
+     br
+     span Preferred contact channel
+     br
+     - var channels = ["First Contact Phone", "Second Contact Phone", "Email", "No contact", "Other"];
+     select#input_type(name="preferred_channel", value=preferred_channel)
+      option(value="") Select
+      each channel in channels
+        if(channel==preferred_channel)
+            option(value=channel selected="selected") #{channel}
+        else
+            option(value=channel) #{channel} 
+     
+     br
+     br
+     span ICRC
+     span &nbsp;
+     - var icrclist = ["Yes", "No", "Unknown"];
+     select#input_type(name="icrc", value=icrc)
+      option(value="") Select
+      each item in icrclist
+        if(item==icrc)
+            option(value=item selected="selected") #{item}
+        else
+            option(value=item) #{item} 
+     
+     br
+     br
+     span Family Associations
+     span &nbsp;
+     - var associations = ["Committee of Families of the Kidnapped and Disappeared in Lebanon", "SOLIDE"];
+     each assoc, i in associations
+            div.checkbox-inline
+             if (family_associations && family_associations.includes(assoc))
+              input.checkbox-input(type='checkbox', name="family_associations", value=assoc, checked)
+              label #{assoc}
+             else
+              input.checkbox-input(type='checkbox', name="family_associations", value=assoc)
+              label #{assoc}
+     
+     br
+     span Contacted by Act
+     span &nbsp;
+     input#input_contacted_act(type="text", placeholder="Yes / No", name="contacted_act", value=contacted_act)
+     br
+     span Notes
+     br
+     textarea#input_notes(type="text", placeholder="Any notes", cols="120" rows="10", name="notes", value=notes)
+        | #{notes}
+     
+     
+    br
+    br
+    div#wrapper
+     div(class='btn menu')
+      button#submit_missing(type="submit" role='submit' class="buttons") submit
+     div(class='btn menu')
+      a(href="/contacts") Go back to list of Contacts
+    
+    script.
+        $('#missingList').DataTable( {
+            paging: false
+        } );
+        $('#locationsList').DataTable( {
+            paging: false
+        } );
+        $('#eventsList').DataTable( {
+            paging: false
+        } );
+        $('#sitesList').DataTable( {
+            paging: false
+        } );
+        $('#contactsList').DataTable( {
+            paging: false
+        } );
+        $('#interviewsList').DataTable( {
+            paging: false
+        } );

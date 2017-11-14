@@ -1,0 +1,44 @@
+extends layout
+
+block content
+  include menu
+  br
+  div   
+   div#table
+    div(class='btn menu')
+     a(href="/newprofile/?type=event&nextrecord="+nextrecord) Add a New Event
+  
+    h3. 
+     #{title}
+
+          
+    table(id="eventsList")
+      thead    
+        tr#headtag
+            th Code
+            th Type
+            th Name
+            th District
+            th Governorate
+            th Date
+            
+      tbody        
+            each event, i in collList
+                tr
+                    td
+                        a(href="#" onclick="loadProfile('events','"+event.code+"');") #{event.code}
+                    td=event.type
+                    td=event.name.en
+                    td=event.location.district
+                    td=event.location.governorate                
+                    if(event.dates.beg) 
+                     td=moment(event.dates.beg).utc().format('MMMM Do, YYYY')
+                    else
+                     td="Unknown"
+   
+   div#sideProfile                 
+  
+   script.
+    $('#eventsList').DataTable( {
+        paging: true
+        } );      

@@ -1,0 +1,15 @@
+extends layout
+
+block content
+ div#wrapper  
+   h3. 
+     #{title}
+     
+   a(href="/newlocation/?newrecord="+nextrecord) Add a New #{title}
+   br
+   a(href="/home") Go back to Index
+   
+   ul
+    each item, i in collList
+       li#locations_list_item
+          a(href="/locationprofile/?locationcode="+item.code) #{item.name.ar} /  #{item.name.en}

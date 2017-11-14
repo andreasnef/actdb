@@ -1,0 +1,35 @@
+extends layout
+
+block content
+  h3. 
+     Parties
+  
+  a(href="/newprofile/?type=party&nextrecord="+nextrecord) Add a Party
+  br
+  a(href="/home") Go back to Index
+  
+  br
+  
+  table(id="partiesList")
+      thead    
+        tr#headtag
+            th Code
+            th Name in English
+            th Name in Arabic
+            th Alternative Name
+            
+      tbody        
+            each party, i in collList
+                tr
+                    td
+                        a(href='/profile/?type=parties&code='+party.code) #{party.code}
+                    td=party.name.en
+                    td=party.name.ar
+                    td=party.name.alt_name
+                    
+  
+  script.
+    $('#partiesList').DataTable( {
+        paging: false
+        } );
+  

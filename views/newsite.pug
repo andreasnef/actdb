@@ -1,0 +1,628 @@
+extends layout
+
+block content
+ include menu
+ div
+  h3= title
+  
+  if errormessage
+     p #{errormessage} 
+     
+  if validationErrors 
+     each valError, i in validationErrors
+       li#valErrors_list_item
+         p #{valError.msg}  
+         
+  if editprofile
+    each value, i in editprofile
+        - _id = value._id
+        - code = value.code
+        - type = value.type
+        - name_ar = value.name.ar
+        - name_en = value.name.en
+        - location_place = value.location.place
+        - location_district = value.location.district
+        - location_governorate = value.location.governorate
+        - if (value.location.coordinates)location_latitude = value.location.coordinates[1]
+        - if (value.location.coordinates)location_longitude = value.location.coordinates[0]
+        - UNHCR_latitude = value.UNHCR.latitude
+        - UNHCR_longitude = value.UNHCR.longitude
+        - var datebeg = new Date(value.dates.beg);
+        - date_beg_day = ("0"+datebeg.getDate()).slice(-2);
+        - date_beg_month = ("0" + (datebeg.getMonth()+1)).slice(-2);
+        - date_beg_year = datebeg.getFullYear();
+        - var dateend = new Date(value.dates.end);
+        - date_end_day = ("0"+dateend.getDate()).slice(-2);
+        - date_end_month = ("0" + (dateend.getMonth()+1)).slice(-2);
+        - date_end_year = dateend.getFullYear();
+        - perpetrators = value.perpetrators
+        - number_expected = value.number_expected
+        - risk_index = value.risk.index
+        - risk_reasons = value.risk.reasons
+        - related_events = value.related.events
+        - related_sites = value.related.sites
+        - related_locations = value.related.locations
+        - related_mps = value.related.mps
+        - sensitivity_index = value.sensitivity.index
+        - sensitivity_reasons = value.sensitivity.reasons
+        - credibility_index = value.credibility.index
+        - credibility_reasons = value.credibility.reasons
+        - exhumed_status = value.exhumed.status
+        - var exhumededate = new Date(value.exhumed.date);
+        - exhumed_date_day = ("0"+exhumededate.getDate()).slice(-2);
+        - exhumed_date_month = ("0" + (exhumededate.getMonth()+1)).slice(-2);
+        - exhumed_date_year = exhumededate.getFullYear();
+        - exhumed_number = value.exhumed.number
+        - exhumed_contact = value.exhumed.contact
+        - exhumed_notes = value.exhumed.notes
+        - status = value.status
+        - notes = value.notes
+        - sources = value.sources
+        - reports = value.reports
+        
+     
+  form#form_add_event(name="addsite", method="post", action="/addsite")
+    div#wrapper
+     if (_id)
+        input#input_code(type="text", value=code, name="code" readonly)
+        input#input_edit(type="hidden", value=_id, name="_id")
+     else
+        input#input_code(type="text", value='S'+nextrecord, name="code" readonly)
+    br
+    br
+     
+    div#wrapper 
+     
+     input#input_name_ar(type="text", placeholder="Name in Arabic", name="name_ar" value=name_ar)
+     br
+     input#input_name_en(type="text", placeholder="Name in English", name="name_en", value=name_en)
+     br
+     br
+     
+    div#wrapper 
+     legend Location
+     br
+     input#input_location_place(type="text", placeholder="Place", name="location_place", value=location_place)
+     br
+     span District
+     br
+     select#input_location_district(name="location_district", value=location_district)
+        option(value="") Select
+        - var districts = ["Akkar", "Baalbek", "Hermel", "Beirut", "Rashaya", "Western Beqaa", "Zahle", "Aley", "Baabda", "Chouf", "Jbeil", "Keserwan", "Matn", "Batroun", "Bsharri", "Koura", "Miniyeh-Danniyeh", "Tripoli", "Zgharta", "Bint Jbeil", "Hasbaya", "Marjeyoun", "Nabatiyeh", "Sidon", "Jezzine", "Tyre"];
+        each district in districts
+           if(location_district==district)
+                option(value=district selected="selected") #{district}
+           else
+                option(value=district) #{district}
+     br
+     span Governorate
+     br
+     select#input_disappearance_place_governorate(name="location_governorate", value=location_governorate)
+        option(value="") Select
+        - var governorates = ["Akkar", "Baalbek-Hermel", "Beirut", "Beqaa", "Mount Lebanon", "Nabatieh", "North", "South"];
+        each governorate in governorates
+           if(location_governorate==governorate)
+                option(value=governorate selected="selected") #{governorate}
+           else
+                option(value=governorate) #{governorate}
+     br
+     br
+     input#input_location_coordinates_latitude(type="text", placeholder="Latitude", name="location_latitude", value=location_latitude)
+     br
+     input#input_location_coordinates_longitude(type="text", placeholder="Longitude", name="location_longitude", value=location_longitude)
+     br
+     br
+     input#input_location_UNHCR_latitude(type="text", placeholder="UNHCR Latitude", name="UNHCR_latitude", value=UNHCR_latitude)
+     br
+     input#input_location_UNHCR_longitude(type="text", placeholder="UNHCR Longitude", name="UNHCR_longitude", value=UNHCR_longitude)
+     br
+     br
+     
+    div#wrapper 
+     legend Event Period
+     br
+     br
+     span Beginning Date
+     span &nbsp;
+     select(name="date_beg_day", value=date_beg_day)
+       option(value="") Select
+       -for(var i = 1;i<32;i++){
+          - i = ("0" + i).slice(-2)
+           if(date_beg_day==i)
+                option(value=i selected="selected") #{i}
+           else
+                option(value=i) #{i}
+       -}
+     span &nbsp;
+     select#input_date_beg_month(name="date_beg_month", value=date_beg_month)
+        if (date_beg_month=="01") 
+         option(value="01" selected="selected")  Jan 
+        else 
+         option(value="01")  Jan
+        if (date_beg_month=="02")
+         option(value="02" selected="selected")  Feb
+        else
+         option(value="02")  Feb    
+        if (date_beg_month=="03")
+         option(value="03" selected="selected")  Mar
+        else
+         option(value="03")  Mar
+        if (date_beg_month=="04")
+         option(value="04" selected="selected")  Apr
+        else
+         option(value="04")  Apr
+        if (date_beg_month=="05")
+         option(value="05" selected="selected")  May
+        else
+         option(value="05")  May
+        if (date_beg_month=="06")
+         option(value="06" selected="selected")  Jun
+        else
+         option(value="06")  Jun
+        if (date_beg_month=="07")
+         option(value="07" selected="selected")  Jul
+        else 
+         option(value="07")  Jul
+        if (date_beg_month=="08")
+         option(value="08" selected="selected")  Ago
+        else
+         option(value="08")  Ago
+        if (date_beg_month=="09")
+         option(value="09" selected="selected")  Sep
+        else
+         option(value="09")  Sep
+        if (date_beg_month=="10")
+         option(value="10" selected="selected")  Oct
+        else 
+         option(value="10")  Oct
+        if (date_beg_month=="11")
+         option(value="11" selected="selected")  Nov
+        else
+         option(value="11")  Nov
+        if (date_beg_month=="12")
+         option(value="12" selected="selected")  Dec
+        else
+         option(value="12")  Dec
+        span &nbsp;
+     select(name="date_beg_year", value=date_beg_year)
+       option(value="") Select
+       -for(var i = 1973;i<2006;i++){
+           if(date_beg_year==i)
+                option(value=i selected="selected") #{i}
+           else
+                option(value=i) #{i}
+       -}  
+     br
+     span End Date
+     span &nbsp;
+     select(name="date_end_day", value=date_end_day)
+       option(value="") Select
+       -for(var i = 1;i<32;i++){
+          - i = ("0" + i).slice(-2)
+           if(date_end_day==i)
+                option(value=i selected="selected") #{i}
+           else
+                option(value=i) #{i}
+       -}
+     span &nbsp;
+     select#input_date_end_month(name="date_end_month", value=date_end_month)
+        if (date_end_month=="01") 
+         option(value="01" selected="selected")  Jan 
+        else 
+         option(value="01")  Jan
+        if (date_end_month=="02")
+         option(value="02" selected="selected")  Feb
+        else
+         option(value="02")  Feb    
+        if (date_end_month=="03")
+         option(value="03" selected="selected")  Mar
+        else
+         option(value="03")  Mar
+        if (date_end_month=="04")
+         option(value="04" selected="selected")  Apr
+        else
+         option(value="04")  Apr
+        if (date_end_month=="05")
+         option(value="05" selected="selected")  May
+        else
+         option(value="05")  May
+        if (date_end_month=="06")
+         option(value="06" selected="selected")  Jun
+        else
+         option(value="06")  Jun
+        if (date_end_month=="07")
+         option(value="07" selected="selected")  Jul
+        else 
+         option(value="07")  Jul
+        if (date_end_month=="08")
+         option(value="08" selected="selected")  Ago
+        else
+         option(value="08")  Ago
+        if (date_end_month=="09")
+         option(value="09" selected="selected")  Sep
+        else
+         option(value="09")  Sep
+        if (date_end_month=="10")
+         option(value="10" selected="selected")  Oct
+        else 
+         option(value="10")  Oct
+        if (date_end_month=="11")
+         option(value="11" selected="selected")  Nov
+        else
+         option(value="11")  Nov
+        if (date_end_month=="12")
+         option(value="12" selected="selected")  Dec
+        else
+         option(value="12")  Dec
+        span &nbsp;
+     select(name="date_end_year", value=date_end_year)
+       option(value="") Select
+       -for(var i = 1973;i<2006;i++){
+           if(date_end_year==i)
+                option(value=i selected="selected") #{i}
+           else
+                option(value=i) #{i}
+       -}  
+     
+    br
+    br
+    div#wrapper
+     span Type
+     br
+     - var types = ["Bridge", "Buried underground", "Cave", "Cemetries", "Dumpsters", "Garbage heap", "Hospital", "Ocean", "Open land", "River",  "Unknown",   "Well"];
+     select#input_type(name="type", value=type)
+      option(value="") Select
+      each typ in types
+        if(type==typ)
+            option(value=typ selected="selected") #{typ}
+        else
+            option(value=se) #{typ}
+     br
+     span Perpetrators
+     br
+     select#input_groups_responsible(name="perpetrators", value=perpetrators)
+        option(value="") Select
+        if (parties)
+         each party, i in parties
+           if(perpetrators==party.name.en)
+                option(value=party.name.en selected="selected") #{party.name.en}
+           else
+                option(value=party.name.en) #{party.name.en}
+    br 
+    br
+    div#wrapper
+     legend Related
+     br
+     //span Related Events 
+     a(href="#" onclick="return toggle_visibility('relatedEvents');") Related Events #{related_events} (click to modify)
+    
+     div#relatedEvents(class='dropMenu')
+      if (events)
+       table(id="eventsList")
+        thead    
+         tr#headtag
+            th Select
+            th Code
+            th Name
+        tbody     
+         each event, i in events
+          tr
+           td
+             if (related_events && related_events.includes(event.code))
+              input.checkbox-input(type='checkbox', name="related_events", value=event.code, checked)
+             else
+              input.checkbox-input(type='checkbox', name="related_events", value=event.code)
+           td=event.code
+           td=event.name.en
+
+     br
+    
+     //span Related Sites
+     a(href="#" onclick="return toggle_visibility('relatedSites');") Related Sites #{related_sites} (click to modify)
+    
+     div#relatedSites(class='dropMenu')
+      if (sites)
+       table(id="sitesList")
+        thead    
+         tr#headtag
+            th Select
+            th Code
+            th Name
+
+        tbody  
+         each site, i in sites
+          tr
+           td
+             if (related_sites && related_sites.includes(site.code))
+              input.checkbox-input(type='checkbox', name="related_sites", value=site.code, checked)
+             else
+              input.checkbox-input(type='checkbox', name="related_sites", value=site.code)
+             td=site.code
+             td=site.name.en
+     br
+
+     //span Related Locations
+     a(href="#" onclick="return toggle_visibility('relatedLocations');") Related Locations #{related_locations} (click to modify)
+    
+     div#relatedLocations(class='dropMenu')
+      if (locations)
+       table(id="locationsList")
+        thead    
+         tr#headtag
+            th Select
+            th Code
+            th Name
+            th Groups Responsible
+
+        tbody    
+         each location, i in locations
+          tr
+           td
+            if (related_locations && related_locations.includes(location.code))
+              input.checkbox-input(type='checkbox', name="related_locations", value=location.code, checked)
+            else
+              input.checkbox-input(type='checkbox', name="related_locations", value=location.code)
+            td=location.code
+            td=location.name.en
+            td=location.groups_responsible
+
+     br
+     //span Related Missing Persons
+     a(href="#" onclick="return toggle_visibility('relatedMps');") Related Missing Persons #{related_mps} (click to modify)
+    
+     div#relatedMps(class='dropMenu')
+      if (mps)
+       table(id="missingList")
+        thead    
+         tr#headtag
+            th Select
+            th Code
+            th Name in Arabic
+            th Name in English
+
+        tbody    
+         each mp, i in mps
+            tr
+             td
+              if (related_mps && related_mps.includes(mp.code))
+                input.checkbox-input(type='checkbox', name="related_mps", value=mp.code, checked)
+              else  
+                input.checkbox-input(type='checkbox', name="related_mps", value=mp.code)
+             td= mp.code
+             td= mp.name.ar.last+', '+mp.name.ar.first+' '+mp.name.ar.middle
+             td= mp.name.en.last+', '+mp.name.en.first+' '+mp.name.en.middle 
+     br
+     br
+    
+    div#wrapper
+     input#input_sources(type="text", placeholder="Number of remains Expected", name="number_expected", value=number_expected)
+     br
+     br
+     
+    div#wrapper 
+     legend Risk of destruction
+     br
+     span Index
+     br
+     select(name="risk_index", value=risk_index)
+       option(value="") Select
+       -for(var i = 1;i<6;i++){
+           if(risk_index==i)
+                option(value=i selected="selected") #{i}
+           else
+                option(value=i) #{i}
+       -}
+     span &nbsp;
+     br
+     span Reasons
+     br
+     textarea#input_reasons(type="text", placeholder="Reasons for risk of destruction", cols="120" rows="10", name="risk_reasons", value=risk_reasons)
+        | #{risk_reasons}
+     br
+     br
+     
+    div#wrapper 
+     legend Sensitivity of the site
+     br
+     span Index
+     br
+     select(name="sensitivity_index", value=sensitivity_index)
+       option(value="") Select
+       -for(var i = 1;i<6;i++){
+           if(sensitivity_index==i)
+                option(value=i selected="selected") #{i}
+           else
+                option(value=i) #{i}
+       -}
+     span &nbsp;
+     br
+     span Reasons
+     br
+     textarea#input_reasons(type="text", placeholder="Reasons for sensitivity of the site", cols="100" rows="10", name="sensitivity_reasons", value=sensitivity_reasons)
+        | #{sensitivity_reasons}
+     br
+     br
+
+     
+    div#wrapper 
+     legend Credibility of the information
+     br
+     span Index
+     br
+     select(name="credibility_index", value=credibility_index)
+       option(value="") Select
+       -for(var i = 1;i<6;i++){
+           if(credibility_index==i)
+                option(value=i selected="selected") #{i}
+           else
+                option(value=i) #{i}
+       -}
+     span &nbsp;
+     br
+     span Reasons
+     br
+     textarea#input_reasons(type="text", placeholder="Reasons for credibility of the information", cols="100" rows="10", name="credibility_reasons", value=credibility_reasons)
+        | #{credibility_reasons}
+     br
+     br
+     
+    div#wrapper 
+     legend Information on Exhumation 
+     br
+     span Status
+     br
+     select#input_disappearance_place_governorate(name="exhumed_status", value=exhumed_status)
+        option(value="") Select
+        - var exhumed_status = ["Accidental-Partial", "Exhumed-No Identification", "Exhumed-Partial Identification", "Exhumed-Identified", "No exhumation"];
+        each status in exhumed_status
+           if(exhumed_status==status)
+                option(value=status selected="selected") #{status}
+           else
+                option(value=status) #{status}
+     br
+     span Date
+     br
+     select(name="exhumed_date_day", value=exhumed_date_day)
+       option(value="") Select
+       -for(var i = 1;i<32;i++){
+          - i = ("0" + i).slice(-2)
+           if(exhumed_date_day==i)
+                option(value=i selected="selected") #{i}
+           else
+                option(value=i) #{i}
+       -}
+     span &nbsp;
+     select#input_date_end_month(name="exhumed_date_month", value=exhumed_date_month)
+        if (exhumed_date_month=="01") 
+         option(value="01" selected="selected")  Jan 
+        else 
+         option(value="01")  Jan
+        if (exhumed_date_month=="02")
+         option(value="02" selected="selected")  Feb
+        else
+         option(value="02")  Feb    
+        if (exhumed_date_month=="03")
+         option(value="03" selected="selected")  Mar
+        else
+         option(value="03")  Mar
+        if (exhumed_date_month=="04")
+         option(value="04" selected="selected")  Apr
+        else
+         option(value="04")  Apr
+        if (exhumed_date_month=="05")
+         option(value="05" selected="selected")  May
+        else
+         option(value="05")  May
+        if (exhumed_date_month=="06")
+         option(value="06" selected="selected")  Jun
+        else
+         option(value="06")  Jun
+        if (exhumed_date_month=="07")
+         option(value="07" selected="selected")  Jul
+        else 
+         option(value="07")  Jul
+        if (exhumed_date_month=="08")
+         option(value="08" selected="selected")  Ago
+        else
+         option(value="08")  Ago
+        if (exhumed_date_month=="09")
+         option(value="09" selected="selected")  Sep
+        else
+         option(value="09")  Sep
+        if (exhumed_date_month=="10")
+         option(value="10" selected="selected")  Oct
+        else 
+         option(value="10")  Oct
+        if (exhumed_date_month=="11")
+         option(value="11" selected="selected")  Nov
+        else
+         option(value="11")  Nov
+        if (exhumed_date_month=="12")
+         option(value="12" selected="selected")  Dec
+        else
+         option(value="12")  Dec
+        span &nbsp;
+     select(name="exhumed_date_year", value=exhumed_date_year)
+       option(value="") Select
+       - var year = new Date().getFullYear();
+       -for(var i = 1973;i<=year;i++){
+           if(exhumed_date_year==i)
+                option(value=i selected="selected") #{i}
+           else
+                option(value=i) #{i}
+       -}  
+     
+     br
+     br
+     input#input_documents(type="text", placeholder="Numbers of remains exhumed", name="exhumed_number", value=exhumed_number)
+     br
+     input#input_documents(type="text", placeholder="Contact Information", name="exhumed_contact", value=exhumed_contact)
+     br
+     span Notes
+     br
+     textarea#input_reasons(type="text", placeholder="Notes", cols="120" rows="10", name="exhumed_notes", value=exhumed_notes)
+        | #{exhumed_notes}
+     br
+     br 
+     
+    div#wrapper 
+     input#input_documents(type="text", placeholder="Exhumation Status", name="status", value=status)
+     br 
+     
+    div#wrapper 
+     input#input_documents(type="text", placeholder="Sources", name="sources", value=sources)
+     br
+     span Notes
+     br
+     textarea#input_reasons(type="text", placeholder="Notes", cols="120" rows="10", name="notes", value=notes)
+        | #{notes}
+     
+    br
+    div#wrapper 
+     span Contact Information
+     br
+     if (contactslist)
+      table(id="contactsList")
+          thead    
+            tr#headtag
+                th Select
+                th Code
+                th Name in Arabic
+                th Name in English
+                th Category
+
+          tbody    
+            each contact, i in contactslist
+                tr
+                 td
+                  if (contacts && contacts.includes(contact.code))
+                    input.checkbox-input(type='checkbox', name="contacts", value=contact.code, checked)
+                  else  
+                    input.checkbox-input(type='checkbox', name="contacts", value=contact.code)
+                 td= contact.code
+                 td= contact.name.ar.last, contact.name.ar.first
+                 td= contact.name.en.first, contact.name.en.last
+                 td= contact.category
+    br
+    br
+    div(class='btn menu')
+      button#submit_site(type="submit" role='submit' class="buttons") submit
+    div(class='btn menu')
+      a(href="/sites") Go back to Sites
+    
+    script.
+        $('#missingList').DataTable( {
+            paging: false
+        } );
+        $('#locationsList').DataTable( {
+            paging: false
+        } );
+        $('#eventsList').DataTable( {
+            paging: false
+        } );
+        $('#sitesList').DataTable( {
+            paging: false
+        } );
+        $('#contactsList').DataTable( {
+            paging: false
+        } );

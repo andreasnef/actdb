@@ -1,0 +1,42 @@
+extends layout
+
+block content
+ each value, i in profile
+  h3. 
+     #{value.name.ar}, #{value.name.en}
+     #{value.name.alt_name} (#{value.code})
+
+  div
+      h4 Headquarters
+    
+      p Place: #{value.hq.place}
+      p Description: #{value.hq.description}
+      p Coordinates: #{value.hq.coordinates}
+      
+  div  
+      h4 Areas of Control:
+      
+      -for(var i = 1;i<6;i++){
+          p #{i}    
+          - var desc = 'value.control_areas.'+i+'.description'
+          p Description: #{desc}
+          //p #{value.control_areas.i.coordinates}
+          p #{desc}
+          //span #{value.control_areas.1.description}
+          //#{value.control_areas.1.description}
+          p Coordinates: #{'value.control_areas.'+i+'.coordinates'}
+          p Begining value.control_areas.i.beg
+          p End value.control_areas.i.end
+      -}
+      
+
+  div       
+      h4 Flag: 
+      #{value.flag.file}
+    
+      
+      br
+      a(href="/newprofile/?type=party&mpcode="+value.code) Edit
+      br
+      a(href="/parties") Go back to list of Parties
+  
