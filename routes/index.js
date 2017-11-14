@@ -55,7 +55,8 @@ router.post('/login', function(req, res){
     //var date = new Date(Date.UTC());
     var date = new Date().toISOString();
     var MongoClient = mongodb.MongoClient;
-    var url = 'mongodb://'+user+':'+pass+'@localhost:27017/Act';
+    // var url = 'mongodb://'+user+':'+pass+'@localhost:27017/Act';
+    var url = process.env.MONGODB_URI || 'mongodb://'+user+':'+pass+'@localhost:27017/Act';
     
     //Validate Fields
     req.check('user', 'User cannot be empty').notEmpty();
