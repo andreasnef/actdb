@@ -55,7 +55,6 @@ router.post('/login', function(req, res){
     //var date = new Date(Date.UTC());
     var date = new Date().toISOString();
     var MongoClient = mongodb.MongoClient;
-    // var url = 'mongodb://'+user+':'+pass+'@localhost:27017/Act';
     // var url = process.env.MONGODB_URI || 'mongodb://'+user+':'+pass+'@cluster0-shard-00-00-tey75.mongodb.net:27017,cluster0-shard-00-01-tey75.mongodb.net:27017,cluster0-shard-00-02-tey75.mongodb.net:27017/Act?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin';
     var url = 'mongodb://'+user+':'+pass+'@cluster0-shard-00-00-tey75.mongodb.net:27017,cluster0-shard-00-01-tey75.mongodb.net:27017,cluster0-shard-00-02-tey75.mongodb.net:27017/Act?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin';
     
