@@ -1,4 +1,4 @@
-var express = require('express');
+ var express = require('express');
 var app = express();
 var router = express.Router();
 var mongodb = require('mongodb');
@@ -14,7 +14,6 @@ var fs = require("fs");
  
 var db;
 var user;
-var sessData;
 var collectionsList;
 var partiesList;
 var locationsList;
@@ -42,6 +41,8 @@ var upload = multer({ storage : storage}).any();
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
+    //console.log(req.cookies);
+    //console.log(req.session);
     if(req.session.user && db) {
         res.redirect("missing");
     } else {
@@ -58,8 +59,9 @@ router.post('/login', function(req, res){
     //var date = new Date(Date.UTC());
     var date = new Date().toISOString();
     var MongoClient = mongodb.MongoClient;
-    // var url = process.env.MONGODB_URI || 'mongodb://'+user+':'+pass+'@cluster0-shard-00-00-tey75.mongodb.net:27017,cluster0-shard-00-01-tey75.mongodb.net:27017,cluster0-shard-00-02-tey75.mongodb.net:27017/Act?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin';
-    var url = 'mongodb://'+user+':'+pass+'@cluster0-shard-00-00-tey75.mongodb.net:27017,cluster0-shard-00-01-tey75.mongodb.net:27017,cluster0-shard-00-02-tey75.mongodb.net:27017/Act?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin';
+    var url = 'mongodb://'+user+':'+pass+'@localhost:27017/Act';
+    //var url = 'mongodb://'+user+':'+pass+'@cluster0-shard-00-00-tey75.mongodb.net:27017,cluster0-shard-00-01-tey75.mongodb.net:27017,cluster0-shard-00-02-tey75.mongodb.net:27017/Act?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin';
+
     //Validate Fields
     req.check('user', 'User cannot be empty').notEmpty();
     req.check('pass', 'Password cannot be empty').notEmpty();
@@ -78,9 +80,9 @@ router.post('/login', function(req, res){
                         });
                     } else {
                         console.log('User:'+user+' Connected to server');
-                        console.log("sessdata "+sessData);
                         //Store the connection globally
                         db = database;
+                        req.session.user = user;
                         //save in session
                         app.use(session({
                             secret: "ewjdasnkqwiluyrfgbcnxaiureyfhbca", 
@@ -88,10 +90,6 @@ router.post('/login', function(req, res){
                             resave: false,
                             store: new MongoStore({ url: url, ttl: 1 * 24 * 60 * 60 })
                         }));
-                        sessData = req.session;
-                        //save in session
-                        sessData.user = user;
-                        console.log("sessdata "+sessData);
                         //save the login info in the db
                         var collection = db.collection('logins');
             
@@ -116,28 +114,28 @@ router.post('/login', function(req, res){
 });
 
 /*View Home*/
-router.get('/home', function(req, res){
-    if (collectionsList){
-        res.render('home', {
-            "collections" : collectionsList, "user": user
-            });   
-    }else if (db) {
-        db.listCollections().toArray(function (err, names){ 
-            if (err){
-                res.send(err);
-            } else if (names.length) {
-                    collectionsList = names;
-                    res.render('home', {
-                        "collections" : collectionsList, "user": user
-                        });    
-            } else {
-                    res.send('No documents found');
-            }
-        });  
-    } else {
-        res.render('index', { title: 'Login to Database'});
-    }
-});
+// router.get('/home', function(req, res){
+//     if (collectionsList){
+//         res.render('home', {
+//             "collections" : collectionsList, "user": user
+//             });   
+//     }else if (db) {
+//         db.listCollections().toArray(function (err, names){ 
+//             if (err){
+//                 res.send(err);
+//             } else if (names.length) {
+//                     collectionsList = names;
+//                     res.render('home', {
+//                         "collections" : collectionsList, "user": user
+//                         });    
+//             } else {
+//                     res.send('No documents found');
+//             }
+//         });  
+//     } else {
+//         res.render('index', { title: 'Login to Database'});
+//     }
+// });
 
 /*retrieve list of parties*/
 function getParties(callback){ 
@@ -480,7 +478,8 @@ function createFileRecord(req, contactCode, relEvents, relSites, relLocations, r
 
 /* GET list of missing */
 router.get('/missing', function(req, res){
-    if (sessData.user){
+    //console.log("req.session.user"+sessData.user);
+    if (req.session.user){
         async.parallel([
             getMissing,
             getEvents,
@@ -514,7 +513,8 @@ router.get('/missing', function(req, res){
 });
 
 /* GET list of Events */
-router.get('/events', function(req, res){      
+router.get('/events', function(req, res){
+    if (req.session.user){      
         getEvents(function(){
             if (eventsList.length) {
                 nextrecord = calcLastRecord(eventsList, "events");
@@ -528,58 +528,69 @@ router.get('/events', function(req, res){
                     res.send('No Events found');
             }
         });
+    } else {
+        res.render('index', { title: 'Login to Database'});
+    }    
 });
 
 /* GET list of Locations */
 router.get('/locations', function(req, res){
-    getLocations(function(){
-            if (locationsList.length) {
-                nextrecord = calcLastRecord(locationsList, "locations");
-                res.render('locationslist', {
-                    "user": user,
-                    "collList" : locationsList,
-                    "nextbarrack" : nextrecord[0],
-                    "nextsbarrack" : nextrecord[1],
-                    "nextibarrack" : nextrecord[2],
-                    "nextcheckpoint" : nextrecord[3],
-                    "nextscheckpoint" : nextrecord[4],
-                    "nexticheckpoint" : nextrecord[5],
-                    "nextcenter" : nextrecord[6],
-                    "nextscenter" : nextrecord[7],
-                    "nexticenter" : nextrecord[8],
-                });   
+    if (req.session.user){
+        getLocations(function(){
+                if (locationsList.length) {
+                    nextrecord = calcLastRecord(locationsList, "locations");
+                    res.render('locationslist', {
+                        "user": user,
+                        "collList" : locationsList,
+                        "nextbarrack" : nextrecord[0],
+                        "nextsbarrack" : nextrecord[1],
+                        "nextibarrack" : nextrecord[2],
+                        "nextcheckpoint" : nextrecord[3],
+                        "nextscheckpoint" : nextrecord[4],
+                        "nexticheckpoint" : nextrecord[5],
+                        "nextcenter" : nextrecord[6],
+                        "nextscenter" : nextrecord[7],
+                        "nexticenter" : nextrecord[8],
+                    });   
 
-            } else {
-                    res.send('No Events found');
-            }
-        }); 
+                } else {
+                        res.send('No Events found');
+                }
+            }); 
+    } else {
+        res.render('index', { title: 'Login to Database'});
+    }    
 });
 
 /* GET list of Sites */
 router.get('/sites', function(req, res){
-    getSites(function(){
-            if (sitesList.length) {
-                nextrecord = calcLastRecord(sitesList, "sites");
-                res.render('siteslist', {
-                    "collList" : sitesList,
-                    nextrecord : nextrecord,
-                    parties : partiesList,
-                    locations: locationsList, 
-                    events: eventsList, 
-                    sites: sitesList,
-                    mps: missingList,
-                    "user": user
-                });   
+    if (req.session.user){
+        getSites(function(){
+                if (sitesList.length) {
+                    nextrecord = calcLastRecord(sitesList, "sites");
+                    res.render('siteslist', {
+                        "collList" : sitesList,
+                        nextrecord : nextrecord,
+                        parties : partiesList,
+                        locations: locationsList, 
+                        events: eventsList, 
+                        sites: sitesList,
+                        mps: missingList,
+                        "user": user
+                    });   
 
-            } else {
-                    res.send('No Events found');
-            }
-        });     
+                } else {
+                        res.send('No Events found');
+                }
+            });
+    } else {
+        res.render('index', { title: 'Login to Database'});
+    }         
 });
 
 /* GET list of Logins */
 router.get('/logins', function(req, res){
-    if (db) {
+    if (req.session.user && db){
         var loginsColl = db.collection('logins');
 
         loginsColl.find({}, {user:1, ip:1, date:1}).toArray(function(err, result){
@@ -594,89 +605,109 @@ router.get('/logins', function(req, res){
                     res.send('No Sites found');
             }
         }); 
-    } else { 
+    } else {
         res.render('index', { title: 'Login to Database'});
-    }     
+    }    
 });
 
 /*GET mapping*/
 router.get('/map', function(req, res){
-    res.render('map', {
-        "user": user
-    });    
+    if (req.session.user){
+        res.render('map', {
+            "user": user
+        });  
+    } else {
+        res.render('index', { title: 'Login to Database'});
+    }  
 });
 
 /* GET list of Parties */
 router.get('/parties', function(req, res){
-    getParties(function(){
-            if (partiesList.length) {
-                nextrecord = calcLastRecord(partiesList, "parties");
-                res.render('partieslist', {
-                    "collList" : partiesList,
-                    nextrecord : nextrecord,
-                    "user": user
-                });   
+    if (req.session.user){
+        getParties(function(){
+                if (partiesList.length) {
+                    nextrecord = calcLastRecord(partiesList, "parties");
+                    res.render('partieslist', {
+                        "collList" : partiesList,
+                        nextrecord : nextrecord,
+                        "user": user
+                    });   
 
-            } else {
-                    res.send('No Events found');
-            }
-        });       
+                } else {
+                        res.send('No Events found');
+                }
+            }); 
+    } else {
+        res.render('index', { title: 'Login to Database'});
+    }          
 });
 
 /* GET list of Contacts */
 router.get('/contacts', function(req, res){
-    getContacts(function(){
-            if (contactsList.length) {
-                nextrecord = calcLastRecord(contactsList, "contacts");
-                res.render('contactslist', {
-                    "collList" : contactsList,
-                    nextrecord : nextrecord,
-                    "user": user
-                });   
+    if (req.session.user){
+        getContacts(function(){
+                if (contactsList.length) {
+                    nextrecord = calcLastRecord(contactsList, "contacts");
+                    res.render('contactslist', {
+                        "collList" : contactsList,
+                        nextrecord : nextrecord,
+                        "user": user
+                    });   
 
-            } else {
-                    res.send('No Events found');
-            }
-        });       
+                } else {
+                        res.send('No Events found');
+                }
+            });       
+    } else {
+        res.render('index', { title: 'Login to Database'});
+    }     
 });
 
 /* GET list of Interviews */
 router.get('/interviews', function(req, res){
-    getInterviews(function(){
-            if (interviewsList.length) {
-                nextrecord = calcLastRecord(interviewsList, "interviews");
-                res.render('interviewslist', {
-                    "collList" : interviewsList,
-                    nextrecord : nextrecord,
-                    "user": user
-                });   
+    if (req.session.user){
+        getInterviews(function(){
+                if (interviewsList.length) {
+                    nextrecord = calcLastRecord(interviewsList, "interviews");
+                    res.render('interviewslist', {
+                        "collList" : interviewsList,
+                        nextrecord : nextrecord,
+                        "user": user
+                    });   
 
-            } else {
-                    res.send('No Interviews found');
-            }
-        });       
+                } else {
+                        res.send('No Interviews found');
+                }
+            }); 
+    } else {
+        res.render('index', { title: 'Login to Database'});
+    }          
 });
 
 /* GET list of Files */
 router.get('/files', function(req, res){
-    getFiles(function(){
-            if (filesList.length) {
-                nextrecord = calcLastRecord(filesList, "files");
-                res.render('fileslist', {
-                    "collList" : filesList,
-                    nextrecord : nextrecord,
-                    "user": user
-                });   
+    if (req.session.user){
+        getFiles(function(){
+                if (filesList.length) {
+                    nextrecord = calcLastRecord(filesList, "files");
+                    res.render('fileslist', {
+                        "collList" : filesList,
+                        nextrecord : nextrecord,
+                        "user": user
+                    });   
 
-            } else {
-                    res.send('No Files found');
-            }
-        });       
+                } else {
+                        res.send('No Files found');
+                }
+            }); 
+    } else {
+        res.render('index', { title: 'Login to Database'});
+    }           
 });
 
 /* GET profile*/
 router.get('/profile', function(req, res){
-    if (db) {
+    if (req.session.user && db) {
             var collName = req.query.type;
             var collection = db.collection(collName);
             
@@ -699,27 +730,31 @@ router.get('/profile', function(req, res){
 });
 
 /* ADD or EDIT */
-router.get('/newprofile', function(req, res){  
-    async.parallel([
-        getMissing,
-        getEvents,
-        getLocations,
-        getParties,
-        getSites,
-        getContacts,
-        getInterviews,
-        getFiles
-    ], function(err){
-        if (err) {
-            return console.error(err);
-        }
-        var type = req.query.type;
-        if (req.query.nextrecord){
-            res.render('new'+type, { title: 'Add New '+type, nextrecord : req.query.nextrecord, parties : partiesList, mps: missingList, locations: locationsList, events: eventsList, sites: sitesList, contactslist: contactsList, interviewslist: interviewsList});
-        } else {
-            res.render('new'+type, { title: 'Edit '+type, editprofile : profile, parties : partiesList, mps: missingList, locations: locationsList, events: eventsList, sites: sitesList, contactslist: contactsList, interviewslist: interviewsList});
-        }
-    });
+router.get('/newprofile', function(req, res){
+    if (req.session.user){  
+        async.parallel([
+            getMissing,
+            getEvents,
+            getLocations,
+            getParties,
+            getSites,
+            getContacts,
+            getInterviews,
+            getFiles
+        ], function(err){
+            if (err) {
+                return console.error(err);
+            }
+            var type = req.query.type;
+            if (req.query.nextrecord){
+                res.render('new'+type, { title: 'Add New '+type, nextrecord : req.query.nextrecord, parties : partiesList, mps: missingList, locations: locationsList, events: eventsList, sites: sitesList, contactslist: contactsList, interviewslist: interviewsList});
+            } else {
+                res.render('new'+type, { title: 'Edit '+type, editprofile : profile, parties : partiesList, mps: missingList, locations: locationsList, events: eventsList, sites: sitesList, contactslist: contactsList, interviewslist: interviewsList});
+            }
+        });
+    } else {
+        res.render('index', { title: 'Login to Database'});
+    }
 });
 
 function dateConverter(day, month, year) {
@@ -3027,9 +3062,10 @@ router.post('/export', function(req, res){
     
     });
 
-    var date = moment().format('DD-MM-YYYY-hhmmss');
-    
-    wb.write(date+'.xlsx', function (err, stats) {
+    //var date = moment().format('DD-MM-YYYY-hhmmss');
+    var dateXls = new Date().toISOString();
+
+    wb.write(dateXls+'.xlsx', function (err, stats) {
         if (err) {
             console.error(err);
             /*res.render('missinglist', {
@@ -3191,6 +3227,7 @@ router.post('/removeFile', function(req,res){
 router.post('/logout', function(req, res){
     db.close(function(){
         //res.redirect('/');
+        req.session.destroy;
         res.render('index', { title: 'Login to Database'});
     });
     
