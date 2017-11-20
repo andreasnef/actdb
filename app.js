@@ -4,7 +4,8 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-var sessions = require('express-session');
+var session = require('express-session');
+var MongoStore = require('connect-mongo')(session);
 var expressValidator = require('express-validator');
 var jsdom = require('jsdom');
 var async = require('async');
@@ -30,7 +31,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(expressValidator());
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-//app.use(sessions({secret: "ewjdasnkqwiluyrfgbcnxaiureyfhbca", saveUninitialized: false, resave: false}));
+app.use(session({secret: "ewjdasnkqwiluyrfgbcnxaiureyfhbca", saveUninitialized: true, resave: true}));
 
 app.use('/', index);
 app.use('/users', users);
