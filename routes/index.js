@@ -14,6 +14,7 @@ var fs = require("fs");
  
 var db;
 var user;
+var sessData;
 var collectionsList;
 var partiesList;
 var locationsList;
@@ -41,7 +42,7 @@ var upload = multer({ storage : storage}).any();
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-    if(db) {
+    if(sessData.user && db) {
         res.redirect("missing");
     } else {
         res.render('index', { title: 'Login to Database'});   
@@ -57,10 +58,12 @@ router.post('/login', function(req, res){
     //var date = new Date(Date.UTC());
     var date = new Date().toISOString();
     var MongoClient = mongodb.MongoClient;
-    // var url = 'mongodb://'+user+':'+pass+'@localhost:27017/Act';
     // var url = process.env.MONGODB_URI || 'mongodb://'+user+':'+pass+'@cluster0-shard-00-00-tey75.mongodb.net:27017,cluster0-shard-00-01-tey75.mongodb.net:27017,cluster0-shard-00-02-tey75.mongodb.net:27017/Act?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin';
     var url = 'mongodb://'+user+':'+pass+'@cluster0-shard-00-00-tey75.mongodb.net:27017,cluster0-shard-00-01-tey75.mongodb.net:27017,cluster0-shard-00-02-tey75.mongodb.net:27017/Act?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin';
-    
+    app.use(sessions({
+        secret: 'foo',
+        store: new MongoStore({ url: url })
+      }));
     //Validate Fields
     req.check('user', 'User cannot be empty').notEmpty();
     req.check('pass', 'Password cannot be empty').notEmpty();
@@ -82,8 +85,14 @@ router.post('/login', function(req, res){
                         //Store the connection globally
                         db = database;
                         //save in session
+                        sessData.user = user;
+                        console.log(sessData);
+                        //save in session
                         app.use(session({
-                            store: new MongoStore({ url: url })
+                            secret: "ewjdasnkqwiluyrfgbcnxaiureyfhbca", 
+                            saveUninitialized: false, 
+                            resave: false,
+                            store: new MongoStore({ url: url, ttl: 1 * 24 * 60 * 60 })
                         }));
                         //save the login info in the db
                         var collection = db.collection('logins');
@@ -473,32 +482,37 @@ function createFileRecord(req, contactCode, relEvents, relSites, relLocations, r
 
 /* GET list of missing */
 router.get('/missing', function(req, res){
-    async.parallel([
-        getMissing,
-        getEvents,
-        getLocations,
-        getParties,
-        getSites
-    ], function(err){
-        if (err) {
-            return console.error(err);
-        } else if (missingList.length) {
-                nextrecord = calcLastRecord(missingList, "missing");
-                res.render('missinglist', {
-                    "collList" : missingList,
-                    title: "List of Missing People",
-                    nextrecord : nextrecord,
-                    "user": user,
-                    parties : partiesList,
-                    locations: locationsList, 
-                    events: eventsList, 
-                    sites: sitesList
-                });   
-
-            } else {
-                    res.send('No Events found');
-            }
-    });
+    if (sessData.user){
+        async.parallel([
+            getMissing,
+            getEvents,
+            getLocations,
+            getParties,
+            getSites
+        ], function(err){
+            if (err) {
+                return console.error(err);
+            } else if (missingList.length) {
+                    nextrecord = calcLastRecord(missingList, "missing");
+                    res.render('missinglist', {
+                        "collList" : missingList,
+                        title: "List of Missing People",
+                        nextrecord : nextrecord,
+                        "user": user,
+                        parties : partiesList,
+                        locations: locationsList, 
+                        events: eventsList, 
+                        sites: sitesList
+                    });   
+    
+                } else {
+                        res.send('No Events found');
+                }
+        });
+    } else {
+        res.render('index', { title: 'Login to Database'});
+    }
+    
 });
 
 /* GET list of Events */
