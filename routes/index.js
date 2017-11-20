@@ -85,15 +85,16 @@ router.post('/login', function(req, res){
                         //Store the connection globally
                         db = database;
                         //save in session
-                        sessData.user = user;
-                        console.log(sessData);
-                        //save in session
                         app.use(session({
                             secret: "ewjdasnkqwiluyrfgbcnxaiureyfhbca", 
                             saveUninitialized: false, 
                             resave: false,
                             store: new MongoStore({ url: url, ttl: 1 * 24 * 60 * 60 })
                         }));
+                        sessData = req.session;
+                        //save in session
+                        sessData.user = user;
+                        console.log("sessdata "+sessData);
                         //save the login info in the db
                         var collection = db.collection('logins');
             
