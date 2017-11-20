@@ -60,10 +60,6 @@ router.post('/login', function(req, res){
     var MongoClient = mongodb.MongoClient;
     // var url = process.env.MONGODB_URI || 'mongodb://'+user+':'+pass+'@cluster0-shard-00-00-tey75.mongodb.net:27017,cluster0-shard-00-01-tey75.mongodb.net:27017,cluster0-shard-00-02-tey75.mongodb.net:27017/Act?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin';
     var url = 'mongodb://'+user+':'+pass+'@cluster0-shard-00-00-tey75.mongodb.net:27017,cluster0-shard-00-01-tey75.mongodb.net:27017,cluster0-shard-00-02-tey75.mongodb.net:27017/Act?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin';
-    app.use(sessions({
-        secret: 'foo',
-        store: new MongoStore({ url: url })
-      }));
     //Validate Fields
     req.check('user', 'User cannot be empty').notEmpty();
     req.check('pass', 'Password cannot be empty').notEmpty();
@@ -82,6 +78,7 @@ router.post('/login', function(req, res){
                         });
                     } else {
                         console.log('User:'+user+' Connected to server');
+                        console.log("sessdata "+sessData);
                         //Store the connection globally
                         db = database;
                         //save in session
