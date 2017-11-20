@@ -42,7 +42,7 @@ var upload = multer({ storage : storage}).any();
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-    if(sessData.user && db) {
+    if(req.session.user && db) {
         res.redirect("missing");
     } else {
         res.render('index', { title: 'Login to Database'});   
