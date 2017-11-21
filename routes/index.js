@@ -40,9 +40,7 @@ var upload = multer({ storage : storage}).any();
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-    //console.log(req.cookies);
-    //console.log(req.session);
-    if(req.session.user && db) {
+    if(req.session && db) {
         res.redirect("missing");
     } else {
         res.render('index', { title: 'Login to Database'});   
@@ -82,13 +80,10 @@ router.post('/login', function(req, res){
                         //Store the connection globally
                         db = database;
                         req.session.user = user;
-                        //save in session
-                        app.use(session({
-                            secret: "ewjdasnkqwiluyrfgbcnxaiureyfhbca", 
-                            saveUninitialized: false, 
-                            resave: false,
-                            store: new MongoStore({ url: url, ttl: 1 * 24 * 60 * 60 })
-                        }));
+                        //save user in session
+                        console.log("session "+req.session);
+                        console.log("session "+req.session.user);
+                        
                         //save the login info in the db
                         var collection = db.collection('logins');
             
@@ -98,6 +93,7 @@ router.post('/login', function(req, res){
                             if (err){
                                 console.log(err)
                             }else {
+                                
                                 res.redirect("missing");
                             }
                         });
@@ -106,10 +102,7 @@ router.post('/login', function(req, res){
                     })
                     
                 }
-
-    
-    
-    
+ 
 });
 
 /*retrieve list of parties*/

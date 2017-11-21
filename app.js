@@ -25,14 +25,24 @@ app.set('view engine', 'pug');
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
-app.use(logger('dev'));
+if (app.get('env') === 'production') {
+  app.use(logger('combined'));
+} else {
+  app.use(logger('dev'));
+}
+app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(expressValidator());
-app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
-app.use(session({secret: "ewjdasnkqwiluyrfgbcnxaiureyfhbca", saveUninitialized: true, resave: true}));
 
+app.use(express.static(path.join(__dirname, 'public')));
+//app.use(session({secret: "ewjdasnkqwiluyrfgbcnxaiureyfhbca", saveUninitialized: true, resave: true}));
+app.use(session({
+  secret: "ewjdasnkqwiluyrfgbcnxaiureyfhbca", 
+  saveUninitialized: false, 
+  resave: false,
+  store: new MongoStore({ url: process.env.MONGODB_URI, ttl: 1 * 24 * 60 * 60 })
+}));
 app.use('/', index);
 app.use('/users', users);
 
@@ -53,13 +63,5 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
-
-//create sessions 
-/*app.use(sessions({
-  cookieName: 'session',
-  secret: 'feiucbrejwcvgyhjoufewwscthmvcrthnjut',
-  duration: 24 * 60 * 60 * 1000,
-  activeDuration: 1000 * 60 * 5,
-}));*/
 
 module.exports = app;
