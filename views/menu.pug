@@ -27,7 +27,8 @@ block content
  
   
   div#userOptions(class='dropMenu')
-    a(href='logins' target="_blank") Login registry
+    if (user == "actadmin")
+     a(href='logins' target="_blank") Login registry
     //br
     //a(href='/logout') Logout
     form#logout(name="logout", method="post", action="/logout")

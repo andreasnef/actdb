@@ -4,7 +4,7 @@ var router = express.Router();
 var mongodb = require('mongodb');
 var session = require('express-session');
 var MongoStore = require('connect-mongo')(session);
-var moment = require('moment');
+//var moment = require('moment');
 var bodyParser = require('body-parser');
 var validator = require('express-validator');
 var async = require('async');
@@ -13,7 +13,6 @@ var multer  = require('multer');
 var fs = require("fs");
  
 var db;
-var user;
 var collectionsList;
 var partiesList;
 var locationsList;
@@ -53,7 +52,7 @@ router.get('/', function(req, res, next) {
 /*Log in*/
 router.post('/login', function(req, res){
     
-    user = req.body.user;
+    var user = req.body.user;
     var pass = req.body.pass;
     var ip = req.connection.remoteAddress;
     //var date = new Date(Date.UTC());
@@ -112,30 +111,6 @@ router.post('/login', function(req, res){
     
     
 });
-
-/*View Home*/
-// router.get('/home', function(req, res){
-//     if (collectionsList){
-//         res.render('home', {
-//             "collections" : collectionsList, "user": user
-//             });   
-//     }else if (db) {
-//         db.listCollections().toArray(function (err, names){ 
-//             if (err){
-//                 res.send(err);
-//             } else if (names.length) {
-//                     collectionsList = names;
-//                     res.render('home', {
-//                         "collections" : collectionsList, "user": user
-//                         });    
-//             } else {
-//                     res.send('No documents found');
-//             }
-//         });  
-//     } else {
-//         res.render('index', { title: 'Login to Database'});
-//     }
-// });
 
 /*retrieve list of parties*/
 function getParties(callback){ 
@@ -478,7 +453,6 @@ function createFileRecord(req, contactCode, relEvents, relSites, relLocations, r
 
 /* GET list of missing */
 router.get('/missing', function(req, res){
-    //console.log("req.session.user"+sessData.user);
     if (req.session.user){
         async.parallel([
             getMissing,
@@ -495,7 +469,7 @@ router.get('/missing', function(req, res){
                         "collList" : missingList,
                         title: "List of Missing People",
                         nextrecord : nextrecord,
-                        "user": user,
+                        "user": req.session.user,
                         parties : partiesList,
                         locations: locationsList, 
                         events: eventsList, 
@@ -521,7 +495,7 @@ router.get('/events', function(req, res){
                 res.render('eventslist', {
                     "collList" : eventsList,
                     nextrecord : nextrecord,
-                    user: user
+                    user: req.session.user
                 });   
 
             } else {
@@ -540,7 +514,7 @@ router.get('/locations', function(req, res){
                 if (locationsList.length) {
                     nextrecord = calcLastRecord(locationsList, "locations");
                     res.render('locationslist', {
-                        "user": user,
+                        "user": req.session.user,
                         "collList" : locationsList,
                         "nextbarrack" : nextrecord[0],
                         "nextsbarrack" : nextrecord[1],
@@ -576,7 +550,7 @@ router.get('/sites', function(req, res){
                         events: eventsList, 
                         sites: sitesList,
                         mps: missingList,
-                        "user": user
+                        "user": req.session.user
                     });   
 
                 } else {
@@ -599,7 +573,7 @@ router.get('/logins', function(req, res){
             } else if (result.length) {
                     res.render('loginslist', {
                         "collList" : result,
-                        "user": user
+                        "user": req.session.user
                         });    
             } else {
                     res.send('No Sites found');
@@ -614,7 +588,7 @@ router.get('/logins', function(req, res){
 router.get('/map', function(req, res){
     if (req.session.user){
         res.render('map', {
-            "user": user
+            "user": req.session.user
         });  
     } else {
         res.render('index', { title: 'Login to Database'});
@@ -630,7 +604,7 @@ router.get('/parties', function(req, res){
                     res.render('partieslist', {
                         "collList" : partiesList,
                         nextrecord : nextrecord,
-                        "user": user
+                        "user": req.session.user
                     });   
 
                 } else {
@@ -651,7 +625,7 @@ router.get('/contacts', function(req, res){
                     res.render('contactslist', {
                         "collList" : contactsList,
                         nextrecord : nextrecord,
-                        "user": user
+                        "user": req.session.user
                     });   
 
                 } else {
@@ -672,7 +646,7 @@ router.get('/interviews', function(req, res){
                     res.render('interviewslist', {
                         "collList" : interviewsList,
                         nextrecord : nextrecord,
-                        "user": user
+                        "user": req.session.user
                     });   
 
                 } else {
@@ -693,7 +667,7 @@ router.get('/files', function(req, res){
                     res.render('fileslist', {
                         "collList" : filesList,
                         nextrecord : nextrecord,
-                        "user": user
+                        "user": req.session.user
                     });   
 
                 } else {
@@ -2907,7 +2881,7 @@ router.post('/searchmissing', function(req, res){
                         parties : partiesList,
                         title: "List of Missing People",
                         nextrecord : nextrecord,
-                        "user": user,
+                        "user": req.session.user,
                         parties : partiesList,
                         locations: locationsList, 
                         events: eventsList, 
@@ -2965,7 +2939,7 @@ router.post('/searchsites', function(req, res){
                         parties : partiesList,
                         title: "List of Sites",
                         nextrecord : nextrecord,
-                        "user": user,
+                        "user": req.session.user,
                         parties : partiesList,
                         locations: locationsList, 
                         events: eventsList, 
@@ -3090,7 +3064,7 @@ router.post('/export', function(req, res){
                             parties : partiesList,
                             title: "List of Missing People",
                             nextrecord : nextrecord,
-                            "user": user,
+                            "user": req.session.user,
                             parties : partiesList,
                             locations: locationsList, 
                             events: eventsList, 
@@ -3149,7 +3123,7 @@ router.post('/uploadPicture',function(req,res){
                                 parties : partiesList,
                                 title: "List of Missing People",
                                 nextrecord : nextrecord,
-                                "user": user   
+                                "user": req.session.user   
                                 });
                         }
                     }); 
