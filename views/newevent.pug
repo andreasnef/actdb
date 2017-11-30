@@ -16,6 +16,7 @@ block content
   if editprofile
     each value, i in editprofile
         - _id = value._id
+        - public = value.public
         - code = value.code
         - type = value.type
         - name_ar = value.name.ar
@@ -69,6 +70,15 @@ block content
         else
             option(value=typ) #{typ}
      br
+
+     span Public
+      br
+      select#public(name="public", value=public)
+        option(value="No")  No
+        if(public=="Yes")
+            option(value="Yes" selected="Selected")  Yes
+        else    
+            option(value="Yes")  Yes 
      
      input#input_name_ar(type="text", placeholder="Name in Arabic", name="name_ar" value=name_ar)
      br

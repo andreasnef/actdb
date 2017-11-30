@@ -5,30 +5,31 @@ block content
  br
  div
   div#table  
-   div(class='btn menu')
-    a(href="#" onclick="toggle_visibility('newCheckpoint');") Add a New CheckPoint
-    div#newCheckpoint(class='dropMenu')    
-     a(href="/newprofile/?type=location&nextrecord="+nextcheckpoint) Lebanese CheckPoint
-     br
-     a(href="/newprofile/?type=location&nextrecord="+nextscheckpoint) Syrian CheckPoint
-     br
-     a(href="/newprofile/?type=location&nextrecord="+nexticheckpoint) Iraeli CheckPoint
-   div(class='btn menu')
-    a(href="#" onclick="toggle_visibility('newDC');") Add a New Detention Centre 
-    div#newDC(class='dropMenu')
-     a(href="/newprofile/?type=location&nextrecord="+nextcenter) Lebanese Detention Centre
-     br
-     a(href="/newprofile/?type=location&nextrecord="+nextscenter) Syrian Detention Centre
-     br
-     a(href="/newprofile/?type=location&nextrecord="+nexticenter) Israeli Detention Centre
-   div(class='btn menu')
-    a(href="#" onclick="toggle_visibility('newBarrack');") Add a New Barrack
-    div#newBarrack(class='dropMenu')
-     a(href="/newprofile/?type=location&nextrecord="+nextbarrack) Lebanese Barrack
-     br
-     a(href="/newprofile/?type=location&nextrecord="+nextsbarrack) Syrian Barrack
-     br
-     a(href="/newprofile/?type=location&nextrecord="+nextibarrack) Israeli Barrack
+   if(user!= "public")
+    div(class='btn menu')
+     a(href="#" onclick="toggle_visibility('newCheckpoint');") Add a New CheckPoint
+     div#newCheckpoint(class='dropMenu')    
+      a(href="/newprofile/?type=location&nextrecord="+nextcheckpoint) Lebanese CheckPoint
+      br
+      a(href="/newprofile/?type=location&nextrecord="+nextscheckpoint) Syrian CheckPoint
+      br
+      a(href="/newprofile/?type=location&nextrecord="+nexticheckpoint) Iraeli CheckPoint
+    div(class='btn menu')
+     a(href="#" onclick="toggle_visibility('newDC');") Add a New Detention Centre 
+     div#newDC(class='dropMenu')
+      a(href="/newprofile/?type=location&nextrecord="+nextcenter) Lebanese Detention Centre
+      br
+      a(href="/newprofile/?type=location&nextrecord="+nextscenter) Syrian Detention Centre
+      br
+      a(href="/newprofile/?type=location&nextrecord="+nexticenter) Israeli Detention Centre
+    div(class='btn menu')
+     a(href="#" onclick="toggle_visibility('newBarrack');") Add a New Barrack
+     div#newBarrack(class='dropMenu')
+      a(href="/newprofile/?type=location&nextrecord="+nextbarrack) Lebanese Barrack
+      br
+      a(href="/newprofile/?type=location&nextrecord="+nextsbarrack) Syrian Barrack
+      br
+      a(href="/newprofile/?type=location&nextrecord="+nextibarrack) Israeli Barrack
 
    
    - var barracks = [];

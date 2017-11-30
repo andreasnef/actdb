@@ -22,6 +22,7 @@
     "jquery": "^3.2.1",
     "jsdom": "^11.0.0",
     "kerberos": "~0.0.17",
+    "leaflet": "^1.2.0",
     "moment": "^2.18.1",
     "mongodb": "~2.2.28",
     "morgan": "~1.8.1",

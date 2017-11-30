@@ -5,13 +5,14 @@ block content
  br
  div   
   div#table
-      div(class='btn menu')
-       a(href="/newprofile/?type=missing&nextrecord="+nextrecord) Add a Missing Person
-      div(class='btn menu')
-       a(href="#" onclick="toggle_visibility('divSearch');") Advance Search of a Missing Person
+      if(user!= "public")  
+       div(class='btn menu')
+        a(href="/newprofile/?type=missing&nextrecord="+nextrecord) Add a Missing Person
+       div(class='btn menu')
+        a(href="#" onclick="toggle_visibility('divSearch');") Advance Search of a Missing Person
       
-
-      div#divSearch(class='dropMenu')
+      
+       div#divSearch(class='dropMenu')
           form#form_search(name="searchmissing", method="post", action="/searchmissing")
               span Dates of Disappearance: 
               br
@@ -226,9 +227,10 @@ block content
                             td="Unknown"
 
       //export to excel button
-      div(class='btn menu')
-       form#form_export(name="export", method="post", action="/export")       
-        button#export(type="submit", class="buttons") Export results to Excel Sheet
+      if(user!= "public")
+       div(class='btn menu')
+        form#form_export(name="export", method="post", action="/export")       
+         button#export(type="submit", class="buttons") Export results to Excel Sheet
   
   
   div#sideProfile

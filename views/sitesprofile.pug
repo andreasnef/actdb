@@ -13,6 +13,11 @@ block content
             span #{value.name.ar}
 
   div
+    span.title Public: 
+    span #{value.public}
+    br
+
+  div
       h4 Location
 
       - if(value.location.place ||value.location.district ||value.location.governorate)    
@@ -127,6 +132,7 @@ block content
        span #{value.credibility.reasons}
        
   div
+   if(value.exhumed)
       h4 Exhumation status: 
       
       -if (value.exhumed.status)
@@ -172,6 +178,6 @@ block content
         each interview, i in value.interviews
          a(href="#" onclick="loadProfile('interviews','"+interview+"');") #{interview}     
       
-      
-      a(href="/newprofile/?type=site&code="+value.code) Edit
+      div(class='btn menu')
+       a(href="/newprofile/?type=site&code="+value.code) Edit
   

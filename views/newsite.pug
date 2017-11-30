@@ -18,6 +18,7 @@ block content
         - _id = value._id
         - code = value.code
         - type = value.type
+        - public = value.public
         - name_ar = value.name.ar
         - name_en = value.name.en
         - location_place = value.location.place
@@ -78,6 +79,16 @@ block content
      input#input_name_en(type="text", placeholder="Name in English", name="name_en", value=name_en)
      br
      br
+
+    div#wrapper
+      span Public
+      br
+      select#public(name="public", value=public)
+        option(value="No")  No
+        if(public=="Yes")
+            option(value="Yes" selected="Selected")  Yes
+        else    
+            option(value="Yes")  Yes 
      
     div#wrapper 
      legend Location

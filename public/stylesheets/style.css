@@ -166,3 +166,5 @@ span {
 #relatedMps {
     display: none;
 }
+
+#map { height: 600px; }

@@ -144,7 +144,8 @@ block content
                     td=site.name.en
                     td=site.location.district
                     td=site.location.governorate
-                    td=site.exhumed.status
+                    if(site.exhumed)
+                     td=site.exhumed.status
                     
    div#sideProfile
   

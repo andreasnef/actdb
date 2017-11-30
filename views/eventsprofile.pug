@@ -4,9 +4,12 @@ block content
  each value, i in profile
   div#profileTitle
       h3. 
-         #{value.name.en} - (#{value.type} - #{value.code})
+         #{value.name.en} - (#{value.type})
       
   div#wrapper
+      p
+       span.title Code: 
+       span #{value.code}
       - if (value.name.ar) 
            p
             span.title Name in Arabic: 
@@ -25,15 +28,13 @@ block content
        p 
         span.title Coordinates: 
         span #{value.location.coordinates}
-      - if(value.UNHCR.coordinates)
+      - if(value.UNHCR && value.UNHCR.coordinates)
        p 
         span.title UNHCR Coordinates: 
         span #{value.UNHCR.coordinates}
       
   div#wrapper  
       h4 Event Period:
-      
-      h4 Activity Period:
       if(!value.dates.beg)
         p 
          span.title From: 
@@ -61,6 +62,7 @@ block content
          span #{moment(value.dates.end).format('MMMM Do, YYYY')}
       
   div#wrapper  
+     if(value.related) 
       h4 Related: 
       
       if(value.related.events)
@@ -91,26 +93,27 @@ block content
       
       
   div#wrapper       
-      h4 Sources:  
+      if(user!="public")
+       h4 Sources:  
       
-      - if (value.sources) 
-       p 
-        span.title Sources: 
-        span #{value.sources}
-      - if(value.files)
-       p 
-        span.title Files: 
-        each file, i in value.files
-         a(href="#" onclick="loadProfile('files','"+file+"');") #{file}     
-      - if (value.notes)
-       p 
-        span.title Notes: 
-        span #{value.notes} 
-      - if (value.interviews)
-       p 
-        span.title Interviews: 
-        each interview, i in value.interviews
-         a(href="#" onclick="loadProfile('interviews','"+interview+"');") #{interview}        
+       - if (value.sources) 
+        p 
+         span.title Sources: 
+         span #{value.sources}
+       - if(value.files)
+        p 
+         span.title Files: 
+         each file, i in value.files
+          a(href="#" onclick="loadProfile('files','"+file+"');") #{file}     
+       - if (value.notes)
+        p 
+         span.title Notes: 
+         span #{value.notes} 
+       - if (value.interviews)
+        p 
+         span.title Interviews: 
+         each interview, i in value.interviews
+          a(href="#" onclick="loadProfile('interviews','"+interview+"');") #{interview}        
       
-      
-      a(href="/newprofile/?type=event&code="+value.code) Edit
+       div(class='btn menu')
+        a(href="/newprofile/?type=event&code="+value.code) Edit

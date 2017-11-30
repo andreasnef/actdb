@@ -1,10 +1,9 @@
- var express = require('express');
+var express = require('express');
 var app = express();
 var router = express.Router();
 var mongodb = require('mongodb');
 var session = require('express-session');
 var MongoStore = require('connect-mongo')(session);
-//var moment = require('moment');
 var bodyParser = require('body-parser');
 var validator = require('express-validator');
 var async = require('async');
@@ -53,7 +52,6 @@ router.post('/login', function(req, res){
     var user = req.body.user;
     var pass = req.body.pass;
     var ip = req.connection.remoteAddress;
-    //var date = new Date(Date.UTC());
     var date = new Date().toISOString();
     var MongoClient = mongodb.MongoClient;
     //var url = 'mongodb://'+user+':'+pass+'@localhost:27017/Act';
@@ -63,53 +61,47 @@ router.post('/login', function(req, res){
     req.check('user', 'User cannot be empty').notEmpty();
     req.check('pass', 'Password cannot be empty').notEmpty();
     var errors = req.validationErrors();
-                if (errors) {
-                    res.render('index', {
-                        "validationErrors" : errors
-                    });
-                } else {
-                    /*Connect to the BD*/
-                    MongoClient.connect(url, function(err,database){
-                    if (err){
-                        console.log("User:"+user+" Unable to connect to server", err);
-                        res.render('index', {
-                            "errormessage" : err
-                        });
-                    } else {
-                        console.log('User:'+user+' Connected to server');
-                        //Store the connection globally
-                        db = database;
-                        req.session.user = user;
-                        //save user in session
-                        console.log("session "+req.session);
-                        console.log("session "+req.session.user);
-                        
-                        //save the login info in the db
-                        var collection = db.collection('logins');
+     if (errors) {
+        res.render('index', {
+            "validationErrors" : errors
+        });
+     } else {
+        /*Connect to the BD*/
+        MongoClient.connect(url, function(err,database){
+        if (err){
+            console.log("User:"+user+" Unable to connect to server", err);
+            res.render('index', {
+                "errormessage" : err
+            });
+        } else {
+            console.log('User:'+user+' Connected to server');
+            //Store the connection globally
+            db = database;
+            //save user in session
+            req.session.user = user;
             
-                        var newlongin = {user: req.body.user, ip: ip, date: date};
-            
-                        collection.insert([newlongin], function(err, result){
-                            if (err){
-                                console.log(err)
-                            }else {
-                                
-                                res.redirect("missing");
-                            }
-                        });
-                     }
-                        
-                    })
-                    
-                }
- 
+            if(user != "public"){
+               //save the login info in the db
+                var collection = db.collection('logins');
+                var newlongin = {user: req.body.user, ip: ip, date: date};
+
+                collection.insert([newlongin], function(err, result){
+                 if (err){
+                    console.log(err)
+                 }
+                });     
+            }
+            res.redirect("missing"); 
+         }   
+        })   
+    }
 });
 
 /*retrieve list of parties*/
 function getParties(callback){ 
     if (db) {
         var partiesColl = db.collection('parties');
-        partiesColl.find({},{'name': 1, code: 1}).sort({'name.en':1}).toArray(function(err, result){
+        partiesColl.find({},{_id:0, 'name': 1, code: 1}).sort({'name.en':1}).toArray(function(err, result){
             if (err){
                     res.send(err);
             } else {
@@ -123,28 +115,45 @@ function getParties(callback){
 };
 
  /*retrieve list of Locations*/
-function getLocations(callback){
+function getLocations(user, callback){
     if (db) {
-        var locationsColl = db.collection('locations');   
-        locationsColl.find({},{code: 1, category: 1, 'name': 1, groups_responsible:1, 'location.district':1, 'location.governorate': 1}).sort({'name.en': 1}).toArray(function(err, result){
-                if (err){
-                        res.send(err);
-                } else {
-                        locationsList = result;
-                }
-                callback();
-            });
+        if (user == "public"){
+         var locationsColl = db.collection('locations_public');
+         locationsColl.find({public: 'Yes'},{_id:0, code: 1, category: 1, 'name': 1, groups_responsible:1, 'location.district':1, 'location.governorate': 1, 'location.coordinates':1}).sort({'name.en': 1}).toArray(function(err, result){
+            if (err){
+                    res.send(err);
+            } else {
+                    locationsList = result;
+            }
+            callback();
+        });
+        }else{
+         var locationsColl = db.collection('locations');  
+         locationsColl.find({},{_id:0, code: 1, category: 1, 'name': 1, groups_responsible:1, 'location.district':1, 'location.governorate': 1, 'location.coordinates':1}).sort({'name.en': 1}).toArray(function(err, result){
+            if (err){
+                    res.send(err);
+            } else {
+                    locationsList = result;
+            }
+            callback();
+        }); 
+        }    
+        
      } else { 
         res.render('index', { title: 'Login to Database'});
     }       
 };
 
  /*retrieve list of Events*/
-function getEvents(callback){
+function getEvents(user, callback){
     if (db) {
-        var eventsColl = db.collection('events');
+        if (user == "public"){
+         var eventsColl = db.collection('events_public');
+        }else{
+         var eventsColl = db.collection('events');   
+        } 
 
-            eventsColl.find({},{'name': 1, code: 1, type: 1, 'location.district':1, 'location.governorate': 1, 'dates.beg': 1}).sort({'name.en':1}).toArray(function(err, result){
+            eventsColl.find({},{_id:0,'name': 1, code: 1, type: 1, 'location.district':1, 'location.governorate': 1, 'dates.beg': 1, 'location.coordinates':1}).sort({'name.en':1}).toArray(function(err, result){
                 if (err){
                         res.send(err);
                 } else {
@@ -158,10 +167,14 @@ function getEvents(callback){
 };   
 
 /*retrieve list of Sites*/
-function getSites(callback){
+function getSites(user, callback){
     if (db) {
-        var sitesColl = db.collection('sites');
-        sitesColl.find({},{'name.en': 1, code: 1, 'location.district':1,'location.governorate':1, 'exhumed.status': 1}).sort({'location.governorate':1, 'location.district':1, 'name.en': 1}).toArray(function(err, result){
+        if (user == "public"){
+         var sitesColl = db.collection('sites_public');
+        }else{
+         var sitesColl = db.collection('sites');   
+        } 
+        sitesColl.find({},{_id:0,'name': 1, code: 1, 'location.district':1,'location.governorate':1, 'exhumed.status': 1, 'location.coordinates':1}).sort({'location.governorate':1, 'location.district':1, 'name.en': 1}).toArray(function(err, result){
                 if (err){
                         res.send(err);
                 } else {
@@ -175,10 +188,22 @@ function getSites(callback){
 };
 
 /*retrieve list of Missing*/
-function getMissing(callback){
+function getMissing(user, callback){
     if (db) {
-        var missingColl = db.collection('missing');
-        missingColl.find({},{'name': 1, code: 1, 'disappearance.place': 1, 'disappearance.date': 1}).sort({'name.ar.last':1}).toArray(function(err, result){
+        if (user == "public"){
+            var missingColl = db.collection('missing_public');
+            missingColl.find({public: 'Yes'},{_id:0, 'name': 1, code: 1, 'disappearance.place': 1, 'disappearance.date': 1, 'location':1}).sort({'name.ar.last':1}).toArray(function(err, result){
+                if (err){
+                        res.send(err);
+                } else {
+                        missingList = result;
+                }
+                callback();
+            });
+        } else {
+            var missingColl = db.collection('missing');
+
+            missingColl.find({},{_id:0, 'name': 1, code: 1, 'disappearance.place': 1, 'disappearance.date': 1, 'location':1}).sort({'name.ar.last':1}).toArray(function(err, result){
                 if (err){
                         res.send(err);
                 } else {
@@ -186,7 +211,9 @@ function getMissing(callback){
                         missingResult = result;
                 }
                 callback();
-            }); 
+            });
+        }
+         
     } else { 
         res.render('index', { title: 'Login to Database'});
     }    
@@ -448,11 +475,11 @@ function createFileRecord(req, contactCode, relEvents, relSites, relLocations, r
 router.get('/missing', function(req, res){
     if (req.session.user){
         async.parallel([
-            getMissing,
-            getEvents,
-            getLocations,
+            getMissing.bind(null, req.session.user),
+            getEvents.bind(null, req.session.user),
+            getLocations.bind(null, req.session.user),
             getParties,
-            getSites
+            getSites.bind(null, req.session.user)
         ], function(err){
             if (err) {
                 return console.error(err);
@@ -482,7 +509,7 @@ router.get('/missing', function(req, res){
 /* GET list of Events */
 router.get('/events', function(req, res){
     if (req.session.user){      
-        getEvents(function(){
+        getEvents(req.session.user,function(){
             if (eventsList.length) {
                 nextrecord = calcLastRecord(eventsList, "events");
                 res.render('eventslist', {
@@ -503,7 +530,7 @@ router.get('/events', function(req, res){
 /* GET list of Locations */
 router.get('/locations', function(req, res){
     if (req.session.user){
-        getLocations(function(){
+        getLocations(req.session.user, function(){
                 if (locationsList.length) {
                     nextrecord = calcLastRecord(locationsList, "locations");
                     res.render('locationslist', {
@@ -532,7 +559,7 @@ router.get('/locations', function(req, res){
 /* GET list of Sites */
 router.get('/sites', function(req, res){
     if (req.session.user){
-        getSites(function(){
+        getSites(req.session.user,function(){
                 if (sitesList.length) {
                     nextrecord = calcLastRecord(sitesList, "sites");
                     res.render('siteslist', {
@@ -579,9 +606,38 @@ router.get('/logins', function(req, res){
 
 /*GET mapping*/
 router.get('/map', function(req, res){
+    var missingLayer = [];
+    var barracksLayer = [];
+    var checkpointsLayer = [];
+    var detentionCentresLayer = [];
+    var sitesLayer = [];
+    var eventsLayer = [];
+
     if (req.session.user){
+        missingList.forEach(function (e){
+            if(e.location.coordinates) missingLayer.push(e);
+        });
+        locationsList.forEach(function (e){
+            if(e.location.coordinates){
+                if (e.category == "Detention Centre") detentionCentresLayer.push(e);
+                if (e.category == "CheckPoint") checkpointsLayer.push(e);
+                if (e.category == "Barrack") barracksLayer.push(e);
+            }
+        });
+        sitesList.forEach(function (e){
+            if(e.location.coordinates) sitesLayer.push(e);
+        });
+        eventsList.forEach(function (e){
+            if(e.location.coordinates) eventsLayer.push(e);
+        });
         res.render('map', {
-            "user": req.session.user
+            "user": req.session.user,
+            "missing": missingLayer,
+            "checkpoints": checkpointsLayer,
+            "barracks": barracksLayer,
+            "centres": detentionCentresLayer,
+            "sites": sitesLayer,
+            "events": eventsLayer
         });  
     } else {
         res.render('index', { title: 'Login to Database'});
@@ -676,8 +732,8 @@ router.get('/files', function(req, res){
 router.get('/profile', function(req, res){
     if (req.session.user && db) {
             var collName = req.query.type;
+            if (req.session.user == "public") collName = collName+"_public"
             var collection = db.collection(collName);
-            
             collection.find({code:req.query.code}).toArray(function(err, result){
             if (err){
                 res.send(err);
@@ -685,6 +741,7 @@ router.get('/profile', function(req, res){
                 profile = result;
                 res.render(req.query.type+'profile', {    
                     "profile" : result,
+                    "user" : req.session.user
                     });    
             } else {
                 res.send('No data found');
@@ -700,11 +757,11 @@ router.get('/profile', function(req, res){
 router.get('/newprofile', function(req, res){
     if (req.session.user){  
         async.parallel([
-            getMissing,
-            getEvents,
-            getLocations,
+            getMissing.bind(null, req.session.user),
+            getEvents.bind(null, req.session.user),
+            getLocations.bind(null, req.session.user),
             getParties,
-            getSites,
+            getSites.bind(null, req.session.user),
             getContacts,
             getInterviews,
             getFiles
@@ -769,6 +826,7 @@ router.post('/addmissing', function(req, res){
                 res.render('newmissing', {
                     "_id":req.body._id,
                     "code":req.body.code,
+                    "public": req.body.public,
                     "name_ar_first" : req.body.name_ar_first,
                     "name_ar_middle" : req.body.name_ar_middle,
                     "name_ar_last" : req.body.name_ar_last,
@@ -877,6 +935,7 @@ router.post('/addmissing', function(req, res){
               /*if its an edit*/   
               if (req.body._id){  
                 var updateVal = {};                                                     
+                if (profile[0].public!= req.body.public) updateVal['public'] =  req.body.public
                 if (profile[0].name.ar.first!= req.body.name_ar_first) updateVal['name.ar.first'] =  req.body.name_ar_first
                 if (profile[0].name.ar.middle!= req.body.name_ar_middle) updateVal['name.ar.middle'] =  req.body.name_ar_middle
                 if (profile[0].name.ar.last!= req.body.name_ar_last) updateVal['name.ar.last'] =  req.body.name_ar_last
@@ -998,6 +1057,7 @@ router.post('/addmissing', function(req, res){
                 
                 var missingnew = {
                                 "code" : req.body.code,
+                                "public": req.body.public,
                                 "name" : {
                                     "ar" : {
                                         "first" : req.body.name_ar_first,
@@ -1143,6 +1203,7 @@ router.post('/addevent', function(req, res){
                 res.render('newevent', {
                     "_id":req.body._id,
                     "code":req.body.code,
+                    "public": req.body.public,
                     "type": req.body.type,
                     "name_ar" : req.body.name_ar,
                     "name_en" : req.body.name_en,
@@ -1205,7 +1266,8 @@ router.post('/addevent', function(req, res){
                  
               /*if its an edit*/   
               if (req.body._id){    
-                var updateVal = {};                                                     
+                var updateVal = {};
+                if (profile[0].public!= req.body.public) updateVal['public'] =  req.body.public                                                     
                 if (profile[0].name.ar!= req.body.name_ar) updateVal['name.ar'] =  req.body.name_ar
                 if (profile[0].name.en!= req.body.name_en) updateVal['name.en'] =  req.body.name_en
                 if (profile[0].type!= req.body.type) updateVal['type'] =  req.body.type  
@@ -1282,6 +1344,7 @@ router.post('/addevent', function(req, res){
              } else{
                 var eventnew = {
                                 "code" : req.body.code,
+                                "public": req.body.public,
                                 "type" : req.body.type,
                                 "name" : {
                                     "ar" : req.body.name_ar,
@@ -1373,6 +1436,7 @@ router.post('/addlocation', function(req, res){
                 res.render('newlocation', {
                     "_id":req.body._id,
                     "code":req.body.code,
+                    "public": req.body.public,
                     "category": req.body.category,
                     "name_ar" : req.body.name_ar,
                     "name_en" : req.body.name_en,
@@ -1438,7 +1502,7 @@ router.post('/addlocation', function(req, res){
                 var updateVal = {};                                                     
                 if (profile[0].name.ar!= req.body.name_ar) updateVal['name.ar'] =  req.body.name_ar
                 if (profile[0].name.en!= req.body.name_en) updateVal['name.en'] =  req.body.name_en
-                //if (profile[0].type!= req.body.category) updateVal['category'] =  req.body.category  
+                if (profile[0].public!= req.body.public) updateVal['public'] =  req.body.public  
                 if (profile[0].location.place!= req.body.location_place) updateVal['location.place'] =  req.body.location_place
                 if (profile[0].location.district!= req.body.location_district) updateVal['location.district'] =  req.body.location_district
                 if (profile[0].location.governorate!= req.body.location_governorate) updateVal['location.governorate'] =  req.body.location_governorate
@@ -1524,6 +1588,7 @@ router.post('/addlocation', function(req, res){
              } else{
                 var locationnew = {
                                 "code" : req.body.code,
+                                "public": req.body.public,
                                 "category" : req.body.category,
                                 "name" : {
                                     "ar" : req.body.name_ar,
@@ -1693,6 +1758,7 @@ router.post('/addsite', function(req, res){
                 var updateVal = {};                                                     
                 if (profile[0].name.ar!= req.body.name_ar) updateVal['name.ar'] =  req.body.name_ar
                 if (profile[0].name.en!= req.body.name_en) updateVal['name.en'] =  req.body.name_en
+                if (profile[0].public!= req.body.public) updateVal['public'] = req.body.public
                 if (profile[0].location.place!= req.body.location_place) updateVal['location.place'] =  req.body.location_place
                 if (profile[0].location.district!= req.body.location_district) updateVal['location.district'] =  req.body.location_district
                 if (profile[0].location.governorate!= req.body.location_governorate) updateVal['location.governorate'] =  req.body.location_governorate
@@ -1780,6 +1846,7 @@ router.post('/addsite', function(req, res){
              } else{
                 var sitenew = {
                                 "code" : req.body.code,
+                                "public": req.body.public,
                                 "type" : req.body.type,
                                 "name" : {
                                     "ar" : req.body.name_ar,

@@ -8,11 +8,93 @@ block content
     h3. 
       Mapping
      
-    iframe(width='800', height='571', src='/maps/qgis2web/index.html')
-   
-    div#sideProfile
+    div   
+     div#table
+       div#map
 
-  //-  script.
-    //- $('#sitesList').DataTable( {
-    //-     paging: true
-    //-     } );
+     div#sideProfile
+
+  script.
+        var missingArray = !{JSON.stringify(missing)};
+        var checkpointsArray = !{JSON.stringify(checkpoints)};
+        var barracksArray = !{JSON.stringify(barracks)};
+        var detentionCentresArray = !{JSON.stringify(centres)};
+        var sitesArray = !{JSON.stringify(sites)};
+        var eventsArray = !{JSON.stringify(events)};
+        
+        var markerArrayMissing = new Array(missingArray.length)
+        var markerArrayCheckpoints = new Array(checkpointsArray.length)
+        var markerArrayBarracks = new Array(barracksArray.length)
+        var markerArrayCentres = new Array(detentionCentresArray.length)
+        var markerArraySites = new Array(sitesArray.length)
+        var markerArrayEvents = new Array(eventsArray.length)
+
+        var missingIcon = L.icon({ iconUrl: '/stylesheets/images/man.png', iconSize: [25, 30]});
+        var checkpointIcon = L.icon({ iconUrl: '/stylesheets/images/checkpoint.png', iconSize: [25, 35]});
+        var barrackIcon = L.icon({ iconUrl: '/stylesheets/images/barracks.png', iconSize: [35, 35]});
+        var detentionCentreIcon = L.icon({ iconUrl: '/stylesheets/images/detention.png', iconSize: [30, 40]});
+        var sitesIcon = L.icon({ iconUrl: '/stylesheets/images/grave2.png', iconSize: [40, 30]});
+        var eventsIcon = L.icon({ iconUrl: '/stylesheets/images/explosion.png', iconSize: [30, 30]});
+        
+        for(var i = 0; i < eventsArray.length; i++){
+          e = eventsArray[i];
+          markerArrayEvents[i] = L.marker([e.location.coordinates[1], e.location.coordinates[0]], {icon: eventsIcon}).bindPopup("<a href='#' onclick=loadProfile('events','"+e.code+"');>"+e.name.ar+"</a>");
+        }
+        
+        for(var i = 0; i < sitesArray.length; i++){
+          e = sitesArray[i];
+          markerArraySites[i] = L.marker([e.location.coordinates[1], e.location.coordinates[0]], {icon: sitesIcon}).bindPopup("<a href='#' onclick=loadProfile('sites','"+e.code+"');>"+e.name.ar+"</a>");
+        }
+
+        for(var i = 0; i < detentionCentresArray.length; i++){
+          e = detentionCentresArray[i];
+          markerArrayCentres[i] = L.marker([e.location.coordinates[1], e.location.coordinates[0]], {icon: detentionCentreIcon}).bindPopup("<a href='#' onclick=loadProfile('locations','"+e.code+"');>"+e.name.ar+"</a>");
+        }
+        
+        for(var i = 0; i < barracksArray.length; i++){
+          e = barracksArray[i];
+          markerArrayBarracks[i] = L.marker([e.location.coordinates[1], e.location.coordinates[0]], {icon: barrackIcon}).bindPopup("<a href='#' onclick=loadProfile('locations','"+e.code+"');>"+e.name.ar+"</a>");
+        }
+
+        for(var i = 0; i < checkpointsArray.length; i++){
+          e = checkpointsArray[i];
+          markerArrayCheckpoints[i] = L.marker([e.location.coordinates[1], e.location.coordinates[0]], {icon: checkpointIcon}).bindPopup("<a href='#' onclick=loadProfile('locations','"+e.code+"');>"+e.name.ar+"</a>");
+        }
+
+        for(var i = 0; i < missingArray.length; i++){
+          e = missingArray[i];
+          markerArrayMissing[i] = L.marker([e.location.coordinates[1], e.location.coordinates[0]],{icon: missingIcon}).bindPopup("<a href='#' onclick=loadProfile('missing','"+e.code+"');>"+e.name.ar.first+" "+e.name.ar.middle+" "+e.name.ar.last+"</a>");
+        }
+
+        var missingLayer = L.layerGroup(markerArrayMissing);
+        var checkpointsLayer = L.layerGroup(markerArrayCheckpoints);
+        var barracksLayer = L.layerGroup(markerArrayBarracks);
+        var centresLayer = L.layerGroup(markerArrayCentres);
+        var sitesLayer = L.layerGroup(markerArraySites);
+        var eventsLayer = L.layerGroup(markerArrayEvents);
+        
+        var basemap = L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+             attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
+             maxZoom: 18,
+             id: 'mapbox.streets',
+             accessToken: 'pk.eyJ1IjoibWFsZW5hZ2UiLCJhIjoiY2o5c2FyczJwMG5xNzMzanp1Mm9nNWlvYyJ9.zyD3dgUl-JqNoSU3TeuL9g'
+        });
+        var map = L.map('map', {
+          center: [33.8699, 35.8274],
+          zoom: 9,
+          layers: [basemap, missingLayer, checkpointsLayer, barracksLayer, centresLayer, sitesLayer, eventsLayer]
+        });
+        var baseMaps = {
+          "Streets": basemap
+        };
+
+        var overlayMaps = {
+          "Missing": missingLayer,
+          "Checkpoints" : checkpointsLayer,
+          "Barracks" : barracksLayer,
+          "Detention Centres" : centresLayer,
+          "Sites": sitesLayer,
+          "Events": eventsLayer
+        };
+
+        L.control.layers(baseMaps, overlayMaps).addTo(map);

@@ -17,6 +17,7 @@ block content
     each value, i in editprofile
         - _id = value._id
         - code = value.code
+        - public = value.public
         - category = value.category
         - name_ar = value.name.ar
         - name_en = value.name.en
@@ -78,6 +79,17 @@ block content
      span &nbsp;
      br
      br
+
+    div#wrapper
+      span Public
+      br
+      select#public(name="public", value=public)
+        option(value="No")  No
+        if(public=="Yes")
+            option(value="Yes" selected="Selected")  Yes
+        else    
+            option(value="Yes")  Yes  
+    br
      
     div#wrapper 
      legend Location
