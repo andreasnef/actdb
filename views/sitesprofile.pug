@@ -25,7 +25,7 @@ block content
         span.title Place: 
         span #{value.location.place}, #{value.location.district}, #{value.location.governorate}
       - if (value.location.coordinates)
-       div#map
+       div
         <div class="mapouter"><div class="gmap_canvas"><iframe width="300" height="250" id="gmap_canvas" src="https://maps.google.com/maps?q=#{value.location.coordinates[1]}%2C%20#{value.location.coordinates[0]}&t=&z=14&ie=UTF8&iwloc=&output=embed" frameborder="0" scrolling="no" marginheight="0" marginwidth="0"></iframe>google maps <a href="http://www.pureblack.de/google-maps/">pure black</a></div><style>.mapouter{overflow:hidden;height:250px;width:300px;}.gmap_canvas {background:none!important;height:500px;width:600px;}</style></div>
        
        p 
@@ -180,4 +180,16 @@ block content
       
       div(class='btn menu')
        a(href="/newprofile/?type=site&code="+value.code) Edit
+      div(class='btn menu')
+            form#deleteEntry(name="deleteEntry", method="post", action="/deleteEntry" onclick="return confirm('This will delete the site permanently. Are you sure?')")
+                    input(type="hidden" name="code" value=value.code)
+                    input(type="hidden" name="collection" value="sites")
+                    input(type="hidden" name="related_events" value=value.related.events)
+                    input(type="hidden" name="related_sites" value=value.related.sites)
+                    input(type="hidden" name="related_locations" value=value.related.locations)
+                    input(type="hidden" name="related_mps" value=value.related.mps)
+                    input(type="hidden" name="related_interviews" value=value.interviews)
+                    input(type="hidden" name="related_contacts" value=value.contacts)
+                    
+                    button#submit_event(class="buttons", type="submit") Delete   
   

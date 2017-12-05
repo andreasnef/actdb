@@ -54,8 +54,8 @@ router.post('/login', function(req, res){
     var ip = req.connection.remoteAddress;
     var date = new Date().toISOString();
     var MongoClient = mongodb.MongoClient;
-    //var url = 'mongodb://'+user+':'+pass+'@localhost:27017/Act';
-    var url = 'mongodb://'+user+':'+pass+'@cluster0-shard-00-00-tey75.mongodb.net:27017,cluster0-shard-00-01-tey75.mongodb.net:27017,cluster0-shard-00-02-tey75.mongodb.net:27017/Act?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin';
+    var url = 'mongodb://'+user+':'+pass+'@localhost:27017/Act';
+    //var url = 'mongodb://'+user+':'+pass+'@cluster0-shard-00-00-tey75.mongodb.net:27017,cluster0-shard-00-01-tey75.mongodb.net:27017,cluster0-shard-00-02-tey75.mongodb.net:27017/Act?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin';
 
     //Validate Fields
     req.check('user', 'User cannot be empty').notEmpty();
@@ -353,7 +353,7 @@ function calcLastRecord(list, type){
 function updateRelated(collection, codeUpdate, codePush, field){
     if(db){
         var collection = db.collection(collection);
-        if(field == "mps"){
+        if(field == "mps" || field == "missing"){
             collection.update({code: codeUpdate}, {$push: {'related.mps': codePush}}, function(err, result){
                 if (err) console.log ("error :"+err);
             });    
@@ -395,7 +395,7 @@ function updateRelated(collection, codeUpdate, codePush, field){
 function removeRelated(collection, codeUpdate, codePush, field){
     if(db){
         var collection = db.collection(collection);
-        if(field == "mps"){
+        if(field == "mps" || field == "missing"){
             collection.update({code: codeUpdate}, {$pull: {'related.mps': codePush}}, function(err, result){
                 if (err) console.log ("error :"+err);
             });    
@@ -1165,6 +1165,8 @@ router.post('/addmissing', function(req, res){
                     }
                     if (relLocations) {
                         relLocations.forEach( function (e){
+                            console.log(e);
+                            console.log(req.body.code);
                             updateRelated("locations", e, req.body.code, "mps");
                         });
                     }
@@ -3192,6 +3194,59 @@ router.post('/uploadPicture',function(req,res){
             }); 
         }
     });
+});
+
+router.post('/deleteEntry', function (req,res){
+    var collection = db.collection(req.body.collection);
+    var code = req.body.code;
+
+    collection.deleteOne({code: req.body.code}, function(err, result){
+        if (err){
+           console.log ("error :"+err);
+        }else {
+            if((req.body.related_events).length){
+                var relEvents = (req.body.related_events).slice(1,-1);
+                relEvents.split(",").forEach(function (e){
+                    console.log(e.slice(1,-1));
+                    console.log(req.body.code);
+                    console.log(req.body.collection);
+                    removeRelated("events", e.slice(1,-1), req.body.code, req.body.collection);
+                })     
+            }
+            if((req.body.related_sites).length){
+                var relSites = (req.body.related_sites).slice(1,-1);
+                relSites.split(",").forEach(function (e){
+                 removeRelated("sites", e.slice(1,-1), req.body.code, req.body.collection);
+                })     
+            }
+            if((req.body.related_locations).length){
+             var relLocations = (req.body.related_locations).slice(1,-1);
+             relLocations.split(",").forEach(function (e){
+              removeRelated("locations", e.slice(1,-1), req.body.code, req.body.collection);
+             })     
+            }
+            if((req.body.related_mps).length){
+             var relMps = (req.body.related_mps).slice(1,-1);
+             relMps.split(",").forEach(function (e){
+              removeRelated("missing", e.slice(1,-1), req.body.code, req.body.collection);
+             })     
+            }
+            if((req.body.related_interviews).length){
+             var relInts = (req.body.related_interviews).slice(1,-1);
+             relInts.split(",").forEach(function (e){
+              removeRelated("interviews", e.slice(1,-1), req.body.file, req.body.collection);
+             })     
+            }
+            if((req.body.related_contacts).length){
+             var relContacts = (req.body.related_contacts).slice(1,-1);
+             relContacts.split(",").forEach(function (e){
+              removeRelated("contacts", e.slice(1,-1), req.body.code, req.body.collection);
+             })     
+            }  
+            res.redirect('/'+req.body.collection);   
+        }
+    }); 
+
 });
 
 router.post('/removeFile', function(req,res){

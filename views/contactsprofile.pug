@@ -150,3 +150,15 @@ block content
 
           div(class='btn menu')
             a(href="/newprofile/?type=contact&code="+value.code) Edit
+          div(class='btn menu')
+            form#deleteEntry(name="deleteEntry", method="post", action="/deleteEntry" onclick="return confirm('This will delete the contact permanently. Are you sure?')")
+                    input(type="hidden" name="code" value=value.code)
+                    input(type="hidden" name="collection" value="contacts")
+                    input(type="hidden" name="related_events" value=value.related.events)
+                    input(type="hidden" name="related_sites" value=value.related.sites)
+                    input(type="hidden" name="related_locations" value=value.related.locations)
+                    input(type="hidden" name="related_mps" value=value.related.mps)
+                    input(type="hidden" name="related_interviews" value=value.interviews)
+                    input(type="hidden" name="related_contacts" value=value.contacts)
+                    
+                    button#submit_event(class="buttons", type="submit") Delete   

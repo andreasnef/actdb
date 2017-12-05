@@ -38,7 +38,7 @@ block content
         
         for(var i = 0; i < eventsArray.length; i++){
           e = eventsArray[i];
-          markerArrayEvents[i] = L.marker([e.location.coordinates[1], e.location.coordinates[0]], {icon: eventsIcon}).bindPopup("<a href='#' onclick=loadProfile('events','"+e.code+"');>"+e.name.ar+"</a>");
+          markerArrayEvents[i] = L.marker([e.location.coordinates[1], e.location.coordinates[0]], {icon: eventsIcon}).bindPopup("<a href='#' onclick=loadProfile('events','"+e.code+"');>"+e.name.en+"</a>");
         }
         
         for(var i = 0; i < sitesArray.length; i++){
@@ -72,6 +72,8 @@ block content
         var centresLayer = L.layerGroup(markerArrayCentres);
         var sitesLayer = L.layerGroup(markerArraySites);
         var eventsLayer = L.layerGroup(markerArrayEvents);
+
+        var municipalitiesLayer = L.geoJson(municipalities, {onEachFeature: onEachFeature});
         
         var basemap = L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
              attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
@@ -82,7 +84,7 @@ block content
         var map = L.map('map', {
           center: [33.8699, 35.8274],
           zoom: 9,
-          layers: [basemap, missingLayer, checkpointsLayer, barracksLayer, centresLayer, sitesLayer, eventsLayer]
+          layers: [basemap, missingLayer]
         });
         var baseMaps = {
           "Streets": basemap
@@ -94,7 +96,89 @@ block content
           "Barracks" : barracksLayer,
           "Detention Centres" : centresLayer,
           "Sites": sitesLayer,
-          "Events": eventsLayer
+          "Events": eventsLayer,
+          "Municipalities": municipalitiesLayer
         };
 
+        //- //- functions
+        //- function style(feature) {
+        //-   return {
+        //-     //- fillColor: getColor(feature.properties.density),
+        //-     weight: 2,
+        //-     opacity: 1,
+        //-     color: 'white',
+        //-     dashArray: '3',
+        //-     fillOpacity: 0.7
+        //-   };
+        //- }
+
+        function highlightFeature(e) {
+          var layer = e.target;
+
+          //- layer.setStyle({
+          //-     weight: 5,
+          //-     color: '#666',
+          //-     dashArray: '',
+          //-     fillOpacity: 0.7
+          //- });
+
+          //- if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+          //-     layer.bringToFront();
+          //- }
+          info.update(layer.feature.properties);
+        }
+
+        function resetHighlight(e) {
+          //- geojson.resetStyle(e.target);
+          info.update();
+        }
+
+        //- function zoomToFeature(e) {
+        //-   map.fitBounds(e.target.getBounds());
+        //- }
+
+        var info = L.control();
+        info.onAdd = function (map) {
+          this._div = L.DomUtil.create('div', 'info'); // create a div with a class "info"
+          this.update();
+          return this._div;
+        };
+        //- // method that we will use to update the control based on feature properties passed
+        info.update = function (props) {
+          this._div.innerHTML = '<h4>Municipality: </h4>' +  (props ? '<b>' + props.name + '</b><br />' : 'Hover over a municipality');
+        };
+
+        info.addTo(map);
+
+        var legend = L.control({position: 'bottomright'});
+
+        legend.onAdd = function (map) {
+           var div = L.DomUtil.create('div', 'info legend')
+        //-     grades = [0, 10, 20, 50, 100, 200, 500, 1000],
+        //-     labels = [];
+
+          // loop through our density intervals and generate a label with a colored square for each interval
+          //- for (var i = 0; i < grades.length; i++) {
+          //-   div.innerHTML +=
+          //-     '<i style="background:'');
+          //- }
+
+           return div;
+         };
+        
+         legend.addTo(map);
+
+        function onEachFeature(feature, layer) {  
+          layer.on({
+            mouseover: highlightFeature,
+            mouseout: resetHighlight,
+            //- click: zoomToFeature
+          });
+        }
+
         L.control.layers(baseMaps, overlayMaps).addTo(map);
+
+
+
+
+
