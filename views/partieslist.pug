@@ -1,16 +1,16 @@
 extends layout
 
 block content
-  h3. 
+  include menu
+  br
+  div
+   div#table
+    div(class='btn menu')
+     a(href="/newprofile/?type=party&nextrecord="+nextrecord) Add a New Party
+    h3. 
      Parties
-  
-  a(href="/newprofile/?type=party&nextrecord="+nextrecord) Add a Party
-  br
-  a(href="/home") Go back to Index
-  
-  br
-  
-  table(id="partiesList")
+
+    table(id="partiesList")
       thead    
         tr#headtag
             th Code
@@ -22,14 +22,15 @@ block content
             each party, i in collList
                 tr
                     td
-                        a(href='/profile/?type=parties&code='+party.code) #{party.code}
+                        a(href='#' onclick="loadProfile('parties','"+party.code+"');") #{party.code}
                     td=party.name.en
                     td=party.name.ar
                     td=party.name.alt_name
                     
-  
+   div#sideProfile
+
   script.
     $('#partiesList').DataTable( {
-        paging: false
+        paging: true
         } );
   

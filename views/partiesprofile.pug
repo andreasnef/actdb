@@ -2,41 +2,71 @@ extends layout
 
 block content
  each value, i in profile
-  h3. 
-     #{value.name.ar}, #{value.name.en}
-     #{value.name.alt_name} (#{value.code})
+  div#profileTitle
+   h3. 
+     #{value.name.ar}
+
+  div
+     p
+      span.title Code: 
+      span #{value.code}
+     p
+      span.title Name in English: 
+      span #{value.name.en}
+     p
+      span.title Alternative Name: 
+      span #{value.name.alt_name}   
 
   div
       h4 Headquarters
     
-      p Place: #{value.hq.place}
-      p Description: #{value.hq.description}
-      p Coordinates: #{value.hq.coordinates}
+      p 
+       span.title Place: 
+       span #{value.hq.place}
+      p 
+       span.title Description: 
+       span #{value.hq.description}
+      div
+        <div class="mapouter"><div class="gmap_canvas"><iframe width="300" height="250" id="gmap_canvas" src="https://maps.google.com/maps?q=#{value.hq.coordinates[1]}%2C%20#{value.hq.coordinates[0]}&t=&z=14&ie=UTF8&iwloc=&output=embed" frameborder="0" scrolling="no" marginheight="0" marginwidth="0"></iframe>google maps <a href="http://www.pureblack.de/google-maps/">pure black</a></div><style>.mapouter{overflow:hidden;height:250px;width:300px;}.gmap_canvas {background:none!important;height:500px;width:600px;}</style></div>
+       
+      p
+       span.title Coordinates: 
+       span #{value.hq.coordinates}
       
-  div  
-      h4 Areas of Control:
-      
-      -for(var i = 1;i<6;i++){
-          p #{i}    
-          - var desc = 'value.control_areas.'+i+'.description'
-          p Description: #{desc}
-          //p #{value.control_areas.i.coordinates}
-          p #{desc}
-          //span #{value.control_areas.1.description}
-          //#{value.control_areas.1.description}
-          p Coordinates: #{'value.control_areas.'+i+'.coordinates'}
-          p Begining value.control_areas.i.beg
-          p End value.control_areas.i.end
-      -}
-      
+                //-   div  
+                //-       h4 Areas of Control:
+                    
+                //-       -for(var i = 1;i<6;i++){
+                //-           p #{i}    
+                //-           - var desc = 'value.control_areas.'+i+'.description'
+                //-           p Description: #{desc}
+                //-           //p #{value.control_areas.i.coordinates}
+                //-           p #{desc}
+                //-           //span #{value.control_areas.1.description}
+                //-           //#{value.control_areas.1.description}
+                //-           p Coordinates: #{'value.control_areas.'+i+'.coordinates'}
+                //-           p Begining value.control_areas.i.beg
+                //-           p End value.control_areas.i.end
+                //-       -}
+                    
 
-  div       
-      h4 Flag: 
-      #{value.flag.file}
-    
+                //- div       
+                //-   h4 Flag: 
+                //-   #{value.flag.file}
+                
       
-      br
-      a(href="/newprofile/?type=party&mpcode="+value.code) Edit
-      br
-      a(href="/parties") Go back to list of Parties
+      div(class='btn menu')
+       a(href="/newprofile/?type=party&code="+value.code) Edit
+      div(class='btn menu')
+            form#deleteEntry(name="deleteEntry", method="post", action="/deleteEntry" onclick="return confirm('This will delete the party permanently. Are you sure?')")
+                    input(type="hidden" name="code" value=value.code)
+                    input(type="hidden" name="collection" value="parties")
+                    //- input(type="hidden" name="related_events" value=value.related.events)
+                    //- input(type="hidden" name="related_sites" value=value.related.sites)
+                    //- input(type="hidden" name="related_locations" value=value.related.locations)
+                    //- input(type="hidden" name="related_mps" value=value.related.mps)
+                    //- input(type="hidden" name="related_interviews" value=value.interviews)
+                    //- input(type="hidden" name="related_contacts" value=value.contacts)
+                    
+                    button#submit_event(class="buttons", type="submit") Delete   
   
