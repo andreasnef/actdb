@@ -94,6 +94,10 @@ block content
        p 
         span.title Perpetrators: 
         span #{value.perpetrators}
+      - if (value.perpetrators_name)
+       p 
+        span.title Perpetrators' Names: 
+        span #{value.perpetrators_name}  
       
   div
       h4 Details: 

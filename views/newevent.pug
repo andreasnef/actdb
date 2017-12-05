@@ -37,6 +37,7 @@ block content
         - date_end_month = ("0" + (dateend.getMonth()+1)).slice(-2);
         - date_end_year = dateend.getFullYear();
         - groups_responsible = value.groups_responsible
+        - groups_responsible_name = value.groups_responsible_name
         - related_events = value.related.events
         - related_sites = value.related.sites
         - related_locations = value.related.locations
@@ -287,7 +288,10 @@ block content
               label #{party.name.en}
     br
     br
-    
+    input#input_groups_responsible_name(type="text", placeholder="Responsible's names", name="groups_responsible_name", value=groups_responsible_name)
+    br
+    br
+
     div#wrapper
      legend Related
      br

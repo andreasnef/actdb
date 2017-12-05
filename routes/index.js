@@ -877,6 +877,7 @@ router.post('/addmissing', function(req, res){
                     "last_seen_date_year" : req.body.last_seen_date_year,
                     "itinerary" : req.body.itinerary,
                     "perpetrators" : req.body.perpetrators,
+                    "perpetrators_name" : req.body.perpetrators_name,
                     "related_events" : req.body.related_events,
                     "related_sites" : req.body.related_sites,
                     "related_locations" : req.body.related_locations,
@@ -980,6 +981,7 @@ router.post('/addmissing', function(req, res){
                 if (profile[0].last_seen.date!= dateConverter(req.body.last_seen_date_day,req.body.last_seen_date_month, req.body.last_seen_date_year)) updateVal['last_seen.date'] =  dateConverter(req.body.last_seen_date_day,req.body.last_seen_date_month, req.body.last_seen_date_year)
                 if (profile[0].itinerary!= req.body.itinerary) updateVal['itinerary'] =  req.body.itinerary
                 if (profile[0].perpetrators!= req.body.perpetrators) updateVal['perpetrators'] =  req.body.perpetrators
+                if (profile[0].perpetrators_name!= req.body.perpetrators_name) updateVal['perpetrators_name'] =  req.body.perpetrators_name
                 if (profile[0].related.events!= relEvents)updateVal['related.events'] = relEvents
                 if (profile[0].related.sites!= relSites)updateVal['related.sites'] = relSites  
                 if (profile[0].related.locations!= relLocations) updateVal['related.locations'] = relLocations
@@ -1114,6 +1116,7 @@ router.post('/addmissing', function(req, res){
                                 },
                                 "itinerary" : req.body.itinerary,
                                 "perpetrators" : req.body.perpetrators,
+                                "perpetrators_name" : req.body.perpetrators_name,
                                 "related" : {
                                     "events" : relEvents,
                                     "sites" : relSites,
@@ -1223,6 +1226,7 @@ router.post('/addevent', function(req, res){
                     "date_end_month": req.body.date_end_month,
                     "date_end_year": req.body.date_end_year,
                     "groups_responsible" : req.body.groups_responsible,
+                    "groups_responsible_name" : req.body.groups_responsible_name,
                     "related_events" : req.body.related_events,
                     "related_sites" : req.body.related_sites,
                     "related_locations" : req.body.related_locations,
@@ -1286,6 +1290,7 @@ router.post('/addevent', function(req, res){
                 if (profile[0].dates.beg!= dateConverter(req.body.date_beg_day,req.body.date_beg_month, req.body.date_beg_year)) updateVal['dates.beg'] =  dateConverter(req.body.date_beg_day,req.body.date_beg_month, req.body.date_beg_year)
                 if (profile[0].dates.end!= dateConverter(req.body.date_end_day,req.body.date_end_month, req.body.date_end_year)) updateVal['dates.end'] =  dateConverter(req.body.date_end_day,req.body.date_end_month, req.body.date_end_year)
                 if (profile[0].groups_responsible!= groups)updateVal['groups_responsible'] = groups
+                if (profile[0].groups_responsible_name!=req.body.groups_responsible_name)updateVal['groups_responsible_name'] = req.body.groups_responsible_name
                 if (profile[0].related.events!= relEvents)updateVal['related.events'] = relEvents
                 if (profile[0].related.sites!= relSites)updateVal['related.sites'] = relSites  
                 if (profile[0].related.locations!= relLocations) updateVal['related.locations'] = relLocations
@@ -1372,6 +1377,7 @@ router.post('/addevent', function(req, res){
                                     "end" : dateConverter(req.body.date_end_day,req.body.date_end_month,req.body.date_end_year)
                                 },
                                 "groups_responsible" : groups,
+                                "groups_responsible_name" : req.body.groups_responsible_name,
                                 "related" : {
                                     "events" : relEvents,
                                     "sites" : relSites,
@@ -1456,6 +1462,7 @@ router.post('/addlocation', function(req, res){
                     "date_end_month": req.body.date_end_month,
                     "date_end_year": req.body.date_end_year,
                     "groups_responsible" : req.body.groups_responsible,
+                    "groups_responsible_name" : req.body.groups_responsible_name,
                     "related_events" : req.body.related_events,
                     "related_sites" : req.body.related_sites,
                     "related_locations" : req.body.related_locations,
@@ -1518,6 +1525,7 @@ router.post('/addlocation', function(req, res){
                 if (profile[0].dates.beg!= dateConverter(req.body.date_beg_day,req.body.date_beg_month, req.body.date_beg_year)) updateVal['dates.beg'] =  dateConverter(req.body.date_beg_day,req.body.date_beg_month, req.body.date_beg_year)
                 if (profile[0].dates.end!= dateConverter(req.body.date_end_day,req.body.date_end_month, req.body.date_end_year)) updateVal['dates.end'] =  dateConverter(req.body.date_end_day,req.body.date_end_month, req.body.date_end_year)
                 if (profile[0].groups_responsible!= groups)updateVal['groups_responsible'] = groups
+                if (profile[0].groups_responsible_name!= req.body.groups_responsible_name)updateVal['groups_responsible_name'] = req.body.groups_responsible_name
                 if (profile[0].related.events!= relEvents)updateVal['related.events'] = relEvents
                 if (profile[0].related.sites!= relSites)updateVal['related.sites'] = relSites  
                 if (profile[0].related.locations!= relLocations) updateVal['related.locations'] = relLocations
@@ -1616,6 +1624,7 @@ router.post('/addlocation', function(req, res){
                                     "end" : dateConverter(req.body.date_end_day,req.body.date_end_month,req.body.date_end_year)
                                 },
                                 "groups_responsible" : groups,
+                                "groups_responsible_name" : req.body.groups_responsible_name,
                                 "related" : {
                                     "events" : relEvents,
                                     "sites" : relSites,
@@ -1699,6 +1708,7 @@ router.post('/addsite', function(req, res){
                     "date_end_month": req.body.date_end_month,
                     "date_end_year": req.body.date_end_year,
                     "perpetrators" : req.body.perpetrators,
+                    "perpetrators_name" : req.body.perpetrators_name,
                     "number_expected" : req.body.number_expected,
                     "risk_index" : req.body.risk_index,
                     "risk_reasons" : req.body.risk_reasons,
@@ -1779,6 +1789,7 @@ router.post('/addsite', function(req, res){
                 if (profile[0].related.locations!= relLocations) updateVal['related.locations'] = relLocations
                 if (profile[0].related.mps!= relMPs) updateVal['related.mps'] = relMPs
                 if (profile[0].perpetrators!= req.body.perpetrators) updateVal['perpetrators'] =  req.body.perpetrators
+                if (profile[0].perpetrators_name!= req.body.perpetrators_name) updateVal['perpetrators_name'] = req.body.perpetrators_name
                 if (profile[0].number_expected!= req.body.number_expected) updateVal['number_expected'] =  req.body.number_expected
                 if (profile[0].risk.index!= req.body.risk_index) updateVal['risk.index'] =  req.body.risk_index
                 if (profile[0].risk.reasons!= req.body.risk_reasons) updateVal['risk.reasons'] =  req.body.risk_reasons  
@@ -1881,6 +1892,7 @@ router.post('/addsite', function(req, res){
                                     "mps" : relMPs
                                 },
                                 "perpetrators" : req.body.perpetrators,
+                                "perpetrators_name" : req.body.perpetrators_name,
                                 "number_expected" : req.body.number_expected,
                                 "risk" : {
 		                                  "index" : req.body.risk_index,

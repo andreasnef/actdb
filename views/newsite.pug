@@ -37,6 +37,7 @@ block content
         - date_end_month = ("0" + (dateend.getMonth()+1)).slice(-2);
         - date_end_year = dateend.getFullYear();
         - perpetrators = value.perpetrators
+        - perpetrators_name = value.perpetrators_name
         - number_expected = value.number_expected
         - risk_index = value.risk.index
         - risk_reasons = value.risk.reasons
@@ -289,6 +290,7 @@ block content
         else
             option(value=se) #{typ}
      br
+     br
      span Perpetrators
      br
      select#input_groups_responsible(name="perpetrators", value=perpetrators)
@@ -299,8 +301,11 @@ block content
                 option(value=party.name.en selected="selected") #{party.name.en}
            else
                 option(value=party.name.en) #{party.name.en}
-    br 
-    br
+     br 
+     br
+     input#input_perpetrators_name(type="text", placeholder="Perpetrators' Names", name="perpetrators_name", value=perpetrators_name)
+     br
+     br
     div#wrapper
      legend Related
      br

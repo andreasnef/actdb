@@ -90,6 +90,11 @@ block content
        p 
         span.title Groups responsible: 
         span #{value.groups_responsible}
+
+      - if (value.groups_responsible_name)
+       p 
+        span.title Responsibles' Names: 
+        span #{value.groups_responsible_name}  
       
       
   div#wrapper       

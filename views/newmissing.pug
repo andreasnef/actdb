@@ -79,6 +79,7 @@ block content
             - last_seen_date_year = lastseendate.getFullYear();
         - itinerary = value.itinerary
         - perpetrators = value.perpetrators
+        - perpetrators_name = value.perpetrators_name
         - related_events = value.related.events
         - related_sites = value.related.sites
         - related_locations = value.related.locations
@@ -687,6 +688,9 @@ block content
               input.checkbox-input(type='checkbox', name="perpetrators", value=party.name.en)
               label #{party.name.en}
           
+     br
+     input#input_perpetrators_name(type="text", placeholder="Perpetrators' Names", name="perpetrators_name", value=perpetrators_name)
+     br
      br      
     
      //span Related Events 
