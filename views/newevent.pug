@@ -44,6 +44,37 @@ block content
         - related_mps = value.related.mps
         - notes = value.notes
         - sources = value.sources
+        each source, i in value.sources  
+          if(i == 0)
+            - source_type_1 = source.type
+            - source_interview_1 = source.interview
+            - source_subtype_1 = source.subtype
+            - source_name_1 = source.name
+            - source_details_1 = source.details
+          if(i == 1)
+            - source_type_2 = source.type
+            - source_interview_2 = source.interview
+            - source_subtype_2 = source.subtype
+            - source_name_2 = source.name
+            - source_details_2 = source.details
+          if(i == 2)
+            - source_type_3 = source.type
+            - source_interview_3 = source.interview
+            - source_subtype_3 = source.subtype
+            - source_name_3 = source.name
+            - source_details_3 = source.details
+          if(i == 3)
+            - source_type_4 = source.type
+            - source_interview_4 = source.interview
+            - source_subtype_4 = source.subtype
+            - source_name_4 = source.name
+            - source_details_4 = source.details
+          if(i == 4)
+            - source_type_5 = source.type
+            - source_interview_5 = source.interview
+            - source_subtype_5 = source.subtype
+            - source_name_5 = source.name
+            - source_details_5 = source.details
         - contacts = value.contacts
         - reports = value.reports
         
@@ -286,9 +317,9 @@ block content
              else
               input.checkbox-input(type='checkbox', name="groups_responsible", value=party.name.en)
               label #{party.name.en}
-    br
-    br
-    input#input_groups_responsible_name(type="text", placeholder="Responsible's names", name="groups_responsible_name", value=groups_responsible_name)
+     br
+     br
+     input#input_groups_responsible_name(type="text", placeholder="Responsible's names", name="groups_responsible_name", value=groups_responsible_name)
     br
     br
 
@@ -405,9 +436,238 @@ block content
      br
      br
      
-     input#input_sources(type="text", placeholder="Sources", name="sources", value=sources)
+     span Sources
+     br
+     select#sources_1(name="source_type_1", value=source_type_1)
+        - var types = ["Interview","Open Source","Closed Source"];
+        option(value="") Select
+        each type in types
+          if(source_type_1 == type)
+            option(value=type selected="selected") #{type}
+          else
+            option(value=type) #{type}  
+     
+     div#interviewsDiv_1(class='dropMenu')
+        if(interviewslist)
+          table(id="interviewsList")
+            thead    
+              tr#headtag
+                th Select
+                th Code
+                th Interviewee
+                th Date
+
+            tbody    
+             each interview, i in interviewslist
+              tr
+                td
+                  if (source_interview_1 && source_interview_1.includes(interview.code))
+                    input.checkbox-input(type='checkbox', name="source_interview_1", value=interview.code, checked)
+                  else  
+                    input.checkbox-input(type='checkbox', name="source_interview_1", value=interview.code)
+                td= interview.code
+                td= interview.interviewee
+                td= interview.date
+
+     div#sourcesDiv_1
+        input#input_subtype_source(type="text", placeholder="Type of Source", name="source_subtype_1", value=source_subtype_1)
+        br
+        input#input_name_source(type="text", placeholder="Name of Source", name="source_name_1", value=source_name_1)
+        br
+        textarea#input_details_source(type="text", placeholder="Details", cols="120" rows="10", name="source_details_1", value=source_details_1)
+            | #{source_details_1}
+
      br
      br
+     //div(class='btn menu')
+        //a(href="#" onclick="return toggle_visibility('source2');") Add another source 
+     //br
+     //br         
+
+        //-----------------------
+     div#source2
+        select#sources_2(name="source_type_2", value=source_type_2)
+            - var types = ["Interview","Open Source","Closed Source"];
+            option(value="") Select
+            each type in types
+             if(source_type_2 == type)
+                option(value=type selected="selected") #{type}
+             else
+                option(value=type) #{type}  
+        
+        div#interviewsDiv_2
+            if (interviewslist)
+             table(id="interviewsList2")
+              thead    
+                tr#headtag
+                    th Select
+                    th Code
+                    th Interviewee
+                    th Date
+
+              tbody    
+                each interview, i in interviewslist
+                  tr
+                   td
+                    if (source_interview_2 && source_interview_2.includes(interview.code))
+                      input.checkbox-input(type='checkbox', name="source_interview_2", value=interview.code, checked)
+                    else  
+                      input.checkbox-input(type='checkbox', name="source_interview_2", value=interview.code)
+                   td= interview.code
+                   td= interview.interviewee
+                   td= interview.date
+
+        div#sourcesDiv_2
+            input#input_subtype_source(type="text", placeholder="Type of Source", name="source_subtype_2", value=source_subtype_2)
+            br
+            input#input_name_source(type="text", placeholder="Name of Source", name="source_name_2", value=source_name_2)
+            br
+            textarea#input_details_source(type="text", placeholder="Details", cols="120" rows="10", name="source_details_2", value=source_details_2)
+                | #{source_details_2}
+
+        br
+        br
+        //div(class='btn menu')
+            //a(href="#" onclick="return toggle_visibility('source3');") Add another source
+        //br 
+        //br  
+        //-----------------------
+     div#source3
+        select#sources_3(name="source_type_3", value=source_type_3)
+            - var types = ["Interview","Open Source","Closed Source"];
+            option(value="") Select
+            each type in types
+             if(source_type_3 == type)
+                option(value=type selected="selected") #{type}
+             else
+                option(value=type) #{type}  
+        
+        div#interviewsDiv_3
+            if (interviewslist)
+            table(id="interviewsList3")
+                thead    
+                 tr#headtag
+                    th Select
+                    th Code
+                    th Interviewee
+                    th Date
+
+                tbody    
+                 each interview, i in interviewslist
+                   tr
+                    td
+                     if (source_interview_3 && source_interview_3.includes(interview.code))
+                      input.checkbox-input(type='checkbox', name="source_interview_3", value=interview.code, checked)
+                     else  
+                      input.checkbox-input(type='checkbox', name="source_interview_3", value=interview.code)
+                    td= interview.code
+                    td= interview.interviewee
+                    td= interview.date
+
+        div#sourcesDiv_3
+            input#input_subtype_source(type="text", placeholder="Type of Source", name="source_subtype_3", value=source_subtype_3)
+            br
+            input#input_name_source(type="text", placeholder="Name of Source", name="source_name_3", value=source_name_3)
+            br
+            textarea#input_details_source(type="text", placeholder="Details", cols="120" rows="10", name="source_details_3", value=source_details_3)
+                | #{source_details_3}
+
+        br
+        br
+        //div(class='btn menu')
+            //a(href="#" onclick="return toggle_visibility('source4');") Add another source
+        //br 
+        //br
+        //-----------------------
+     div#source4
+        select#sources_4(name="source_type_4", value=source_type_4)
+            - var types = ["Interview","Open Source","Closed Source"];
+            option(value="") Select
+            each type in types
+             if(source_type_4 == type)
+                option(value=type selected="selected") #{type}
+             else
+                option(value=type) #{type}  
+        
+        div#interviewsDiv_4
+            if (interviewslist)
+            table(id="interviewsList4")
+              thead    
+                tr#headtag
+                    th Select
+                    th Code
+                    th Interviewee
+                    th Date
+
+              tbody    
+                each interview, i in interviewslist
+                 tr
+                   td
+                    if (source_interview_4 && source_interview_4.includes(interview.code))
+                        input.checkbox-input(type='checkbox', name="source_interview_4", value=interview.code, checked)
+                    else  
+                        input.checkbox-input(type='checkbox', name="source_interview_4", value=interview.code)
+                   td= interview.code
+                   td= interview.interviewee
+                   td= interview.date
+
+        div#sourcesDiv_4
+            input#input_subtype_source(type="text", placeholder="Type of Source", name="source_subtype_4", value=source_subtype_4)
+            br
+            input#input_name_source(type="text", placeholder="Name of Source", name="source_name_4", value=source_name_4)
+            br
+            textarea#input_details_source(type="text", placeholder="Details", cols="120" rows="10", name="source_details_4", value=source_details_4)
+                | #{source_details_4}
+
+        br
+        br
+        //div(class='btn menu')
+            //a(href="#" onclick="return toggle_visibility('source5');") Add another source
+        //br 
+        //br
+        //-----------------------
+     div#source5
+        select#sources_5(name="source_type_5", value=source_type_5)
+            - var types = ["Interview","Open Source","Closed Source"];
+            option(value="") Select
+            each type in types
+             if(source_type_5 == type)
+                option(value=type selected="selected") #{type}
+             else
+                option(value=type) #{type}  
+        
+        div#interviewsDiv_5
+            if (interviewslist)
+            table(id="interviewsList5")
+              thead    
+                tr#headtag
+                    th Select
+                    th Code
+                    th Interviewee
+                    th Date
+
+              tbody    
+                each interview, i in interviewslist
+                 tr
+                  td
+                    if (source_interview_5 && source_interview_5.includes(interview.code))
+                        input.checkbox-input(type='checkbox', name="source_interview_5", value=interview.code, checked)
+                    else  
+                        input.checkbox-input(type='checkbox', name="source_interview_5", value=interview.code)
+                  td= interview.code
+                  td= interview.interviewee
+                  td= interview.date
+
+        div#sourcesDiv_5
+            input#input_subtype_source(type="text", placeholder="Type of Source", name="source_subtype_5", value=source_subtype_5)
+            br
+            input#input_name_source(type="text", placeholder="Name of Source", name="source_name_5", value=source_name_5)
+            br
+            textarea#input_details_source(type="text", placeholder="Details", cols="120" rows="10", name="source_details_5", value=source_details_5)
+                | #{source_details_5}
+
+        br 
+        br  
      
     div#wrapper 
      legend Contact
@@ -459,4 +719,95 @@ block content
         $('#contactsList').DataTable( {
             paging: false
         } );
+        $('#interviewsList').DataTable( {
+                paging: false
+        } );
+        $('#interviewsList2').DataTable( {
+                    paging: false
+        } );
+        $('#interviewsList3').DataTable( {
+                    paging: false
+        } );
+        $('#interviewsList4').DataTable( {
+                    paging: false
+        } );
+        $('#interviewsList5').DataTable( {
+                    paging: false
+        } );
+
+        var elem = document.getElementById("sources_1");
+        var interviewsDiv = document.getElementById("interviewsDiv_1");
+        var sourcesDiv = document.getElementById("sourcesDiv_1");
+        elem.onchange = function(){
+            if(this.value=='Interview'){
+                interviewsDiv.style.display = "block";
+                sourcesDiv.style.display = "none";
+            } else {
+                sourcesDiv.style.display = (this.value == "") ? "none":"block";
+                interviewsDiv.style.display = "none";
+            }   
+        };
+
+        var elem2 = document.getElementById("sources_2");
+        elem2.onchange = function(){
+            var interviewsDiv = document.getElementById("interviewsDiv_2");
+            var sourcesDiv = document.getElementById("sourcesDiv_2");
+            if(this.value=='Interview'){
+                interviewsDiv.style.display = (this.value == "") ? "none":"block";
+                sourcesDiv.style.display = "none";
+            } else {
+                sourcesDiv.style.display = (this.value == "") ? "none":"block";
+                interviewsDiv.style.display = "none";
+            }   
+        };
+        var elem3 = document.getElementById("sources_3");
+        elem3.onchange = function(){
+            var interviewsDiv = document.getElementById("interviewsDiv_3");
+            var sourcesDiv = document.getElementById("sourcesDiv_3");
+            if(this.value=='Interview'){
+                interviewsDiv.style.display = (this.value == "") ? "none":"block";
+                sourcesDiv.style.display = "none";
+            } else {
+                sourcesDiv.style.display = (this.value == "") ? "none":"block";
+                interviewsDiv.style.display = "none";
+            }   
+        };
+        var elem4 = document.getElementById("sources_4");
+        elem4.onchange = function(){
+            var interviewsDiv = document.getElementById("interviewsDiv_4");
+            var sourcesDiv = document.getElementById("sourcesDiv_4");
+            if(this.value=='Interview'){
+                interviewsDiv.style.display = (this.value == "") ? "none":"block";
+                sourcesDiv.style.display = "none";
+            } else {
+                sourcesDiv.style.display = (this.value == "") ? "none":"block";
+                interviewsDiv.style.display = "none";
+            }   
+        };
+        var elem5 = document.getElementById("sources_5");
+        elem5.onchange = function(){
+            var interviewsDiv = document.getElementById("interviewsDiv_5");
+            var sourcesDiv = document.getElementById("sourcesDiv_5");
+            if(this.value=='Interview'){
+                interviewsDiv.style.display = (this.value == "") ? "none":"block";
+                sourcesDiv.style.display = "none";
+            } else {
+                sourcesDiv.style.display = (this.value == "") ? "none":"block";
+                interviewsDiv.style.display = "none";
+            }   
+        };  
+
+        window.onload=function() {
+        //get the divs to show/hide
+            if(elem.value=='Interview')interviewsDiv_1.style.display = "block";
+            if(elem.value=='Open Source' ||elem.value=='Closed Source') sourcesDiv_1.style.display = "block";
+            if(elem2.value=='Interview') interviewsDiv_2.style.display = "block";
+            if(elem2.value=='Open Source' ||elem2.value=='Closed Source') sourcesDiv_2.style.display = "block";
+            if(elem3.value=='Interview') interviewsDiv_3.style.display = "block";
+            if(elem3.value=='Open Source' || elem3.value=='Closed Source') sourcesDiv_3.style.display = "block";
+            if(elem4.value=='Interview') interviewsDiv_4.style.display = "block";
+            if(elem4.value=='Open Source' ||elem4.value=='Closed Source') sourcesDiv_4.style.display = "block";
+            if(elem5.value=='Interview') interviewsDiv_5.style.display = "block";
+            if(elem5.value=='Open Source' ||elem5.value=='Closed Source') sourcesDiv_5.style.display = "block";
+        } 
     

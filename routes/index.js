@@ -884,7 +884,31 @@ router.post('/addmissing', function(req, res){
                     "related_mps" : req.body.related_mps,
                     "fate" : req.body.fate,
                     "notes" : req.body.notes,
-                    "sources" : req.body.sources,
+                    "source_type_1" : req.body.source_type_1,
+                    "source_interview_1" : req.body.source_interview_1,
+                    "source_subtype_1" : req.body.source_subtype_1,
+                    "source_name_1" : req.body.source_name_1,
+                    "source_details_1" : req.body.source_details_1,
+                    "source_type_2" : req.body.source_type_2,
+                    "source_interview_2" : req.body.source_interview_2,
+                    "source_subtype_2" : req.body.source_subtype_2,
+                    "source_name_2" : req.body.source_name_2,
+                    "source_details_2" : req.body.source_details_2,
+                    "source_type_3" : req.body.source_type_3,
+                    "source_interview_3" : req.body.source_interview_3,
+                    "source_subtype_3" : req.body.source_subtype_3,
+                    "source_name_3" : req.body.source_name_3,
+                    "source_details_3" : req.body.source_details_3,
+                    "source_type_4" : req.body.source_type_4,
+                    "source_interview_4" : req.body.source_interview_4,
+                    "source_subtype_4" : req.body.source_subtype_4,
+                    "source_name_4" : req.body.source_name_4,
+                    "source_details_4" : req.body.source_details_4,
+                    "source_type_5" : req.body.source_type_5,
+                    "source_interview_5" : req.body.source_interview_5,
+                    "source_subtype_5" : req.body.source_subtype_5,
+                    "source_name_5" : req.body.source_name_5,
+                    "source_details_5" : req.body.source_details_5,
                     "picture" : req.body.picture,
                     "lists_syria_2000" : req.body.lists_syria_2000,
                     "lists_syria_2002" : req.body.lists_syria_2002,
@@ -988,7 +1012,38 @@ router.post('/addmissing', function(req, res){
                 if (profile[0].related.mps!= relMPs) updateVal['related.mps'] = relMPs
                 if (profile[0].fate!= req.body.fate) updateVal['fate'] =  req.body.fate
                 if (profile[0].notes!= req.body.notes) updateVal['notes'] =  req.body.notes
-                if (profile[0].sources!= req.body.sources) updateVal['sources'] =  [req.body.sources]
+                var sourcesBody = [{
+                    "type": req.body.source_type_1,
+                    "interview": req.body.source_interview_1,
+                    "subtype" : req.body.source_subtype_1,
+                    "name" : req.body.source_name_1,
+                    "details" : req.body.source_details_1
+                },{
+                    "type": req.body.source_type_2,
+                    "interview": req.body.source_interview_2,
+                    "subtype" : req.body.source_subtype_2,
+                    "name" : req.body.source_name_2,
+                    "details" : req.body.source_details_2
+                },{
+                    "type": req.body.source_type_3,
+                    "interview": req.body.source_interview_3,
+                    "subtype" : req.body.source_subtype_3,
+                    "name" : req.body.source_name_3,
+                    "details" : req.body.source_details_3
+                },{
+                    "type": req.body.source_type_4,
+                    "interview": req.body.source_interview_4,
+                    "subtype" : req.body.source_subtype_4,
+                    "name" : req.body.source_name_4,
+                    "details" : req.body.source_details_4
+                },{
+                    "type": req.body.source_type_5,
+                    "interview": req.body.source_interview_5,
+                    "subtype" : req.body.source_subtype_5,
+                    "name" : req.body.source_name_5,
+                    "details" : req.body.source_details_5
+                }]
+                if (profile[0].sources!= sourcesBody) updateVal['sources'] =  sourcesBody
                 if (profile[0].picture!= req.body.picture) updateVal['picture'] =  req.body.picture
                 if (profile[0].lists.syria_2000!= req.body.lists_syria_2000) updateVal['lists.syria_2000'] =  req.body.lists_syria_2000
                 if (profile[0].lists.syria_2002!= req.body.lists_syria_2002) updateVal['lists.syria_2002'] =  req.body.lists_syria_2002
@@ -1125,7 +1180,37 @@ router.post('/addmissing', function(req, res){
                                 },
                                 "fate" : req.body.fate,
                                 "notes" : req.body.notes,
-                                "sources" : req.body.sources,
+                                "sources" : [{
+                                    "type": req.body.source_type_1,
+                                    "interview": req.body.source_interview_1,
+                                    "subtype" : req.body.source_subtype_1,
+                                    "name" : req.body.source_name_1,
+                                    "details" : req.body.source_details_1
+                                },{
+                                    "type": req.body.source_type_2,
+                                    "interview": req.body.source_interview_2,
+                                    "subtype" : req.body.source_subtype_2,
+                                    "name" : req.body.source_name_2,
+                                    "details" : req.body.source_details_2
+                                },{
+                                    "type": req.body.source_type_3,
+                                    "interview": req.body.source_interview_3,
+                                    "subtype" : req.body.source_subtype_3,
+                                    "name" : req.body.source_name_3,
+                                    "details" : req.body.source_details_3
+                                },{
+                                    "type": req.body.source_type_4,
+                                    "interview": req.body.source_interview_4,
+                                    "subtype" : req.body.source_subtype_4,
+                                    "name" : req.body.source_name_4,
+                                    "details" : req.body.source_details_4
+                                },{
+                                    "type": req.body.source_type_5,
+                                    "interview": req.body.source_interview_5,
+                                    "subtype" : req.body.source_subtype_5,
+                                    "name" : req.body.source_name_5,
+                                    "details" : req.body.source_details_5
+                                }],
                                 "picture" : req.body.picture,
                                 "files" : [],
                                 "lists" : {
@@ -1232,7 +1317,31 @@ router.post('/addevent', function(req, res){
                     "related_locations" : req.body.related_locations,
                     "related_mps" : req.body.related_mps,
                     "notes" : req.body.notes,
-                    "sources" : req.body.sources,
+                    "source_type_1" : req.body.source_type_1,
+                    "source_interview_1" : req.body.source_interview_1,
+                    "source_subtype_1" : req.body.source_subtype_1,
+                    "source_name_1" : req.body.source_name_1,
+                    "source_details_1" : req.body.source_details_1,
+                    "source_type_2" : req.body.source_type_2,
+                    "source_interview_2" : req.body.source_interview_2,
+                    "source_subtype_2" : req.body.source_subtype_2,
+                    "source_name_2" : req.body.source_name_2,
+                    "source_details_2" : req.body.source_details_2,
+                    "source_type_3" : req.body.source_type_3,
+                    "source_interview_3" : req.body.source_interview_3,
+                    "source_subtype_3" : req.body.source_subtype_3,
+                    "source_name_3" : req.body.source_name_3,
+                    "source_details_3" : req.body.source_details_3,
+                    "source_type_4" : req.body.source_type_4,
+                    "source_interview_4" : req.body.source_interview_4,
+                    "source_subtype_4" : req.body.source_subtype_4,
+                    "source_name_4" : req.body.source_name_4,
+                    "source_details_4" : req.body.source_details_4,
+                    "source_type_5" : req.body.source_type_5,
+                    "source_interview_5" : req.body.source_interview_5,
+                    "source_subtype_5" : req.body.source_subtype_5,
+                    "source_name_5" : req.body.source_name_5,
+                    "source_details_5" : req.body.source_details_5,
                     "contacts" : req.body.contacts,
                     
                     parties : partiesList, mps: missingList, locations: locationsList, events: eventsList, sites: sitesList,
@@ -1296,7 +1405,38 @@ router.post('/addevent', function(req, res){
                 if (profile[0].related.locations!= relLocations) updateVal['related.locations'] = relLocations
                 if (profile[0].related.mps!= relMPs) updateVal['related.mps'] = relMPs
                 if (profile[0].notes!= req.body.notes) updateVal['notes'] =  req.body.notes
-                if (profile[0].sources!= req.body.sources) updateVal['sources'] =  [req.body.sources]
+                var sourcesBody = [{
+                    "type": req.body.source_type_1,
+                    "interview": req.body.source_interview_1,
+                    "subtype" : req.body.source_subtype_1,
+                    "name" : req.body.source_name_1,
+                    "details" : req.body.source_details_1
+                },{
+                    "type": req.body.source_type_2,
+                    "interview": req.body.source_interview_2,
+                    "subtype" : req.body.source_subtype_2,
+                    "name" : req.body.source_name_2,
+                    "details" : req.body.source_details_2
+                },{
+                    "type": req.body.source_type_3,
+                    "interview": req.body.source_interview_3,
+                    "subtype" : req.body.source_subtype_3,
+                    "name" : req.body.source_name_3,
+                    "details" : req.body.source_details_3
+                },{
+                    "type": req.body.source_type_4,
+                    "interview": req.body.source_interview_4,
+                    "subtype" : req.body.source_subtype_4,
+                    "name" : req.body.source_name_4,
+                    "details" : req.body.source_details_4
+                },{
+                    "type": req.body.source_type_5,
+                    "interview": req.body.source_interview_5,
+                    "subtype" : req.body.source_subtype_5,
+                    "name" : req.body.source_name_5,
+                    "details" : req.body.source_details_5
+                }]
+                if (profile[0].sources!= sourcesBody) updateVal['sources'] =  sourcesBody
                 if (profile[0].contacts!=contacts) updateVal['contacts'] = contacts
 
                 collection.update({_id: profile[0]._id}, {$set: updateVal}, function(err, result){
@@ -1385,7 +1525,37 @@ router.post('/addevent', function(req, res){
                                     "mps" : relMPs
                                 },
                                 "notes" : req.body.notes,
-                                "sources" : req.body.sources,
+                                "sources" : [{
+                                    "type": req.body.source_type_1,
+                                    "interview": req.body.source_interview_1,
+                                    "subtype" : req.body.source_subtype_1,
+                                    "name" : req.body.source_name_1,
+                                    "details" : req.body.source_details_1
+                                },{
+                                    "type": req.body.source_type_2,
+                                    "interview": req.body.source_interview_2,
+                                    "subtype" : req.body.source_subtype_2,
+                                    "name" : req.body.source_name_2,
+                                    "details" : req.body.source_details_2
+                                },{
+                                    "type": req.body.source_type_3,
+                                    "interview": req.body.source_interview_3,
+                                    "subtype" : req.body.source_subtype_3,
+                                    "name" : req.body.source_name_3,
+                                    "details" : req.body.source_details_3
+                                },{
+                                    "type": req.body.source_type_4,
+                                    "interview": req.body.source_interview_4,
+                                    "subtype" : req.body.source_subtype_4,
+                                    "name" : req.body.source_name_4,
+                                    "details" : req.body.source_details_4
+                                },{
+                                    "type": req.body.source_type_5,
+                                    "interview": req.body.source_interview_5,
+                                    "subtype" : req.body.source_subtype_5,
+                                    "name" : req.body.source_name_5,
+                                    "details" : req.body.source_details_5
+                                }],
                                 "contacts" : contacts,    
                                 "files" : []
                              };
@@ -1468,7 +1638,31 @@ router.post('/addlocation', function(req, res){
                     "related_locations" : req.body.related_locations,
                     "related_mps" : req.body.related_mps,
                     "notes" : req.body.notes,
-                    "sources" : req.body.sources,
+                    "source_type_1" : req.body.source_type_1,
+                    "source_interview_1" : req.body.source_interview_1,
+                    "source_subtype_1" : req.body.source_subtype_1,
+                    "source_name_1" : req.body.source_name_1,
+                    "source_details_1" : req.body.source_details_1,
+                    "source_type_2" : req.body.source_type_2,
+                    "source_interview_2" : req.body.source_interview_2,
+                    "source_subtype_2" : req.body.source_subtype_2,
+                    "source_name_2" : req.body.source_name_2,
+                    "source_details_2" : req.body.source_details_2,
+                    "source_type_3" : req.body.source_type_3,
+                    "source_interview_3" : req.body.source_interview_3,
+                    "source_subtype_3" : req.body.source_subtype_3,
+                    "source_name_3" : req.body.source_name_3,
+                    "source_details_3" : req.body.source_details_3,
+                    "source_type_4" : req.body.source_type_4,
+                    "source_interview_4" : req.body.source_interview_4,
+                    "source_subtype_4" : req.body.source_subtype_4,
+                    "source_name_4" : req.body.source_name_4,
+                    "source_details_4" : req.body.source_details_4,
+                    "source_type_5" : req.body.source_type_5,
+                    "source_interview_5" : req.body.source_interview_5,
+                    "source_subtype_5" : req.body.source_subtype_5,
+                    "source_name_5" : req.body.source_name_5,
+                    "source_details_5" : req.body.source_details_5,
                     "contacts" : req.body.contacts,
                     
                     parties : partiesList, mps: missingList, locations: locationsList, events: eventsList, sites: sitesList,
@@ -1531,7 +1725,38 @@ router.post('/addlocation', function(req, res){
                 if (profile[0].related.locations!= relLocations) updateVal['related.locations'] = relLocations
                 if (profile[0].related.mps!= relMPs) updateVal['related.mps'] = relMPs
                 if (profile[0].notes!= req.body.notes) updateVal['notes'] =  req.body.notes
-                if (profile[0].sources!= req.body.sources) updateVal['sources'] =  req.body.sources 
+                var sourcesBody = [{
+                    "type": req.body.source_type_1,
+                    "interview": req.body.source_interview_1,
+                    "subtype" : req.body.source_subtype_1,
+                    "name" : req.body.source_name_1,
+                    "details" : req.body.source_details_1
+                },{
+                    "type": req.body.source_type_2,
+                    "interview": req.body.source_interview_2,
+                    "subtype" : req.body.source_subtype_2,
+                    "name" : req.body.source_name_2,
+                    "details" : req.body.source_details_2
+                },{
+                    "type": req.body.source_type_3,
+                    "interview": req.body.source_interview_3,
+                    "subtype" : req.body.source_subtype_3,
+                    "name" : req.body.source_name_3,
+                    "details" : req.body.source_details_3
+                },{
+                    "type": req.body.source_type_4,
+                    "interview": req.body.source_interview_4,
+                    "subtype" : req.body.source_subtype_4,
+                    "name" : req.body.source_name_4,
+                    "details" : req.body.source_details_4
+                },{
+                    "type": req.body.source_type_5,
+                    "interview": req.body.source_interview_5,
+                    "subtype" : req.body.source_subtype_5,
+                    "name" : req.body.source_name_5,
+                    "details" : req.body.source_details_5
+                }]
+                if (profile[0].sources!= sourcesBody) updateVal['sources'] =  sourcesBody
                 if (profile[0].contacts!=contacts) updateVal['contacts'] = contacts
 
                 collection.update({_id: profile[0]._id}, {$set: updateVal}, function(err, result){
@@ -1632,7 +1857,37 @@ router.post('/addlocation', function(req, res){
                                     "mps" : relMPs
                                 },
                                 "notes" : req.body.notes,
-                                "sources" : req.body.sources,
+                                "sources" : [{
+                                    "type": req.body.source_type_1,
+                                    "interview": req.body.source_interview_1,
+                                    "subtype" : req.body.source_subtype_1,
+                                    "name" : req.body.source_name_1,
+                                    "details" : req.body.source_details_1
+                                },{
+                                    "type": req.body.source_type_2,
+                                    "interview": req.body.source_interview_2,
+                                    "subtype" : req.body.source_subtype_2,
+                                    "name" : req.body.source_name_2,
+                                    "details" : req.body.source_details_2
+                                },{
+                                    "type": req.body.source_type_3,
+                                    "interview": req.body.source_interview_3,
+                                    "subtype" : req.body.source_subtype_3,
+                                    "name" : req.body.source_name_3,
+                                    "details" : req.body.source_details_3
+                                },{
+                                    "type": req.body.source_type_4,
+                                    "interview": req.body.source_interview_4,
+                                    "subtype" : req.body.source_subtype_4,
+                                    "name" : req.body.source_name_4,
+                                    "details" : req.body.source_details_4
+                                },{
+                                    "type": req.body.source_type_5,
+                                    "interview": req.body.source_interview_5,
+                                    "subtype" : req.body.source_subtype_5,
+                                    "name" : req.body.source_name_5,
+                                    "details" : req.body.source_details_5
+                                }],
                                 "contacts" : contacts,
                                 "files" : []
                              };
@@ -1729,7 +1984,31 @@ router.post('/addsite', function(req, res){
                     "exhumed_notes" : req.body.exhumed_notes,
                     "status" : req.body.status,
                     "notes" : req.body.notes,
-                    "sources" : req.body.sources,
+                    "source_type_1" : req.body.source_type_1,
+                    "source_interview_1" : req.body.source_interview_1,
+                    "source_subtype_1" : req.body.source_subtype_1,
+                    "source_name_1" : req.body.source_name_1,
+                    "source_details_1" : req.body.source_details_1,
+                    "source_type_2" : req.body.source_type_2,
+                    "source_interview_2" : req.body.source_interview_2,
+                    "source_subtype_2" : req.body.source_subtype_2,
+                    "source_name_2" : req.body.source_name_2,
+                    "source_details_2" : req.body.source_details_2,
+                    "source_type_3" : req.body.source_type_3,
+                    "source_interview_3" : req.body.source_interview_3,
+                    "source_subtype_3" : req.body.source_subtype_3,
+                    "source_name_3" : req.body.source_name_3,
+                    "source_details_3" : req.body.source_details_3,
+                    "source_type_4" : req.body.source_type_4,
+                    "source_interview_4" : req.body.source_interview_4,
+                    "source_subtype_4" : req.body.source_subtype_4,
+                    "source_name_4" : req.body.source_name_4,
+                    "source_details_4" : req.body.source_details_4,
+                    "source_type_5" : req.body.source_type_5,
+                    "source_interview_5" : req.body.source_interview_5,
+                    "source_subtype_5" : req.body.source_subtype_5,
+                    "source_name_5" : req.body.source_name_5,
+                    "source_details_5" : req.body.source_details_5,
                     "contacts" : req.body.contacts,
                     
                     parties : partiesList, mps: missingList, locations: locationsList, events: eventsList, sites: sitesList,
@@ -1803,7 +2082,38 @@ router.post('/addsite', function(req, res){
                 if (profile[0].exhumed.contact!= req.body.exhumed_contact) updateVal['exhumed.contact'] =  req.body.exhumed_contact
                 if (profile[0].exhumed.notes!= req.body.exhumed_notes) updateVal['exhumed.notes'] =  req.body.exhumed_notes
                 if (profile[0].status!= req.body.status) updateVal['status'] =  req.body.status
-                if (profile[0].sources!= req.body.sources) updateVal['sources'] =  req.body.sources
+                var sourcesBody = [{
+                    "type": req.body.source_type_1,
+                    "interview": req.body.source_interview_1,
+                    "subtype" : req.body.source_subtype_1,
+                    "name" : req.body.source_name_1,
+                    "details" : req.body.source_details_1
+                },{
+                    "type": req.body.source_type_2,
+                    "interview": req.body.source_interview_2,
+                    "subtype" : req.body.source_subtype_2,
+                    "name" : req.body.source_name_2,
+                    "details" : req.body.source_details_2
+                },{
+                    "type": req.body.source_type_3,
+                    "interview": req.body.source_interview_3,
+                    "subtype" : req.body.source_subtype_3,
+                    "name" : req.body.source_name_3,
+                    "details" : req.body.source_details_3
+                },{
+                    "type": req.body.source_type_4,
+                    "interview": req.body.source_interview_4,
+                    "subtype" : req.body.source_subtype_4,
+                    "name" : req.body.source_name_4,
+                    "details" : req.body.source_details_4
+                },{
+                    "type": req.body.source_type_5,
+                    "interview": req.body.source_interview_5,
+                    "subtype" : req.body.source_subtype_5,
+                    "name" : req.body.source_name_5,
+                    "details" : req.body.source_details_5
+                }]
+                if (profile[0].sources!= sourcesBody) updateVal['sources'] =  sourcesBody
                 if (profile[0].contacts!=contacts) updateVal['contacts'] = contacts
                 if (profile[0].notes!= req.body.notes) updateVal['notes'] =  req.body.notes  
                   
@@ -1914,7 +2224,37 @@ router.post('/addsite', function(req, res){
                                             "notes" : req.body.exhumed_notes
                                 },
                                 "status" : req.body.status,
-	                            "sources" : req.body.sources,
+	                            "sources" : [{
+                                    "type": req.body.source_type_1,
+                                    "interview": req.body.source_interview_1,
+                                    "subtype" : req.body.source_subtype_1,
+                                    "name" : req.body.source_name_1,
+                                    "details" : req.body.source_details_1
+                                },{
+                                    "type": req.body.source_type_2,
+                                    "interview": req.body.source_interview_2,
+                                    "subtype" : req.body.source_subtype_2,
+                                    "name" : req.body.source_name_2,
+                                    "details" : req.body.source_details_2
+                                },{
+                                    "type": req.body.source_type_3,
+                                    "interview": req.body.source_interview_3,
+                                    "subtype" : req.body.source_subtype_3,
+                                    "name" : req.body.source_name_3,
+                                    "details" : req.body.source_details_3
+                                },{
+                                    "type": req.body.source_type_4,
+                                    "interview": req.body.source_interview_4,
+                                    "subtype" : req.body.source_subtype_4,
+                                    "name" : req.body.source_name_4,
+                                    "details" : req.body.source_details_4
+                                },{
+                                    "type": req.body.source_type_5,
+                                    "interview": req.body.source_interview_5,
+                                    "subtype" : req.body.source_subtype_5,
+                                    "name" : req.body.source_name_5,
+                                    "details" : req.body.source_details_5
+                                }],
                                 "contacts" : contacts,
                                 "files" : [],
                                 "notes" : req.body.notes,

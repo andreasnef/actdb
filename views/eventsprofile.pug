@@ -101,10 +101,21 @@ block content
       if(user!="public")
        h4 Sources:  
       
-       - if (value.sources) 
-        p 
-         span.title Sources: 
-         span #{value.sources}
+       - if (value.sources)  
+           p
+            span.title Sources: 
+            each source, i in value.sources
+             if(source.type)
+              p
+               span #{source.type}: 
+               if(source.interview)
+                a(href="#" onclick="loadProfile('interviews','"+source.interview+"');") #{source.interview}
+               if(source.subtype)
+                span #{source.subtype} 
+               if(source.name)
+                span #{source.name} 
+               if(source.details) 
+                span #{source.details}
        - if(value.files)
         p 
          span.title Files: 
