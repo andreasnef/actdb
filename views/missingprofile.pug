@@ -207,6 +207,10 @@ block content
            p
             span.title Notes: 
             span #{value.notes}
+          - if (value.source)  
+           p
+            span.title Old Source Field:  
+            span #{value.source}
           - if (value.sources)  
            p
             span.title Sources: 
