@@ -771,9 +771,9 @@ router.get('/newprofile', function(req, res){
             }
             var type = req.query.type;
             if (req.query.nextrecord){
-                res.render('new'+type, { title: 'Add New '+type, nextrecord : req.query.nextrecord, parties : partiesList, mps: missingList, locations: locationsList, events: eventsList, sites: sitesList, contactslist: contactsList, interviewslist: interviewsList});
+                res.render('new'+type, { title: 'Add New '+type, nextrecord : req.query.nextrecord, parties : partiesList, mps: missingList, locations: locationsList, events: eventsList, sites: sitesList, contactslist: contactsList, interviewslist: interviewsList, fileslist: filesList});
             } else {
-                res.render('new'+type, { title: 'Edit '+type, editprofile : profile, parties : partiesList, mps: missingList, locations: locationsList, events: eventsList, sites: sitesList, contactslist: contactsList, interviewslist: interviewsList});
+                res.render('new'+type, { title: 'Edit '+type, editprofile : profile, parties : partiesList, mps: missingList, locations: locationsList, events: eventsList, sites: sitesList, contactslist: contactsList, interviewslist: interviewsList, fileslist: filesList});
             }
         });
     } else {
@@ -1971,6 +1971,7 @@ router.post('/addsite', function(req, res){
                     "related_sites" : req.body.related_sites,
                     "related_locations" : req.body.related_locations,
                     "related_mps" : req.body.related_mps,
+                    "related_files" : req.body.related_files,
                     "sensitivity_index": req.body.sensitivity_index,
                     "sensitivity_reasons" : req.body.sensitivity_reasons,
                     "credibility_index": req.body.credibility_index,
@@ -1982,7 +1983,12 @@ router.post('/addsite', function(req, res){
                     "exhumed_number" : req.body.exhumed_number,
                     "exhumed_contact" : req.body.exhumed_contact,
                     "exhumed_notes" : req.body.exhumed_notes,
-                    "status" : req.body.status,
+                    "identification_status" : req.body.identification_status,
+                    "identification_date_day" : req.body.identification_date_day,
+                    "identification_date_month" : req.body.identification_date_month,
+                    "identification_date_year" : req.body.identification_date_year,
+                    "identification_number" : req.body.identification_number,
+                    "identification_dna" : req.body.identification_dna,
                     "notes" : req.body.notes,
                     "source_type_1" : req.body.source_type_1,
                     "source_interview_1" : req.body.source_interview_1,
@@ -2022,6 +2028,7 @@ router.post('/addsite', function(req, res){
               var relSites = req.body.related_sites;
               var relLocations = req.body.related_locations;
               var relMPs = req.body.related_mps;
+              var relFiles = req.body.related_files;
               var contacts = req.body.contacts; 
               var long;
               var lat; 
@@ -2042,6 +2049,7 @@ router.post('/addsite', function(req, res){
               if (!relSites) relSites = [];
               if (!relLocations) relLocations = [];
               if (!relMPs) relMPs = [];
+              if (!relFiles) relFiles = [];
               if (!contacts) contacts = [];
                  
               /*if its an edit*/
@@ -2067,6 +2075,7 @@ router.post('/addsite', function(req, res){
                 if (profile[0].related.sites!= relSites) updateVal['related.sites'] = relSites  
                 if (profile[0].related.locations!= relLocations) updateVal['related.locations'] = relLocations
                 if (profile[0].related.mps!= relMPs) updateVal['related.mps'] = relMPs
+                if (profile[0].related.files!= relFiles) updateVal['related.files'] = relFiles
                 if (profile[0].perpetrators!= req.body.perpetrators) updateVal['perpetrators'] =  req.body.perpetrators
                 if (profile[0].perpetrators_name!= req.body.perpetrators_name) updateVal['perpetrators_name'] = req.body.perpetrators_name
                 if (profile[0].number_expected!= req.body.number_expected) updateVal['number_expected'] =  req.body.number_expected
@@ -2081,7 +2090,10 @@ router.post('/addsite', function(req, res){
                 if (profile[0].exhumed.number!= req.body.exhumed_number) updateVal['exhumed.number'] =  req.body.exhumed_number
                 if (profile[0].exhumed.contact!= req.body.exhumed_contact) updateVal['exhumed.contact'] =  req.body.exhumed_contact
                 if (profile[0].exhumed.notes!= req.body.exhumed_notes) updateVal['exhumed.notes'] =  req.body.exhumed_notes
-                if (profile[0].status!= req.body.status) updateVal['status'] =  req.body.status
+                if (!profile[0].identification || profile[0].identification.status!=req.body.identification_status) updateVal['identification.status'] =  req.body.identification_status
+                if (!profile[0].identification || profile[0].identification.date!= dateConverter(req.body.identification_date_day,req.body.identification_date_month, req.body.identification_date_year)) updateVal['identification.date'] =  dateConverter(req.body.identification_date_day,req.body.identification_date_month,req.body.identification_date_year)
+                if (!profile[0].identification || profile[0].identification.number!=req.body.identification_number)updateVal['identification.number'] =  req.body.identification_number
+                if (!profile[0].identification || profile[0].identification.dna!=req.body.identification_dna)updateVal['identification.dna'] =  req.body.identification_dna
                 var sourcesBody = [{
                     "type": req.body.source_type_1,
                     "interview": req.body.source_interview_1,
@@ -2158,6 +2170,14 @@ router.post('/addsite', function(req, res){
                             if((relMPs).indexOf(e)== -1)removeRelated("missing", e, req.body.code, "sites");
                         });
                     }
+                    if (profile[0].related.files != relFiles) {
+                        relFiles.forEach( function (e){
+                            if(profile[0].related.files && (profile[0].related.files).indexOf(e)== -1)updateRelated("files", e, req.body.code, "sites");
+                        });
+                        (profile[0].related.files).forEach( function (e){
+                            if((relFiles).indexOf(e)== -1)removeRelated("files", e, req.body.code, "sites");
+                        });
+                    }
                     profile = null;
                     res.redirect('/sites');
                     
@@ -2199,7 +2219,8 @@ router.post('/addsite', function(req, res){
                                     "events" : relEvents,
                                     "sites" : relSites,
                                     "locations" :relLocations,
-                                    "mps" : relMPs
+                                    "mps" : relMPs,
+                                    "files": relFiles
                                 },
                                 "perpetrators" : req.body.perpetrators,
                                 "perpetrators_name" : req.body.perpetrators_name,
@@ -2223,7 +2244,12 @@ router.post('/addsite', function(req, res){
                                             "contact" : req.body.exhumed_contact,
                                             "notes" : req.body.exhumed_notes
                                 },
-                                "status" : req.body.status,
+                                "identification" : {
+                                    "status" : req.body.identification_status,
+                                    "date" : dateConverter(req.body.identification_date_day, req.body.identification_date_month, req.body.identification_date_year),
+                                    "number" : req.body.identification_number,
+                                    "dna" : req.body.identification_dna
+                                },
 	                            "sources" : [{
                                     "type": req.body.source_type_1,
                                     "interview": req.body.source_interview_1,
@@ -3595,6 +3621,12 @@ router.post('/deleteEntry', function (req,res){
               removeRelated("contacts", e.slice(1,-1), req.body.code, req.body.collection);
              })     
             }  
+            if((req.body.related_files).length){
+                var relFiles = (req.body.related_files).slice(1,-1);
+                relFiles.split(",").forEach(function (e){
+                 removeRelated("files", e.slice(1,-1), req.body.code, req.body.collection);
+                })     
+               }
             res.redirect('/'+req.body.collection);   
         }
     }); 

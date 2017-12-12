@@ -45,6 +45,7 @@ block content
         - related_sites = value.related.sites
         - related_locations = value.related.locations
         - related_mps = value.related.mps
+        - related_files = value.related.files
         - sensitivity_index = value.sensitivity.index
         - sensitivity_reasons = value.sensitivity.reasons
         - credibility_index = value.credibility.index
@@ -57,7 +58,14 @@ block content
         - exhumed_number = value.exhumed.number
         - exhumed_contact = value.exhumed.contact
         - exhumed_notes = value.exhumed.notes
-        - status = value.status
+        if(value.identification)
+         - identification_status = value.identification.status
+         - var identificationdate = new Date(value.identification.date);
+         - identification_date_day = ("0"+identificationdate.getDate()).slice(-2);
+         - identification_date_month = ("0" + (identificationdate.getMonth()+1)).slice(-2);
+         - identification_date_year = identificationdate.getFullYear();
+         - identification_number = value.identification.number
+         - identification_dna = value.identification.dna
         - notes = value.notes
         - sources = value.sources
         each source, i in value.sources  
@@ -322,21 +330,23 @@ block content
             option(value=se) #{typ}
      br
      br
-     span Perpetrators
+     span Groups Responsible
+     span &nbsp;
+     if (parties)
+        each party, i in parties
+            div.checkbox-inline
+             if (perpetrators && perpetrators.includes(party.name.en))
+              input.checkbox-input(type='checkbox', name="perpetrators", value=party.name.en, checked)
+              label #{party.name.en}
+             else
+              input.checkbox-input(type='checkbox', name="perpetrators", value=party.name.en)
+              label #{party.name.en}
+          
      br
-     select#input_groups_responsible(name="perpetrators", value=perpetrators)
-        option(value="") Select
-        if (parties)
-         each party, i in parties
-           if(perpetrators==party.name.en)
-                option(value=party.name.en selected="selected") #{party.name.en}
-           else
-                option(value=party.name.en) #{party.name.en}
-     br 
+     input#input_perpetrators_name(type="text", placeholder="Names of Reponsible Persons", name="perpetrators_name", value=perpetrators_name)
      br
-     input#input_perpetrators_name(type="text", placeholder="Perpetrators' Names", name="perpetrators_name", value=perpetrators_name)
-     br
-     br
+     br  
+     
     div#wrapper
      legend Related
      br
@@ -439,6 +449,31 @@ block content
              td= mp.name.ar.last+', '+mp.name.ar.first+' '+mp.name.ar.middle
              td= mp.name.en.last+', '+mp.name.en.first+' '+mp.name.en.middle 
      br
+     //span Related Files
+     a(href="#" onclick="return toggle_visibility('relatedFiles');") Related Files #{related_files} (click to modify)
+    
+     div#relatedFiles(class='dropMenu')
+      if (fileslist)
+       table(id="filesList")
+        thead    
+         tr#headtag
+            th Select
+            th Code
+            th Description
+            th File
+
+        tbody    
+         each file, i in fileslist
+            tr
+             td
+              if (related_files && related_files.includes(file.code))
+                input.checkbox-input(type='checkbox', name="related_files", value=file.code, checked)
+              else  
+                input.checkbox-input(type='checkbox', name="related_files", value=file.code)
+             td= file.code
+             td= file.description
+             td= file.file
+     br
      br
     
     div#wrapper
@@ -520,7 +555,7 @@ block content
      br
      select#input_disappearance_place_governorate(name="exhumed_status", value=exhumed_status)
         option(value="") Select
-        - var exhumed_status = ["Accidental-Partial", "Exhumed-No Identification", "Exhumed-Partial Identification", "Exhumed-Identified", "No exhumation"];
+        - var exhumed_status = ["Yes","No","Partial", "Accidental-Partial", "Exhumed-No Identification", "Exhumed-Partial Identification", "Exhumed-Identified", "No exhumation"];
         each status in exhumed_status
            if(exhumed_status==status)
                 option(value=status selected="selected") #{status}
@@ -612,9 +647,107 @@ block content
      br
      br 
      
-    div#wrapper 
-     input#input_documents(type="text", placeholder="Exhumation Status", name="status", value=status)
-     br 
+     legend Information on Identification 
+     br
+     span Status
+     br
+     select#input_disappearance_place_governorate(name="identification_status", value=identification_status)
+        option(value="") Select
+        - var identification_status = ["Yes", "No", "Partial"];
+        each status in identification_status
+           if(identification_status==status)
+                option(value=status selected="selected") #{status}
+           else
+                option(value=status) #{status}
+     br
+     span Date
+     br
+     select(name="identification_date_day", value=identification_date_day)
+       option(value="") Select
+       -for(var i = 1;i<32;i++){
+          - i = ("0" + i).slice(-2)
+           if(identification_date_day==i)
+                option(value=i selected="selected") #{i}
+           else
+                option(value=i) #{i}
+       -}
+     span &nbsp;
+     select#input_date_end_month(name="identification_date_month", value=identification_date_month)
+        if (identification_date_month=="01") 
+         option(value="01" selected="selected")  Jan 
+        else 
+         option(value="01")  Jan
+        if (identification_date_month=="02")
+         option(value="02" selected="selected")  Feb
+        else
+         option(value="02")  Feb    
+        if (identification_date_month=="03")
+         option(value="03" selected="selected")  Mar
+        else
+         option(value="03")  Mar
+        if (identification_date_month=="04")
+         option(value="04" selected="selected")  Apr
+        else
+         option(value="04")  Apr
+        if (identification_date_month=="05")
+         option(value="05" selected="selected")  May
+        else
+         option(value="05")  May
+        if (identification_date_month=="06")
+         option(value="06" selected="selected")  Jun
+        else
+         option(value="06")  Jun
+        if (identification_date_month=="07")
+         option(value="07" selected="selected")  Jul
+        else 
+         option(value="07")  Jul
+        if (identification_date_month=="08")
+         option(value="08" selected="selected")  Ago
+        else
+         option(value="08")  Ago
+        if (identification_date_month=="09")
+         option(value="09" selected="selected")  Sep
+        else
+         option(value="09")  Sep
+        if (identification_date_month=="10")
+         option(value="10" selected="selected")  Oct
+        else 
+         option(value="10")  Oct
+        if (identification_date_month=="11")
+         option(value="11" selected="selected")  Nov
+        else
+         option(value="11")  Nov
+        if (identification_date_month=="12")
+         option(value="12" selected="selected")  Dec
+        else
+         option(value="12")  Dec
+        span &nbsp;
+     select(name="identification_date_year", value=identification_date_year)
+       option(value="") Select
+       - var year = new Date().getFullYear();
+       -for(var i = 1973;i<=year;i++){
+           if(identification_date_year==i)
+                option(value=i selected="selected") #{i}
+           else
+                option(value=i) #{i}
+       -}  
+     
+     br
+     br
+     input#input_documents(type="text", placeholder="Numbers of remains identified", name="identification_number", value=identification_number)
+     br
+     br
+     span DNA
+     br
+     select#input_disappearance_place_governorate(name="identification_dna", value=identification_dna)
+        option(value="") Select
+        - var identification_dna = ["Yes", "No"];
+        each status in identification_dna
+           if(identification_dna==status)
+                option(value=status selected="selected") #{status}
+           else
+                option(value=status) #{status}
+     br
      br
      
     div#wrapper 
@@ -882,11 +1015,11 @@ block content
                  td= contact.name.ar.last, contact.name.ar.first
                  td= contact.name.en.first, contact.name.en.last
                  td= contact.category
-    br
-    br
-    div(class='btn menu')
+     br
+     br
+     div(class='btn menu')
       button#submit_site(type="submit" role='submit' class="buttons") submit
-    div(class='btn menu')
+     div(class='btn menu')
       a(href="/sites") Go back to Sites
     
     script.
@@ -900,6 +1033,9 @@ block content
             paging: false
         } );
         $('#sitesList').DataTable( {
+            paging: false
+        } );
+        $('#filesList').DataTable( {
             paging: false
         } );
         $('#contactsList').DataTable( {

@@ -88,15 +88,20 @@ block content
        p
         span.title Related Missing Persons: 
         each mp, i in value.related.mps
-         a(href="#" onclick="loadProfile('missing','"+mp+"');") #{mp} 
+         a(href="#" onclick="loadProfile('missing','"+mp+"');") #{mp}
+      - if (value.related.files)
+       p
+        span.title Related Files: 
+        each file, i in value.related.files
+         a(href="#" onclick="loadProfile('files','"+file+"');") #{file}    
 
       - if (value.perpetrators)
        p 
-        span.title Perpetrators: 
+        span.title Groups Responsible: 
         span #{value.perpetrators}
       - if (value.perpetrators_name)
        p 
-        span.title Perpetrators' Names: 
+        span.title Names of Reponsible Persons: 
         span #{value.perpetrators_name}  
       
   div
@@ -141,7 +146,7 @@ block content
       
       -if (value.exhumed.status)
        p
-        span.title Status: 
+        span.title Exhumed: 
         span #{value.exhumed.status}
       - if (value.exhumed.date)
        p 
@@ -149,7 +154,7 @@ block content
         span #{moment(value.exhumed.date).format('MMMM Do, YYYY')}
       - if (value.exhumed.number)
        p
-        span.title Number of bodies: 
+        span.title Number of bodies exhumed: 
         span #{value.exhumed.number}
       - if (value.exhumed.contact)
        p 
@@ -159,7 +164,26 @@ block content
        p 
        span.title Notes: 
        span #{value.exhumed.notes}
+
+   if(value.identification)
+      h4 Identification status: 
       
+      -if (value.identification.status)
+       p
+        span.title Status: 
+        span #{value.identification.status}
+      - if (value.identification.date)
+       p 
+        span.title Date: 
+        span #{moment(value.identification.date).format('MMMM DD, YYYY')}
+      - if (value.identification.number)
+       p
+        span.title Number of bodies identified: 
+        span #{value.identification.number}
+      - if (value.identification.dna)
+       p 
+        span.title DNA conducted: 
+        span #{value.identification.dna}  
   div     
       - if (value.sources)  
            p
@@ -201,6 +225,7 @@ block content
                     input(type="hidden" name="related_sites" value=value.related.sites)
                     input(type="hidden" name="related_locations" value=value.related.locations)
                     input(type="hidden" name="related_mps" value=value.related.mps)
+                    input(type="hidden" name="related_files" value=value.related.files)
                     input(type="hidden" name="related_interviews" value=value.interviews)
                     input(type="hidden" name="related_contacts" value=value.contacts)
                     
