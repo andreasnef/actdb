@@ -2174,9 +2174,12 @@ router.post('/addsite', function(req, res){
                         relFiles.forEach( function (e){
                             if(profile[0].related.files && (profile[0].related.files).indexOf(e)== -1)updateRelated("files", e, req.body.code, "sites");
                         });
-                        (profile[0].related.files).forEach( function (e){
-                            if((relFiles).indexOf(e)== -1)removeRelated("files", e, req.body.code, "sites");
-                        });
+                        if(profile[0].related.files){
+                            (profile[0].related.files).forEach( function (e){
+                                if((relFiles).indexOf(e)== -1)removeRelated("files", e, req.body.code, "sites");
+                            });     
+                        }
+                        
                     }
                     profile = null;
                     res.redirect('/sites');
