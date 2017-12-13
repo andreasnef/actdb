@@ -884,31 +884,28 @@ router.post('/addmissing', function(req, res){
                     "related_mps" : req.body.related_mps,
                     "fate" : req.body.fate,
                     "notes" : req.body.notes,
+                    "interviews" : req.body.interviews,
                     "source_type_1" : req.body.source_type_1,
-                    "source_interview_1" : req.body.source_interview_1,
                     "source_subtype_1" : req.body.source_subtype_1,
                     "source_name_1" : req.body.source_name_1,
                     "source_details_1" : req.body.source_details_1,
                     "source_type_2" : req.body.source_type_2,
-                    "source_interview_2" : req.body.source_interview_2,
                     "source_subtype_2" : req.body.source_subtype_2,
                     "source_name_2" : req.body.source_name_2,
                     "source_details_2" : req.body.source_details_2,
                     "source_type_3" : req.body.source_type_3,
-                    "source_interview_3" : req.body.source_interview_3,
                     "source_subtype_3" : req.body.source_subtype_3,
                     "source_name_3" : req.body.source_name_3,
                     "source_details_3" : req.body.source_details_3,
                     "source_type_4" : req.body.source_type_4,
-                    "source_interview_4" : req.body.source_interview_4,
                     "source_subtype_4" : req.body.source_subtype_4,
                     "source_name_4" : req.body.source_name_4,
                     "source_details_4" : req.body.source_details_4,
                     "source_type_5" : req.body.source_type_5,
-                    "source_interview_5" : req.body.source_interview_5,
                     "source_subtype_5" : req.body.source_subtype_5,
                     "source_name_5" : req.body.source_name_5,
                     "source_details_5" : req.body.source_details_5,
+                    "files": req.body.files,
                     "picture" : req.body.picture,
                     "lists_syria_2000" : req.body.lists_syria_2000,
                     "lists_syria_2002" : req.body.lists_syria_2002,
@@ -936,6 +933,8 @@ router.post('/addmissing', function(req, res){
               var relLocations = req.body.related_locations;
               var relMPs = req.body.related_mps;
               var contacts = req.body.contacts;
+              var files = req.body.files;
+              var interviews = req.body.interviews;
               var long;
               var lat; 
             
@@ -951,11 +950,15 @@ router.post('/addmissing', function(req, res){
               if (typeof relLocations == "string") relLocations = [relLocations]
               if (typeof relMPs == "string") relMPs = [relMPs]
               if (typeof contacts == "string") contacts = [contacts]
+              if (typeof files == "string") files = [files]
+              if (typeof interviews == "string") interviews = [interviews]
               if (!relEvents) relEvents = [];
               if (!relSites) relSites = [];
               if (!relLocations) relLocations = [];
               if (!relMPs) relMPs = [];
               if (!contacts) contacts = [];
+              if (!files) files = [];
+              if (!interviews) interviews = [];
               
               /*if its an edit*/   
               if (req.body._id){  
@@ -1012,38 +1015,35 @@ router.post('/addmissing', function(req, res){
                 if (profile[0].related.mps!= relMPs) updateVal['related.mps'] = relMPs
                 if (profile[0].fate!= req.body.fate) updateVal['fate'] =  req.body.fate
                 if (profile[0].notes!= req.body.notes) updateVal['notes'] =  req.body.notes
+                if (profile[0].interviews!= interviews) updateVal['interviews'] = interviews
                 var sourcesBody = [{
                     "type": req.body.source_type_1,
-                    "interview": req.body.source_interview_1,
                     "subtype" : req.body.source_subtype_1,
                     "name" : req.body.source_name_1,
                     "details" : req.body.source_details_1
                 },{
                     "type": req.body.source_type_2,
-                    "interview": req.body.source_interview_2,
                     "subtype" : req.body.source_subtype_2,
                     "name" : req.body.source_name_2,
                     "details" : req.body.source_details_2
                 },{
                     "type": req.body.source_type_3,
-                    "interview": req.body.source_interview_3,
                     "subtype" : req.body.source_subtype_3,
                     "name" : req.body.source_name_3,
                     "details" : req.body.source_details_3
                 },{
                     "type": req.body.source_type_4,
-                    "interview": req.body.source_interview_4,
                     "subtype" : req.body.source_subtype_4,
                     "name" : req.body.source_name_4,
                     "details" : req.body.source_details_4
                 },{
                     "type": req.body.source_type_5,
-                    "interview": req.body.source_interview_5,
                     "subtype" : req.body.source_subtype_5,
                     "name" : req.body.source_name_5,
                     "details" : req.body.source_details_5
                 }]
                 if (profile[0].sources!= sourcesBody) updateVal['sources'] =  sourcesBody
+                if (profile[0].files!= files) updateVal['files'] =  files
                 if (profile[0].picture!= req.body.picture) updateVal['picture'] =  req.body.picture
                 if (profile[0].lists.syria_2000!= req.body.lists_syria_2000) updateVal['lists.syria_2000'] =  req.body.lists_syria_2000
                 if (profile[0].lists.syria_2002!= req.body.lists_syria_2002) updateVal['lists.syria_2002'] =  req.body.lists_syria_2002
@@ -1100,6 +1100,30 @@ router.post('/addmissing', function(req, res){
                         });
                         (profile[0].related.mps).forEach( function (e){
                             if((relMPs).indexOf(e)== -1)removeRelated("missing", e, req.body.code, "mps");
+                        });
+                    }
+                    if (profile[0].interviews != interviews) {
+                        interviews.forEach( function (e){
+                            if((profile[0].interviews).indexOf(e)== -1)updateRelated("interviews", e, req.body.code, "mps");
+                        });
+                        (profile[0].interviews).forEach( function (e){
+                            if((interviews).indexOf(e)== -1)removeRelated("interviews", e, req.body.code, "mps");
+                        });
+                    }
+                    if (profile[0].files != files) {
+                        files.forEach( function (e){
+                            if((profile[0].files).indexOf(e)== -1)updateRelated("files", e, req.body.code, "mps");
+                        });
+                        (profile[0].files).forEach( function (e){
+                            if((files).indexOf(e)== -1)removeRelated("files", e, req.body.code, "mps");
+                        });
+                    }
+                    if (profile[0].contacts != contacts) {
+                        contacts.forEach( function (e){
+                            if((profile[0].contacts).indexOf(e)== -1)updateRelated("contacts", e, req.body.code, "mps");
+                        });
+                        (profile[0].contacts).forEach( function (e){
+                            if((contacts).indexOf(e)== -1)removeRelated("contacts", e, req.body.code, "mps");
                         });
                     }
                     profile = null;
@@ -1180,39 +1204,35 @@ router.post('/addmissing', function(req, res){
                                 },
                                 "fate" : req.body.fate,
                                 "notes" : req.body.notes,
+                                "interviews" : interviews,
                                 "sources" : [{
                                     "type": req.body.source_type_1,
-                                    "interview": req.body.source_interview_1,
                                     "subtype" : req.body.source_subtype_1,
                                     "name" : req.body.source_name_1,
                                     "details" : req.body.source_details_1
                                 },{
                                     "type": req.body.source_type_2,
-                                    "interview": req.body.source_interview_2,
                                     "subtype" : req.body.source_subtype_2,
                                     "name" : req.body.source_name_2,
                                     "details" : req.body.source_details_2
                                 },{
                                     "type": req.body.source_type_3,
-                                    "interview": req.body.source_interview_3,
                                     "subtype" : req.body.source_subtype_3,
                                     "name" : req.body.source_name_3,
                                     "details" : req.body.source_details_3
                                 },{
                                     "type": req.body.source_type_4,
-                                    "interview": req.body.source_interview_4,
                                     "subtype" : req.body.source_subtype_4,
                                     "name" : req.body.source_name_4,
                                     "details" : req.body.source_details_4
                                 },{
                                     "type": req.body.source_type_5,
-                                    "interview": req.body.source_interview_5,
                                     "subtype" : req.body.source_subtype_5,
                                     "name" : req.body.source_name_5,
                                     "details" : req.body.source_details_5
                                 }],
                                 "picture" : req.body.picture,
-                                "files" : [],
+                                "files" : files,
                                 "lists" : {
                                     "syria_2000" : req.body.lists_syria_2000,
                                     "syria_2002" : req.body.lists_syria_2002,
@@ -1261,6 +1281,21 @@ router.post('/addmissing', function(req, res){
                     if (relMPs) {
                         relMPs.forEach( function (e){
                             updateRelated("missing", e, req.body.code, "mps");
+                        });
+                    }
+                    if (interviews) {
+                        interviews.forEach( function (e){
+                            updateRelated("interviews", e, req.body.code, "mps");
+                        });
+                    }
+                    if (files) {
+                        files.forEach( function (e){
+                            updateRelated("files", e, req.body.code, "mps");
+                        });
+                    }
+                    if (contacts) {
+                        contacts.forEach( function (e){
+                            updateRelated("contacts", e, req.body.code, "mps");
                         });
                     }
                     
@@ -1631,6 +1666,7 @@ router.post('/addlocation', function(req, res){
                     "date_end_day" : req.body.date_end_day,
                     "date_end_month": req.body.date_end_month,
                     "date_end_year": req.body.date_end_year,
+                    "description" : req.body.description,
                     "groups_responsible" : req.body.groups_responsible,
                     "groups_responsible_name" : req.body.groups_responsible_name,
                     "related_events" : req.body.related_events,
@@ -1638,31 +1674,28 @@ router.post('/addlocation', function(req, res){
                     "related_locations" : req.body.related_locations,
                     "related_mps" : req.body.related_mps,
                     "notes" : req.body.notes,
+                    "interviews" : req.body.interviews,
                     "source_type_1" : req.body.source_type_1,
-                    "source_interview_1" : req.body.source_interview_1,
                     "source_subtype_1" : req.body.source_subtype_1,
                     "source_name_1" : req.body.source_name_1,
                     "source_details_1" : req.body.source_details_1,
                     "source_type_2" : req.body.source_type_2,
-                    "source_interview_2" : req.body.source_interview_2,
                     "source_subtype_2" : req.body.source_subtype_2,
                     "source_name_2" : req.body.source_name_2,
                     "source_details_2" : req.body.source_details_2,
                     "source_type_3" : req.body.source_type_3,
-                    "source_interview_3" : req.body.source_interview_3,
                     "source_subtype_3" : req.body.source_subtype_3,
                     "source_name_3" : req.body.source_name_3,
                     "source_details_3" : req.body.source_details_3,
                     "source_type_4" : req.body.source_type_4,
-                    "source_interview_4" : req.body.source_interview_4,
                     "source_subtype_4" : req.body.source_subtype_4,
                     "source_name_4" : req.body.source_name_4,
                     "source_details_4" : req.body.source_details_4,
                     "source_type_5" : req.body.source_type_5,
-                    "source_interview_5" : req.body.source_interview_5,
                     "source_subtype_5" : req.body.source_subtype_5,
                     "source_name_5" : req.body.source_name_5,
                     "source_details_5" : req.body.source_details_5,
+                    "files" : req.body.files,
                     "contacts" : req.body.contacts,
                     
                     parties : partiesList, mps: missingList, locations: locationsList, events: eventsList, sites: sitesList,
@@ -1677,7 +1710,9 @@ router.post('/addlocation', function(req, res){
               var relLocations = req.body.related_locations;
               var relMPs = req.body.related_mps;
               var contacts = req.body.contacts;
-              var groups =  req.body.groups_responsible;    
+              var interviews = req.body.interviews;
+              var groups =  req.body.groups_responsible;  
+              var files = req.body.files;  
               var long;
               var lat; 
             
@@ -1694,11 +1729,15 @@ router.post('/addlocation', function(req, res){
               if (typeof relMPs == "string") relMPs = [relMPs]
               if (typeof groups == "string") groups = [groups]     
               if (typeof contacts == "string") contacts = [contacts]
+              if (typeof interviews == "string") interviews = [interviews]
+              if (typeof files == "string") files = [files]
               if (!relEvents) relEvents = [];
               if (!relSites) relSites = [];
               if (!relLocations) relLocations = [];
               if (!relMPs) relMPs = [];
-              if (!contacts) contacts = [];     
+              if (!files) files = [];
+              if (!contacts) contacts = [];  
+              if (!interviews) interviews = [];   
                  
               /*if its an edit*/     
               if (req.body._id){    
@@ -1718,6 +1757,7 @@ router.post('/addlocation', function(req, res){
                 if (profile[0].UNHCR.longitude!= req.body.UNHCR_longitude) updateVal['UNHCR.longitude'] =  req.body.UNHCR_longitude  
                 if (profile[0].dates.beg!= dateConverter(req.body.date_beg_day,req.body.date_beg_month, req.body.date_beg_year)) updateVal['dates.beg'] =  dateConverter(req.body.date_beg_day,req.body.date_beg_month, req.body.date_beg_year)
                 if (profile[0].dates.end!= dateConverter(req.body.date_end_day,req.body.date_end_month, req.body.date_end_year)) updateVal['dates.end'] =  dateConverter(req.body.date_end_day,req.body.date_end_month, req.body.date_end_year)
+                if (profile[0].description!= req.body.description) updateVal['description'] =  req.body.description
                 if (profile[0].groups_responsible!= groups)updateVal['groups_responsible'] = groups
                 if (profile[0].groups_responsible_name!= req.body.groups_responsible_name)updateVal['groups_responsible_name'] = req.body.groups_responsible_name
                 if (profile[0].related.events!= relEvents)updateVal['related.events'] = relEvents
@@ -1725,38 +1765,35 @@ router.post('/addlocation', function(req, res){
                 if (profile[0].related.locations!= relLocations) updateVal['related.locations'] = relLocations
                 if (profile[0].related.mps!= relMPs) updateVal['related.mps'] = relMPs
                 if (profile[0].notes!= req.body.notes) updateVal['notes'] =  req.body.notes
+                if (profile[0].interviews!= interviews) updateVal['interviews'] = interviews
                 var sourcesBody = [{
                     "type": req.body.source_type_1,
-                    "interview": req.body.source_interview_1,
                     "subtype" : req.body.source_subtype_1,
                     "name" : req.body.source_name_1,
                     "details" : req.body.source_details_1
                 },{
                     "type": req.body.source_type_2,
-                    "interview": req.body.source_interview_2,
                     "subtype" : req.body.source_subtype_2,
                     "name" : req.body.source_name_2,
                     "details" : req.body.source_details_2
                 },{
                     "type": req.body.source_type_3,
-                    "interview": req.body.source_interview_3,
                     "subtype" : req.body.source_subtype_3,
                     "name" : req.body.source_name_3,
                     "details" : req.body.source_details_3
                 },{
                     "type": req.body.source_type_4,
-                    "interview": req.body.source_interview_4,
                     "subtype" : req.body.source_subtype_4,
                     "name" : req.body.source_name_4,
                     "details" : req.body.source_details_4
                 },{
                     "type": req.body.source_type_5,
-                    "interview": req.body.source_interview_5,
                     "subtype" : req.body.source_subtype_5,
                     "name" : req.body.source_name_5,
                     "details" : req.body.source_details_5
                 }]
                 if (profile[0].sources!= sourcesBody) updateVal['sources'] =  sourcesBody
+                if (profile[0].files!= files) updateVal['files'] = files
                 if (profile[0].contacts!=contacts) updateVal['contacts'] = contacts
 
                 collection.update({_id: profile[0]._id}, {$set: updateVal}, function(err, result){
@@ -1812,6 +1849,36 @@ router.post('/addlocation', function(req, res){
                         }
                         
                     }
+                    if (profile[0].files != files) {
+                        files.forEach( function (e){
+                            if(profile[0].files && (profile[0].files).indexOf(e)== -1)updateRelated("files", e, req.body.code, "locations");
+                        });
+                        if(profile[0].files){
+                            (profile[0].files).forEach( function (e){
+                                if((files).indexOf(e)== -1)removeRelated("files", e, req.body.code, "locations");
+                            });     
+                        } 
+                    }
+                    if (profile[0].contacts != contacts) {
+                        contacts.forEach( function (e){
+                            if(profile[0].contacts && (profile[0].contacts).indexOf(e)== -1)updateRelated("contacts", e, req.body.code, "locations");
+                        });
+                        if(profile[0].contacts){
+                            (profile[0].contacts).forEach( function (e){
+                                if((contacts).indexOf(e)== -1)removeRelated("contacts", e, req.body.code, "locations");
+                            });     
+                        } 
+                    }
+                    if (profile[0].interviews != interviews) {
+                        interviews.forEach( function (e){
+                            if(profile[0].interviews && (profile[0].interviews).indexOf(e)== -1)updateRelated("interviews", e, req.body.code, "locations");
+                        });
+                        if(profile[0].interviews){
+                            (profile[0].interviews).forEach( function (e){
+                                if((interviews).indexOf(e)== -1)removeRelated("interviews", e, req.body.code, "locations");
+                            });     
+                        } 
+                    }
                     profile = null;
                     res.redirect('/locations');
                     
@@ -1848,6 +1915,7 @@ router.post('/addlocation', function(req, res){
                                     "beg" : dateConverter(req.body.date_beg_day,req.body.date_beg_month,req.body.date_beg_year),
                                     "end" : dateConverter(req.body.date_end_day,req.body.date_end_month,req.body.date_end_year)
                                 },
+                                "description" : req.body.description,
                                 "groups_responsible" : groups,
                                 "groups_responsible_name" : req.body.groups_responsible_name,
                                 "related" : {
@@ -1857,39 +1925,35 @@ router.post('/addlocation', function(req, res){
                                     "mps" : relMPs
                                 },
                                 "notes" : req.body.notes,
+                                "interviews" : req.body.interviews,
                                 "sources" : [{
                                     "type": req.body.source_type_1,
-                                    "interview": req.body.source_interview_1,
                                     "subtype" : req.body.source_subtype_1,
                                     "name" : req.body.source_name_1,
                                     "details" : req.body.source_details_1
                                 },{
                                     "type": req.body.source_type_2,
-                                    "interview": req.body.source_interview_2,
                                     "subtype" : req.body.source_subtype_2,
                                     "name" : req.body.source_name_2,
                                     "details" : req.body.source_details_2
                                 },{
                                     "type": req.body.source_type_3,
-                                    "interview": req.body.source_interview_3,
                                     "subtype" : req.body.source_subtype_3,
                                     "name" : req.body.source_name_3,
                                     "details" : req.body.source_details_3
                                 },{
                                     "type": req.body.source_type_4,
-                                    "interview": req.body.source_interview_4,
                                     "subtype" : req.body.source_subtype_4,
                                     "name" : req.body.source_name_4,
                                     "details" : req.body.source_details_4
                                 },{
                                     "type": req.body.source_type_5,
-                                    "interview": req.body.source_interview_5,
                                     "subtype" : req.body.source_subtype_5,
                                     "name" : req.body.source_name_5,
                                     "details" : req.body.source_details_5
                                 }],
                                 "contacts" : contacts,
-                                "files" : []
+                                "files" : files
                              };
                 collection.insert([locationnew], function(err, result){
                 if (err){
@@ -1915,6 +1979,21 @@ router.post('/addlocation', function(req, res){
                     if (relMPs) {
                         relMPs.forEach( function (e){
                             updateRelated("missing", e, req.body.code, "locations");
+                        });
+                    }
+                    if (interviews) {
+                        interviews.forEach( function (e){
+                            updateRelated("interviews", e, req.body.code, "locations");
+                        });
+                    }
+                    if (files) {
+                        files.forEach( function (e){
+                            updateRelated("files", e, req.body.code, "locations");
+                        });
+                    }
+                    if (contacts) {
+                        contacts.forEach( function (e){
+                            updateRelated("contacts", e, req.body.code, "locations");
                         });
                     }
                     res.redirect('/locations');
@@ -1962,6 +2041,7 @@ router.post('/addsite', function(req, res){
                     "date_end_day" : req.body.date_end_day,
                     "date_end_month": req.body.date_end_month,
                     "date_end_year": req.body.date_end_year,
+                    "description" : req.body.description,
                     "perpetrators" : req.body.perpetrators,
                     "perpetrators_name" : req.body.perpetrators_name,
                     "number_expected" : req.body.number_expected,
@@ -1971,7 +2051,6 @@ router.post('/addsite', function(req, res){
                     "related_sites" : req.body.related_sites,
                     "related_locations" : req.body.related_locations,
                     "related_mps" : req.body.related_mps,
-                    "related_files" : req.body.related_files,
                     "sensitivity_index": req.body.sensitivity_index,
                     "sensitivity_reasons" : req.body.sensitivity_reasons,
                     "credibility_index": req.body.credibility_index,
@@ -1990,31 +2069,28 @@ router.post('/addsite', function(req, res){
                     "identification_number" : req.body.identification_number,
                     "identification_dna" : req.body.identification_dna,
                     "notes" : req.body.notes,
+                    "interviews" : req.body.interviews,
                     "source_type_1" : req.body.source_type_1,
-                    "source_interview_1" : req.body.source_interview_1,
                     "source_subtype_1" : req.body.source_subtype_1,
                     "source_name_1" : req.body.source_name_1,
                     "source_details_1" : req.body.source_details_1,
                     "source_type_2" : req.body.source_type_2,
-                    "source_interview_2" : req.body.source_interview_2,
                     "source_subtype_2" : req.body.source_subtype_2,
                     "source_name_2" : req.body.source_name_2,
                     "source_details_2" : req.body.source_details_2,
                     "source_type_3" : req.body.source_type_3,
-                    "source_interview_3" : req.body.source_interview_3,
                     "source_subtype_3" : req.body.source_subtype_3,
                     "source_name_3" : req.body.source_name_3,
                     "source_details_3" : req.body.source_details_3,
                     "source_type_4" : req.body.source_type_4,
-                    "source_interview_4" : req.body.source_interview_4,
                     "source_subtype_4" : req.body.source_subtype_4,
                     "source_name_4" : req.body.source_name_4,
                     "source_details_4" : req.body.source_details_4,
                     "source_type_5" : req.body.source_type_5,
-                    "source_interview_5" : req.body.source_interview_5,
                     "source_subtype_5" : req.body.source_subtype_5,
                     "source_name_5" : req.body.source_name_5,
                     "source_details_5" : req.body.source_details_5,
+                    "files" : req.body.files,
                     "contacts" : req.body.contacts,
                     
                     parties : partiesList, mps: missingList, locations: locationsList, events: eventsList, sites: sitesList,
@@ -2028,7 +2104,8 @@ router.post('/addsite', function(req, res){
               var relSites = req.body.related_sites;
               var relLocations = req.body.related_locations;
               var relMPs = req.body.related_mps;
-              var relFiles = req.body.related_files;
+              var files = req.body.files;
+              var interviews = req.body.interviews;
               var contacts = req.body.contacts; 
               var long;
               var lat; 
@@ -2045,12 +2122,15 @@ router.post('/addsite', function(req, res){
               if (typeof relLocations == "string") relLocations = [relLocations]
               if (typeof relMPs == "string") relMPs = [relMPs]
               if (typeof contacts == "string") contacts = [contacts]
+              if (typeof files == "string") files = [files]
+              if (typeof interviews == "string") interviews = [interviews]
               if (!relEvents) relEvents = [];
               if (!relSites) relSites = [];
               if (!relLocations) relLocations = [];
               if (!relMPs) relMPs = [];
-              if (!relFiles) relFiles = [];
+              if (!files) files = [];
               if (!contacts) contacts = [];
+              if (!interviews) interviews = [];
                  
               /*if its an edit*/
               if (req.body._id){    
@@ -2070,12 +2150,12 @@ router.post('/addsite', function(req, res){
                 if (profile[0].UNHCR.longitude!= req.body.UNHCR_longitude) updateVal['UNHCR.longitude'] =  req.body.UNHCR_longitude  
                 if (profile[0].dates.beg!= dateConverter(req.body.date_beg_day,req.body.date_beg_month, req.body.date_beg_year)) updateVal['dates.beg'] =  dateConverter(req.body.date_beg_day,req.body.date_beg_month, req.body.date_beg_year)
                 if (profile[0].dates.end!= dateConverter(req.body.date_end_day,req.body.date_end_month, req.body.date_end_year)) updateVal['dates.end'] =  dateConverter(req.body.date_end_day,req.body.date_end_month, req.body.date_end_year)
+                if (profile[0].description!= req.body.description) updateVal['description'] = req.body.description
                 if (profile[0].type!= req.body.type) updateVal['type'] =  req.body.type
                 if (profile[0].related.events!= relEvents) updateVal['related.events'] = relEvents
                 if (profile[0].related.sites!= relSites) updateVal['related.sites'] = relSites  
                 if (profile[0].related.locations!= relLocations) updateVal['related.locations'] = relLocations
                 if (profile[0].related.mps!= relMPs) updateVal['related.mps'] = relMPs
-                if (profile[0].related.files!= relFiles) updateVal['related.files'] = relFiles
                 if (profile[0].perpetrators!= req.body.perpetrators) updateVal['perpetrators'] =  req.body.perpetrators
                 if (profile[0].perpetrators_name!= req.body.perpetrators_name) updateVal['perpetrators_name'] = req.body.perpetrators_name
                 if (profile[0].number_expected!= req.body.number_expected) updateVal['number_expected'] =  req.body.number_expected
@@ -2094,38 +2174,35 @@ router.post('/addsite', function(req, res){
                 if (!profile[0].identification || profile[0].identification.date!= dateConverter(req.body.identification_date_day,req.body.identification_date_month, req.body.identification_date_year)) updateVal['identification.date'] =  dateConverter(req.body.identification_date_day,req.body.identification_date_month,req.body.identification_date_year)
                 if (!profile[0].identification || profile[0].identification.number!=req.body.identification_number)updateVal['identification.number'] =  req.body.identification_number
                 if (!profile[0].identification || profile[0].identification.dna!=req.body.identification_dna)updateVal['identification.dna'] =  req.body.identification_dna
+                if (profile[0].interviews!= interviews) updateVal['interviews'] = interviews
                 var sourcesBody = [{
                     "type": req.body.source_type_1,
-                    "interview": req.body.source_interview_1,
                     "subtype" : req.body.source_subtype_1,
                     "name" : req.body.source_name_1,
                     "details" : req.body.source_details_1
                 },{
                     "type": req.body.source_type_2,
-                    "interview": req.body.source_interview_2,
                     "subtype" : req.body.source_subtype_2,
                     "name" : req.body.source_name_2,
                     "details" : req.body.source_details_2
                 },{
                     "type": req.body.source_type_3,
-                    "interview": req.body.source_interview_3,
                     "subtype" : req.body.source_subtype_3,
                     "name" : req.body.source_name_3,
                     "details" : req.body.source_details_3
                 },{
                     "type": req.body.source_type_4,
-                    "interview": req.body.source_interview_4,
                     "subtype" : req.body.source_subtype_4,
                     "name" : req.body.source_name_4,
                     "details" : req.body.source_details_4
                 },{
                     "type": req.body.source_type_5,
-                    "interview": req.body.source_interview_5,
                     "subtype" : req.body.source_subtype_5,
                     "name" : req.body.source_name_5,
                     "details" : req.body.source_details_5
                 }]
                 if (profile[0].sources!= sourcesBody) updateVal['sources'] =  sourcesBody
+                if (profile[0].files!= files) updateVal['files'] = files
                 if (profile[0].contacts!=contacts) updateVal['contacts'] = contacts
                 if (profile[0].notes!= req.body.notes) updateVal['notes'] =  req.body.notes  
                   
@@ -2170,16 +2247,35 @@ router.post('/addsite', function(req, res){
                             if((relMPs).indexOf(e)== -1)removeRelated("missing", e, req.body.code, "sites");
                         });
                     }
-                    if (profile[0].related.files != relFiles) {
-                        relFiles.forEach( function (e){
-                            if(profile[0].related.files && (profile[0].related.files).indexOf(e)== -1)updateRelated("files", e, req.body.code, "sites");
+                    if (profile[0].interviews != interviews) {
+                        interviews.forEach( function (e){
+                            if(profile[0].interviews && (profile[0].interviews).indexOf(e)== -1)updateRelated("interviews", e, req.body.code, "sites");
                         });
-                        if(profile[0].related.files){
-                            (profile[0].related.files).forEach( function (e){
-                                if((relFiles).indexOf(e)== -1)removeRelated("files", e, req.body.code, "sites");
+                        if(profile[0].interviews){
+                            (profile[0].interviews).forEach( function (e){
+                                if((interviews).indexOf(e)== -1)removeRelated("interviews", e, req.body.code, "sites");
                             });     
-                        }
-                        
+                        } 
+                    }
+                    if (profile[0].files != files) {
+                        files.forEach( function (e){
+                            if(profile[0].files && (profile[0].files).indexOf(e)== -1)updateRelated("files", e, req.body.code, "sites");
+                        });
+                        if(profile[0].files){
+                            (profile[0].files).forEach( function (e){
+                                if((files).indexOf(e)== -1)removeRelated("files", e, req.body.code, "sites");
+                            });     
+                        } 
+                    }
+                    if (profile[0].contacts != contacts) {
+                        contacts.forEach( function (e){
+                            if(profile[0].contacts && (profile[0].contacts).indexOf(e)== -1)updateRelated("contacts", e, req.body.code, "sites");
+                        });
+                        if(profile[0].contacts){
+                            (profile[0].contacts).forEach( function (e){
+                                if((contacts).indexOf(e)== -1)removeRelated("contacts", e, req.body.code, "sites");
+                            });     
+                        } 
                     }
                     profile = null;
                     res.redirect('/sites');
@@ -2217,13 +2313,13 @@ router.post('/addsite', function(req, res){
                                     "beg" : dateConverter(req.body.date_beg_day,req.body.date_beg_month,req.body.date_beg_year),
                                     "end" : dateConverter(req.body.date_end_day,req.body.date_end_month,req.body.date_end_year)
                                 },
+                                "description" : req.body.description,
                                 "type" : req.body.type,
                                 "related" : {
                                     "events" : relEvents,
                                     "sites" : relSites,
                                     "locations" :relLocations,
-                                    "mps" : relMPs,
-                                    "files": relFiles
+                                    "mps" : relMPs
                                 },
                                 "perpetrators" : req.body.perpetrators,
                                 "perpetrators_name" : req.body.perpetrators_name,
@@ -2253,39 +2349,35 @@ router.post('/addsite', function(req, res){
                                     "number" : req.body.identification_number,
                                     "dna" : req.body.identification_dna
                                 },
+                                "interviews" : interviews,
 	                            "sources" : [{
                                     "type": req.body.source_type_1,
-                                    "interview": req.body.source_interview_1,
                                     "subtype" : req.body.source_subtype_1,
                                     "name" : req.body.source_name_1,
                                     "details" : req.body.source_details_1
                                 },{
                                     "type": req.body.source_type_2,
-                                    "interview": req.body.source_interview_2,
                                     "subtype" : req.body.source_subtype_2,
                                     "name" : req.body.source_name_2,
                                     "details" : req.body.source_details_2
                                 },{
                                     "type": req.body.source_type_3,
-                                    "interview": req.body.source_interview_3,
                                     "subtype" : req.body.source_subtype_3,
                                     "name" : req.body.source_name_3,
                                     "details" : req.body.source_details_3
                                 },{
                                     "type": req.body.source_type_4,
-                                    "interview": req.body.source_interview_4,
                                     "subtype" : req.body.source_subtype_4,
                                     "name" : req.body.source_name_4,
                                     "details" : req.body.source_details_4
                                 },{
                                     "type": req.body.source_type_5,
-                                    "interview": req.body.source_interview_5,
                                     "subtype" : req.body.source_subtype_5,
                                     "name" : req.body.source_name_5,
                                     "details" : req.body.source_details_5
                                 }],
                                 "contacts" : contacts,
-                                "files" : [],
+                                "files" : files,
                                 "notes" : req.body.notes,
                              };
                 collection.insert([sitenew], function(err, result){
@@ -2312,6 +2404,21 @@ router.post('/addsite', function(req, res){
                     if (relMPs) {
                         relMPs.forEach( function (e){
                             updateRelated("missing", e, req.body.code, "sites");
+                        });
+                    }
+                    if (interviews) {
+                        interviews.forEach( function (e){
+                            updateRelated("interviews", e, req.body.code, "sites");
+                        });
+                    }
+                    if (files) {
+                        files.forEach( function (e){
+                            updateRelated("files", e, req.body.code, "sites");
+                        });
+                    }
+                    if (contacts) {
+                        contacts.forEach( function (e){
+                            updateRelated("contacts", e, req.body.code, "sites");
                         });
                     }
                     res.redirect('/sites');
@@ -3624,9 +3731,9 @@ router.post('/deleteEntry', function (req,res){
               removeRelated("contacts", e.slice(1,-1), req.body.code, req.body.collection);
              })     
             }  
-            if((req.body.related_files).length){
-                var relFiles = (req.body.related_files).slice(1,-1);
-                relFiles.split(",").forEach(function (e){
+            if(req.body.files && (req.body.files).length){
+                var files = (req.body.files).slice(1,-1);
+                files.split(",").forEach(function (e){
                  removeRelated("files", e.slice(1,-1), req.body.code, req.body.collection);
                 })     
                }

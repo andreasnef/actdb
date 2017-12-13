@@ -38,6 +38,7 @@ block content
         - date_end_day = ("0"+dateend.getDate()).slice(-2);
         - date_end_month = ("0" + (dateend.getMonth()+1)).slice(-2);
         - date_end_year = dateend.getFullYear();
+        - description = value.description
         - groups_responsible = value.groups_responsible
         - groups_responsible_name = value.groups_responsible_name
         - related_events = value.related.events
@@ -45,39 +46,36 @@ block content
         - related_locations = value.related.locations
         - related_mps = value.related.mps
         - notes = value.notes
+        - interviews = value.interviews
         - sources = value.sources
         each source, i in value.sources  
           if(i == 0)
             - source_type_1 = source.type
-            - source_interview_1 = source.interview
             - source_subtype_1 = source.subtype
             - source_name_1 = source.name
             - source_details_1 = source.details
           if(i == 1)
             - source_type_2 = source.type
-            - source_interview_2 = source.interview
             - source_subtype_2 = source.subtype
             - source_name_2 = source.name
             - source_details_2 = source.details
           if(i == 2)
             - source_type_3 = source.type
-            - source_interview_3 = source.interview
             - source_subtype_3 = source.subtype
             - source_name_3 = source.name
             - source_details_3 = source.details
           if(i == 3)
             - source_type_4 = source.type
-            - source_interview_4 = source.interview
             - source_subtype_4 = source.subtype
             - source_name_4 = source.name
             - source_details_4 = source.details
           if(i == 4)
             - source_type_5 = source.type
-            - source_interview_5 = source.interview
             - source_subtype_5 = source.subtype
             - source_name_5 = source.name
             - source_details_5 = source.details
         - contacts = value.contacts
+        - files = value.files
         - reports = value.reports
         
      
@@ -308,6 +306,12 @@ block content
      
     br
     br
+
+    div#wrapper
+     textarea#input_description(type="text", placeholder="Description", cols="120" rows="10", name="description", value=description)
+        | #{description}
+    br
+    br
     
     div#wrapper
      legend Groups Responsible
@@ -329,9 +333,10 @@ block content
               input.checkbox-input(type='checkbox', name="groups_responsible", value=party.name.en)
               label #{party.name.en}
      br
-     input#input_groups_responsible_name(type="text", placeholder="Names of Reponsible Persons", name="groups_responsible_name", value=groups_responsible_name)
+     textarea#input_perpetrators_name(type="text", placeholder="Names of Reponsible Persons or Fractions within the group", cols="120" rows="10", name="groups_responsible_name", value=groups_responsible_name)
+        | #{groups_responsible_name}
      br
-     br
+     br 
     div#wrapper
      legend Related
      br
@@ -446,20 +451,13 @@ block content
      br
      br
      
-     span Sources
+    div#wrapper 
+     legend Sources
      br
-     select#sources_1(name="source_type_1", value=source_type_1)
-        - var types = ["Interview","Open Source","Closed Source"];
-        option(value="") Select
-        each type in types
-          if(source_type_1 == type)
-            option(value=type selected="selected") #{type}
-          else
-            option(value=type) #{type}  
-     
-     //if(source_type_1 == "Interview")
-     div#interviewsDiv_1(class='dropMenu')
-            if(interviewslist)
+     br
+     span Interviews
+     div#interviews
+        if(interviewslist)
                 table(id="interviewsList")
                  thead    
                     tr#headtag
@@ -472,15 +470,27 @@ block content
                     each interview, i in interviewslist
                       tr
                        td
-                        if (source_interview_1 && source_interview_1.includes(interview.code))
-                            input.checkbox-input(type='checkbox', name="source_interview_1", value=interview.code, checked)
+                        if (interviews && interviews.includes(interview.code))
+                            input.checkbox-input(type='checkbox', name="interviews", value=interview.code, checked)
                         else  
-                            input.checkbox-input(type='checkbox', name="source_interview_1", value=interview.code)
+                            input.checkbox-input(type='checkbox', name="interviews", value=interview.code)
                        td= interview.code
                        td= interview.interviewee
-                       td= interview.date
+                       td= moment(interview.date).utc().format('MMMM Do, YYYY')
 
-     div#sourcesDiv_1
+     br
+     br       
+     span Other sources
+     div#source1
+        select#sources_1(name="source_type_1", value=source_type_1)
+            - var types = ["Open Source","Closed Source"];
+            option(value="") Select
+            each type in types
+             if(source_type_1 == type)
+              option(value=type selected="selected") #{type}
+             else
+              option(value=type) #{type}  
+        br
         input#input_subtype_source(type="text", placeholder="Type of Source", name="source_subtype_1", value=source_subtype_1)
         br
         input#input_name_source(type="text", placeholder="Name of Source", name="source_name_1", value=source_name_1)
@@ -488,111 +498,53 @@ block content
         textarea#input_details_source(type="text", placeholder="Details", cols="120" rows="10", name="source_details_1", value=source_details_1)
             | #{source_details_1}
 
-     br
-     br
-     //div(class='btn menu')
-        //a(href="#" onclick="return toggle_visibility('source2');") Add another source 
-     //br
-     //br         
-
-        //-----------------------
+        br
+        br
+     
      div#source2
         select#sources_2(name="source_type_2", value=source_type_2)
-            - var types = ["Interview","Open Source","Closed Source"];
+            - var types = ["Open Source","Closed Source"];
             option(value="") Select
             each type in types
              if(source_type_2 == type)
                 option(value=type selected="selected") #{type}
              else
                 option(value=type) #{type}  
-        
-        div#interviewsDiv_2
-            if (interviewslist)
-            table(id="interviewsList2")
-               thead    
-                tr#headtag
-                    th Select
-                    th Code
-                    th Interviewee
-                    th Date
-
-               tbody    
-                each interview, i in interviewslist
-                  tr
-                   td
-                    if (source_interview_2 && source_interview_2.includes(interview.code))
-                        input.checkbox-input(type='checkbox', name="source_interview_2", value=interview.code, checked)
-                    else  
-                        input.checkbox-input(type='checkbox', name="source_interview_2", value=interview.code)
-                   td= interview.code
-                   td= interview.interviewee
-                   td= interview.date
-
-        div#sourcesDiv_2
-            input#input_subtype_source(type="text", placeholder="Type of Source", name="source_subtype_2", value=source_subtype_2)
-            br
-            input#input_name_source(type="text", placeholder="Name of Source", name="source_name_2", value=source_name_2)
-            br
-            textarea#input_details_source(type="text", placeholder="Details", cols="120" rows="10", name="source_details_2", value=source_details_2)
-                | #{source_details_2}
+        br
+        input#input_subtype_source(type="text", placeholder="Type of Source", name="source_subtype_2", value=source_subtype_2)
+        br
+        input#input_name_source(type="text", placeholder="Name of Source", name="source_name_2", value=source_name_2)
+        br
+        textarea#input_details_source(type="text", placeholder="Details", cols="120" rows="10", name="source_details_2", value=source_details_2)
+            | #{source_details_2}
 
         br
         br
-        //div(class='btn menu')
-            //a(href="#" onclick="return toggle_visibility('source3');") Add another source
-        //br 
-        //br  
-        //-----------------------
+
      div#source3
         select#sources_3(name="source_type_3", value=source_type_3)
-            - var types = ["Interview","Open Source","Closed Source"];
+            - var types = ["Open Source","Closed Source"];
             option(value="") Select
             each type in types
              if(source_type_3 == type)
                 option(value=type selected="selected") #{type}
              else
                 option(value=type) #{type}  
-        
-        div#interviewsDiv_3
-            if (interviewslist)
-            table(id="interviewsList3")
-               thead    
-                tr#headtag
-                    th Select
-                    th Code
-                    th Interviewee
-                    th Date
 
-               tbody    
-                each interview, i in interviewslist
-                  tr
-                   td
-                    if (source_interview_3 && source_interview_3.includes(interview.code))
-                        input.checkbox-input(type='checkbox', name="source_interview_3", value=interview.code, checked)
-                    else  
-                        input.checkbox-input(type='checkbox', name="source_interview_3", value=interview.code)
-                   td= interview.code
-                   td= interview.interviewee
-                   td= interview.date
-
-        div#sourcesDiv_3
-            input#input_subtype_source(type="text", placeholder="Type of Source", name="source_subtype_3", value=source_subtype_3)
-            br
-            input#input_name_source(type="text", placeholder="Name of Source", name="source_name_3", value=source_name_3)
-            br
-            textarea#input_details_source(type="text", placeholder="Details", cols="120" rows="10", name="source_details_3", value=source_details_3)
-                | #{source_details_3}
+        br
+        input#input_subtype_source(type="text", placeholder="Type of Source", name="source_subtype_3", value=source_subtype_3)
+        br
+        input#input_name_source(type="text", placeholder="Name of Source", name="source_name_3", value=source_name_3)
+        br
+        textarea#input_details_source(type="text", placeholder="Details", cols="120" rows="10", name="source_details_3", value=source_details_3)
+            | #{source_details_3}
 
         br
         br
-        //div(class='btn menu')
-            //a(href="#" onclick="return toggle_visibility('source4');") Add another source
-        //br 
-        //br
-        //-----------------------
+
      div#source4
         select#sources_4(name="source_type_4", value=source_type_4)
-            - var types = ["Interview","Open Source","Closed Source"];
+            - var types = ["Open Source","Closed Source"];
             option(value="") Select
             each type in types
              if(source_type_4 == type)
@@ -600,46 +552,20 @@ block content
              else
                 option(value=type) #{type}  
         
-        div#interviewsDiv_4
-            if (interviewslist)
-            table(id="interviewsList4")
-              thead    
-                tr#headtag
-                    th Select
-                    th Code
-                    th Interviewee
-                    th Date
-
-              tbody    
-                each interview, i in interviewslist
-                  tr
-                   td
-                    if (source_interview_4 && source_interview_4.includes(interview.code))
-                        input.checkbox-input(type='checkbox', name="source_interview_4", value=interview.code, checked)
-                    else  
-                        input.checkbox-input(type='checkbox', name="source_interview_4", value=interview.code)
-                   td= interview.code
-                   td= interview.interviewee
-                   td= interview.date
-
-        div#sourcesDiv_4
-            input#input_subtype_source(type="text", placeholder="Type of Source", name="source_subtype_4", value=source_subtype_4)
-            br
-            input#input_name_source(type="text", placeholder="Name of Source", name="source_name_4", value=source_name_4)
-            br
-            textarea#input_details_source(type="text", placeholder="Details", cols="120" rows="10", name="source_details_4", value=source_details_4)
-                | #{source_details_4}
+        br
+        input#input_subtype_source(type="text", placeholder="Type of Source", name="source_subtype_4", value=source_subtype_4)
+        br
+        input#input_name_source(type="text", placeholder="Name of Source", name="source_name_4", value=source_name_4)
+        br
+        textarea#input_details_source(type="text", placeholder="Details", cols="120" rows="10", name="source_details_4", value=source_details_4)
+            | #{source_details_4}
 
         br
         br
-        //div(class='btn menu')
-            //a(href="#" onclick="return toggle_visibility('source5');") Add another source
-        //br 
-        //br
-        //-----------------------
+ 
      div#source5
         select#sources_5(name="source_type_5", value=source_type_5)
-            - var types = ["Interview","Open Source","Closed Source"];
+            - var types = ["Open Source","Closed Source"];
             option(value="") Select
             each type in types
              if(source_type_5 == type)
@@ -647,41 +573,45 @@ block content
              else
                 option(value=type) #{type}  
         
-        div#interviewsDiv_5
-            if (interviewslist)
-            table(id="interviewsList5")
-              thead    
-                tr#headtag
-                    th Select
-                    th Code
-                    th Interviewee
-                    th Date
-
-              tbody    
-                each interview, i in interviewslist
-                  tr
-                   td
-                    if (source_interview_5 && source_interview_5.includes(interview.code))
-                        input.checkbox-input(type='checkbox', name="source_interview_5", value=interview.code, checked)
-                    else  
-                        input.checkbox-input(type='checkbox', name="source_interview_5", value=interview.code)
-                   td= interview.code
-                   td= interview.interviewee
-                   td= interview.date
-
-        div#sourcesDiv_5
-            input#input_subtype_source(type="text", placeholder="Type of Source", name="source_subtype_5", value=source_subtype_5)
-            br
-            input#input_name_source(type="text", placeholder="Name of Source", name="source_name_5", value=source_name_5)
-            br
-            textarea#input_details_source(type="text", placeholder="Details", cols="120" rows="10", name="source_details_5", value=source_details_5)
-                | #{source_details_5}
+        br
+        input#input_subtype_source(type="text", placeholder="Type of Source", name="source_subtype_5", value=source_subtype_5)
+        br
+        input#input_name_source(type="text", placeholder="Name of Source", name="source_name_5", value=source_name_5)
+        br
+        textarea#input_details_source(type="text", placeholder="Details", cols="120" rows="10", name="source_details_5", value=source_details_5)
+            | #{source_details_5}
 
         br 
-        br  
-
+        br 
+    
     div#wrapper 
-     span Contact
+      a(href="#" onclick="return toggle_visibility('relatedFiles');") Files #{files} (click to modify)
+      
+      div#relatedFiles(class='dropMenu')
+        if (fileslist)
+         table(id="filesList")
+          thead    
+            tr#headtag
+                th Select
+                th Code
+                th Description
+                th File
+
+          tbody    
+            each file, i in fileslist
+             tr
+               td
+                if (files && files.includes(file.code))
+                    input.checkbox-input(type='checkbox', name="files", value=file.code, checked)
+                else  
+                    input.checkbox-input(type='checkbox', name="files", value=file.code)
+                td= file.code
+                td= file.description
+                td= file.file
+    br
+    br
+    div#wrapper 
+     span Contacts
      br
      if (contactslist)
       table(id="contactsList")
@@ -702,17 +632,17 @@ block content
                   else  
                     input.checkbox-input(type='checkbox', name="contacts", value=contact.code)
                  td= contact.code
-                 td= contact.name.ar.last, contact.name.ar.first
-                 td= contact.name.en.first, contact.name.en.last
+                 td= contact.name.ar.last+', '+contact.name.ar.first
+                 td= contact.name.en.first+', '+contact.name.en.last
                  td= contact.category
  
      
      
-    br
-    br
-    div(class='btn menu')
+     br
+     br
+     div(class='btn menu')
       button#submit_location(type="submit" role='submit' class="buttons") submit
-    div(class='btn menu')
+     div(class='btn menu')
       a(href="/locations") Go back to list of Locations
 
     script.
@@ -732,6 +662,9 @@ block content
             paging: false
         } );
         $('#contactsList').DataTable( {
+            paging: false
+        } );
+        $('#filesList').DataTable( {
             paging: false
         } );
         $('#interviewsList').DataTable( {

@@ -21,10 +21,10 @@ block content
           - else if (value.picture == "YES") 
             p 
              span Picture exists but hasn't been uploaded
-          if(user!="public")
-           p          
-            span.title Public: 
-            span #{value.public}
+          //- if(user!="public")
+          //-  p          
+          //-   span.title Public: 
+          //-   span #{value.public}
           p
            span.title Name in Arabic:  
            span #{value.name.ar.last}, #{value.name.ar.first} #{value.name.ar.middle} 
@@ -146,7 +146,7 @@ block content
           br
 
       div
-       if(value.last_seen)
+       if(value.last_seen.reported || value.last_seen.location || value.last_seen.date ||value.last_seen.country || value.itinerary)
           h4 Last seen: 
 
           - if (value.last_seen.reported)
@@ -170,6 +170,9 @@ block content
            p
             span.title Itinerary: 
             span #{value.itinerary}
+       
+       if(value.perpetrators || value.perpetrators_name)
+          h4 Responsibles:
           - if (value.perpetrators)
            p
             span.title Groups Responsible: 
@@ -178,39 +181,52 @@ block content
            p
             span.title Names of Reponsible Persons: 
             span #{value.perpetrators_name}  
-          - if (value.related.events)
+
+       if((value.related.events).length>0 ||(value.related.sites).length>0 || (value.related.locations).length>0 || (value.related.mps).length>0)     
+          h4 Related: 
+          - if ((value.related.events).length>0)
            p
             span.title Related Events: 
             each event, i in value.related.events
              a(href="#" onclick="loadProfile('events','"+event+"');") #{event} 
-          - if (value.related.sites)
+          - if ((value.related.sites).length>0)
            p
             span.title Related Sites: 
             each site, i in value.related.sites
              a(href="#" onclick="loadProfile('sites','"+site+"');") #{site} 
-          - if (value.related.locations)
+          - if ((value.related.locations).length>0)
            p
             span.title Related Locations: 
             each location, i in value.related.locations
              a(href="#" onclick="loadProfile('locations','"+location+"');") #{location} 
-          - if (value.related.mps)
+          - if ((value.related.mps).length>0)
            p
             span.title Related Missing Persons: 
             each mp, i in value.related.mps
              a(href="#" onclick="loadProfile('missing','"+mp+"');") #{mp} 
 
-          - if (value.fate)
+       - if (value.fate)
            p
             span.title Fate: 
             span #{value.fate}
-          - if (value.notes)
+       - if (value.notes)
            p
             span.title Notes: 
             span #{value.notes}
+          
+       if(value.source || value.sorces || value.files || value.interviews)
+          h4 Sources 
+          if(value.interviews && (value.interviews).length>0)
+            p
+              span.title Interviews: 
+              each interview, i in value.interviews
+                a(href="#" onclick="loadProfile('interviews','"+interview+"');") #{interview} 
+    
           - if (value.source)  
            p
             span.title Old Source Field:  
             span #{value.source}
+          
           - if (value.sources)  
            p
             span.title Sources: 
@@ -218,8 +234,6 @@ block content
              if(source.type)
               p
                span #{source.type}: 
-               if(source.interview)
-                a(href="#" onclick="loadProfile('interviews','"+source.interview+"');") #{source.interview}
                if(source.subtype)
                 span #{source.subtype} 
                if(source.name)
@@ -281,9 +295,9 @@ block content
       //-     br
           
       div
-       if(value.contacts || value.contact)
+          //if((value.contacts && (value.contacts).length>0) || value.contact || value.contact.phone_1)
           h4 Contact:
-          - if (value.contacts)
+          - if ((value.contacts).length>0)
            p
             span.title Contacts: 
             each contact, i in value.contacts
@@ -336,7 +350,7 @@ block content
                 span.title Notes: 
                 span #{value.contact.notes}
 
-          if(user!="public")
+      if(user!="public")
            div(class='btn menu')
             a(href="/newprofile/?type=missing&mpcode="+value.code) Edit
            div(class='btn menu') 

@@ -4,21 +4,24 @@ block content
  each value, i in profile
   div#profileTitle
       h3. 
-         #{value.name.en} - (#{value.code})
+         #{value.name.en}
       
   div
       - if (value.name.ar) 
            p
             span.title Name in Arabic: 
             span #{value.name.ar}
+      p
+        span.title Code:
+        span #{value.code}      
+
+  //- div
+  //-   span.title Public: 
+  //-   span #{value.public}
+  //-   br
 
   div
-    span.title Public: 
-    span #{value.public}
-    br
-
-  div
-      h4 Location
+      h4 Location:
 
       - if(value.location.place ||value.location.district ||value.location.governorate)    
        p 
@@ -36,8 +39,7 @@ block content
         span.title Type: 
         span #{value.type}
       
-  
-      
+   
   div 
       h4 Activity Period:
       if(!value.dates.beg)
@@ -67,42 +69,49 @@ block content
          span #{moment(value.dates.end).format('MMMM Do, YYYY')}
       
   div
+      if(value.description)
+       h4 Description:
+       p
+        span #{value.description}
+
+  div
+    if((value.related.events && (value.related.events).length>0 )|| (value.related.sites && (value.related.sites).length>0) || (value.related.locations && (value.related.locations).length>0) || (value.related.mps && (value.related.mps).length>0))
       h4 Related: 
       
-      if(value.related.events)
+      if(value.related.events && (value.related.events).length>0)
        p 
         span.title Related Events: 
         each event, i in value.related.events
          a(href="#" onclick="loadProfile('events','"+event+"');") #{event} 
-      - if(value.related.sites)
+      
+      - if(value.related.sites && (value.related.sites).length>0)
        p
         span.title Related Sites: 
         each site, i in value.related.sites
          a(href="#" onclick="loadProfile('sites','"+site+"');") #{site} 
-      - if (value.related.locations)
+      
+      - if (value.related.locations && (value.related.locations).length>0)
        p
         span.title Related Locations: 
         each location, i in value.related.locations
          a(href="#" onclick="loadProfile('locations','"+location+"');") #{location} 
-      - if (value.related.mps)
+      
+      - if (value.related.mps && (value.related.mps).length>0)
        p
         span.title Related Missing Persons: 
         each mp, i in value.related.mps
-         a(href="#" onclick="loadProfile('missing','"+mp+"');") #{mp}
-      - if (value.related.files)
-       p
-        span.title Related Files: 
-        each file, i in value.related.files
-         a(href="#" onclick="loadProfile('files','"+file+"');") #{file}    
-
-      - if (value.perpetrators)
-       p 
-        span.title Groups Responsible: 
-        span #{value.perpetrators}
-      - if (value.perpetrators_name)
-       p 
-        span.title Names of Reponsible Persons: 
-        span #{value.perpetrators_name}  
+         a(href="#" onclick="loadProfile('missing','"+mp+"');") #{mp}   
+  div
+    if(value.perpetrators || value.perpetrators_name)
+     h4 Responsibles:
+     - if (value.perpetrators)
+        p 
+         span.title Groups Responsible: 
+         span #{value.perpetrators}
+     - if (value.perpetrators_name)
+        p 
+         span.title Names of Reponsible Persons: 
+         span #{value.perpetrators_name}  
       
   div
       h4 Details: 
@@ -126,7 +135,7 @@ block content
       - if (value.sensitivity.index)
        p 
         span.title Sensitivity index: 
-        #{value.sensitivity.index}
+        span #{value.sensitivity.index}
       - if (value.sensitivity.reasons)
        p 
        span.title Sensitivity reasons: 
@@ -184,36 +193,44 @@ block content
        p 
         span.title DNA conducted: 
         span #{value.identification.dna}  
-  div     
+  div
+      h4 Sources 
+      if(value.interviews && (value.interviews).length>0)
+       p
+        span.title Interviews: 
+        each interview, i in value.interviews
+         a(href="#" onclick="loadProfile('interviews','"+interview+"');") #{interview} 
+
       - if (value.sources)  
            p
-            span.title Sources: 
             each source, i in value.sources
              if(source.type)
               p
-               span #{source.type}: 
-               if(source.interview)
-                a(href="#" onclick="loadProfile('interviews','"+source.interview+"');") #{source.interview}
+               span #{source.type}:
                if(source.subtype)
                 span #{source.subtype} 
                if(source.name)
                 span #{source.name} 
                if(source.details) 
                 span #{source.details}
-      - if(value.files)
-       p 
+      
+      - if (value.files && (value.files).length>0)
+       p
         span.title Files: 
         each file, i in value.files
-         a(href="#" onclick="loadProfile('files','"+file+"');") #{file}  
+         a(href="#" onclick="loadProfile('files','"+file+"');") #{file} 
+      
       - if (value.notes)
        p 
         span.title Notes: 
-        span #{value.notes}  
-      - if (value.interviews)
-       p 
-        span.title Interviews: 
-        each interview, i in value.interviews
-         a(href="#" onclick="loadProfile('interviews','"+interview+"');") #{interview}     
+        span #{value.notes}   
+
+      - if (value.contacts && (value.contacts).length>0)
+       p
+        span.title Contacts: 
+        each contact, i in value.contacts
+         a(href="#" onclick="loadProfile('contacts','"+contact+"');") #{contact}   
+           
       
       div(class='btn menu')
        a(href="/newprofile/?type=site&code="+value.code) Edit

@@ -11,9 +11,9 @@ block content
        p 
         span.title Code: 
         span #{value.code}
-       p 
-        span.title Public: 
-        span #{value.public} 
+      //-  p 
+      //-   span.title Public: 
+      //-   span #{value.public} 
       - if (value.name.ar) 
            p
             span.title Name in Arabic: 
@@ -32,17 +32,17 @@ block content
        p 
         span.title Coordinates: 
         span #{value.location.coordinates}
-      - if(value.UNHCR)
+      
+      - if(value.UNHCR.latitude)
        p 
         span.title UNHCR Coordinates: 
-        span #{value.UNHCR.coordinates}
+        span #{value.UNHCR.latitude} #{value.UNHCR.latitude}
       
-  div 
+  div
+     if(value.dates.beg || value.dates.end) 
       h4 Activity Period:
       if(!value.dates.beg)
-        p 
-         span.title From: 
-         span Unknown
+
       else if(value.dates.beg && ((value.dates.beg).getDate() == 1) && ((value.dates.beg).getMonth() == 0))
         p 
          span.title From: 
@@ -53,9 +53,7 @@ block content
          span #{moment(value.dates.beg).format('MMMM Do, YYYY')}
         
       if (!value.dates.end)
-        p 
-         span.title To: 
-         span Unknown
+
       else if(value.dates.end && ((value.dates.end).getDate() == 1) && ((value.dates.end).getMonth() == 0))
         p 
          span.title To: 
@@ -65,59 +63,70 @@ block content
          span.title To: 
          span #{moment(value.dates.end).format('MMMM Do, YYYY')}
         
-      
+  div
+      if(value.description)
+       h4 Description:
+       p
+        span #{value.description}
+            
   div 
-      if(value.related)
-       h4 Related: 
+      if((value.related.events && (value.related.events).length>0 )|| (value.related.sites&& (value.related.sites).length>0) || (value.related.locations && (value.related.locations).length>0) || (value.related.mps && (value.related.mps).length>0))
+        h4 Related: 
       
-        if(value.related.events)
-        p 
-          span.title Related Events: 
+        if((value.related.events).length>0)
+         p 
+          span.title Related Events:
           each event, i in value.related.events
            a(href="#" onclick="loadProfile('events','"+event+"');") #{event} 
-        - if(value.related.sites)
-        p
+        - if((value.related.sites).length>0)
+         p
           span.title Related Sites: 
           each site, i in value.related.sites
            a(href="#" onclick="loadProfile('sites','"+site+"');") #{site} 
-        - if (value.related.locations)
-        p
+        - if ((value.related.locations).length>0)
+         p
           span.title Related Locations: 
           each location, i in value.related.locations
            a(href="#" onclick="loadProfile('locations','"+location+"');") #{location} 
-        - if (value.related.mps)
-        p
+        - if ((value.related.mps).length>0)
+         p
           span.title Related Missing Persons: 
           each mp, i in value.related.mps
            a(href="#" onclick="loadProfile('missing','"+mp+"');") #{mp} 
         
-        - if (value.groups_responsible)
-        p 
+      - if (value.groups_responsible)
+         h4 Responsibles: 
+         p 
           span.title Groups Responsible: 
           span #{value.groups_responsible}
         
-        - if (value.groups_responsible_name)
-        p 
-          span.title Names of Reponsible Persons: 
+      - if (value.groups_responsible_name)
+         p 
+          span.title Names of Reponsible Persons or Fractions: 
           span #{value.groups_responsible_name}  
       
       
   div    
+      h4 Sources 
+      if(value.interviews && (value.interviews).length>0)
+       p
+        span.title Interviews: 
+        each interview, i in value.interviews
+         a(href="#" onclick="loadProfile('interviews','"+interview+"');") #{interview} 
+
       - if (value.sources)  
            p
-            span.title Sources: 
             each source, i in value.sources
              if(source.type)
               p
-               span #{source.type}: 
-               if(source.interview)
-                a(href="#" onclick="loadProfile('interviews','"+source.interview+"');") #{source.interview}
+               span #{source.type}:
                if(source.subtype)
                 span #{source.subtype} 
                if(source.name)
                 span #{source.name} 
                if(source.details) 
                 span #{source.details}
+      
       - if(value.files)
        p 
         span.title Files: 
@@ -127,11 +136,12 @@ block content
        p 
         span.title Notes: 
         span #{value.notes}
-      - if (value.interviews)
-       p 
-        span.title Interviews: 
-        each interview, i in value.interviews
-         a(href="#" onclick="loadProfile('interviews','"+interview+"');") #{interview}         
+        
+      - if (value.contacts && (value.contacts).length>0)
+       p
+        span.title Contacts: 
+        each contact, i in value.contacts
+         a(href="#" onclick="loadProfile('contacts','"+contact+"');") #{contact}            
       
       if (user != "public")
        div(class='btn menu')
@@ -146,6 +156,7 @@ block content
                     input(type="hidden" name="related_mps" value=value.related.mps)
                     input(type="hidden" name="related_interviews" value=value.interviews)
                     input(type="hidden" name="related_contacts" value=value.contacts)
+                    input(type="hidden" name="related_files" value=value.files)
                     
                     button#submit_event(class="buttons", type="submit") Delete   
       
