@@ -741,7 +741,14 @@ router.get('/profile', function(req, res){
                 profile = result;
                 res.render(req.query.type+'profile', {    
                     "profile" : result,
-                    "user" : req.session.user
+                    "user" : req.session.user,
+                    "locationsList" : locationsList,
+                    "missingList" : missingList,
+                    "sitesList" : sitesList,
+                    "eventsList" : eventsList,
+                    "interviewsList" : interviewsList,
+                    "contactsList" : contactsList,
+                    "filesList" : filesList
                     });    
             } else {
                 res.send('No data found');
@@ -1345,6 +1352,7 @@ router.post('/addevent', function(req, res){
                     "date_end_day" : req.body.date_end_day,
                     "date_end_month": req.body.date_end_month,
                     "date_end_year": req.body.date_end_year,
+                    "description" : req.body.description,
                     "groups_responsible" : req.body.groups_responsible,
                     "groups_responsible_name" : req.body.groups_responsible_name,
                     "related_events" : req.body.related_events,
@@ -1352,31 +1360,28 @@ router.post('/addevent', function(req, res){
                     "related_locations" : req.body.related_locations,
                     "related_mps" : req.body.related_mps,
                     "notes" : req.body.notes,
+                    "interviews" : req.body.interviews,
                     "source_type_1" : req.body.source_type_1,
-                    "source_interview_1" : req.body.source_interview_1,
                     "source_subtype_1" : req.body.source_subtype_1,
                     "source_name_1" : req.body.source_name_1,
                     "source_details_1" : req.body.source_details_1,
                     "source_type_2" : req.body.source_type_2,
-                    "source_interview_2" : req.body.source_interview_2,
                     "source_subtype_2" : req.body.source_subtype_2,
                     "source_name_2" : req.body.source_name_2,
                     "source_details_2" : req.body.source_details_2,
                     "source_type_3" : req.body.source_type_3,
-                    "source_interview_3" : req.body.source_interview_3,
                     "source_subtype_3" : req.body.source_subtype_3,
                     "source_name_3" : req.body.source_name_3,
                     "source_details_3" : req.body.source_details_3,
                     "source_type_4" : req.body.source_type_4,
-                    "source_interview_4" : req.body.source_interview_4,
                     "source_subtype_4" : req.body.source_subtype_4,
                     "source_name_4" : req.body.source_name_4,
                     "source_details_4" : req.body.source_details_4,
                     "source_type_5" : req.body.source_type_5,
-                    "source_interview_5" : req.body.source_interview_5,
                     "source_subtype_5" : req.body.source_subtype_5,
                     "source_name_5" : req.body.source_name_5,
                     "source_details_5" : req.body.source_details_5,
+                    "files" : req.body.files,
                     "contacts" : req.body.contacts,
                     
                     parties : partiesList, mps: missingList, locations: locationsList, events: eventsList, sites: sitesList,
@@ -1391,6 +1396,8 @@ router.post('/addevent', function(req, res){
               var relLocations = req.body.related_locations;
               var relMPs = req.body.related_mps;
               var contacts = req.body.contacts;
+              var interviews = req.body.interviews;
+              var files = req.body.files;
               var groups =  req.body.groups_responsible;      
               var long;
               var lat; 
@@ -1408,11 +1415,15 @@ router.post('/addevent', function(req, res){
               if (typeof relMPs == "string") relMPs = [relMPs]
               if (typeof groups == "string") groups = [groups]
               if (typeof contacts == "string") contacts = [contacts]
+              if (typeof interviews == "string") interviews = [interviews]
+              if (typeof files == "string") files = [files]
               if (!relEvents) relEvents = [];
               if (!relSites) relSites = [];
               if (!relLocations) relLocations = [];
               if (!relMPs) relMPs = [];
-              if (!contacts) contacts = [];     
+              if (!contacts) contacts = []; 
+              if (!interviews) interviews = [];   
+              if (!files) files = []; 
                  
               /*if its an edit*/   
               if (req.body._id){    
@@ -1433,6 +1444,7 @@ router.post('/addevent', function(req, res){
                 if (profile[0].UNHCR.longitude!= req.body.UNHCR_longitude) updateVal['UNHCR.longitude'] =  req.body.UNHCR_longitude  
                 if (profile[0].dates.beg!= dateConverter(req.body.date_beg_day,req.body.date_beg_month, req.body.date_beg_year)) updateVal['dates.beg'] =  dateConverter(req.body.date_beg_day,req.body.date_beg_month, req.body.date_beg_year)
                 if (profile[0].dates.end!= dateConverter(req.body.date_end_day,req.body.date_end_month, req.body.date_end_year)) updateVal['dates.end'] =  dateConverter(req.body.date_end_day,req.body.date_end_month, req.body.date_end_year)
+                if (profile[0].description!=req.body.description)updateVal['description'] = req.body.description
                 if (profile[0].groups_responsible!= groups)updateVal['groups_responsible'] = groups
                 if (profile[0].groups_responsible_name!=req.body.groups_responsible_name)updateVal['groups_responsible_name'] = req.body.groups_responsible_name
                 if (profile[0].related.events!= relEvents)updateVal['related.events'] = relEvents
@@ -1440,39 +1452,36 @@ router.post('/addevent', function(req, res){
                 if (profile[0].related.locations!= relLocations) updateVal['related.locations'] = relLocations
                 if (profile[0].related.mps!= relMPs) updateVal['related.mps'] = relMPs
                 if (profile[0].notes!= req.body.notes) updateVal['notes'] =  req.body.notes
+                if (profile[0].interviews!= interviews) updateVal['interviews'] = interviews
                 var sourcesBody = [{
                     "type": req.body.source_type_1,
-                    "interview": req.body.source_interview_1,
                     "subtype" : req.body.source_subtype_1,
                     "name" : req.body.source_name_1,
                     "details" : req.body.source_details_1
                 },{
                     "type": req.body.source_type_2,
-                    "interview": req.body.source_interview_2,
                     "subtype" : req.body.source_subtype_2,
                     "name" : req.body.source_name_2,
                     "details" : req.body.source_details_2
                 },{
                     "type": req.body.source_type_3,
-                    "interview": req.body.source_interview_3,
                     "subtype" : req.body.source_subtype_3,
                     "name" : req.body.source_name_3,
                     "details" : req.body.source_details_3
                 },{
                     "type": req.body.source_type_4,
-                    "interview": req.body.source_interview_4,
                     "subtype" : req.body.source_subtype_4,
                     "name" : req.body.source_name_4,
                     "details" : req.body.source_details_4
                 },{
                     "type": req.body.source_type_5,
-                    "interview": req.body.source_interview_5,
                     "subtype" : req.body.source_subtype_5,
                     "name" : req.body.source_name_5,
                     "details" : req.body.source_details_5
                 }]
                 if (profile[0].sources!= sourcesBody) updateVal['sources'] =  sourcesBody
                 if (profile[0].contacts!=contacts) updateVal['contacts'] = contacts
+                if (profile[0].files!=files) updateVal['files'] = files
 
                 collection.update({_id: profile[0]._id}, {$set: updateVal}, function(err, result){
                 
@@ -1515,6 +1524,30 @@ router.post('/addevent', function(req, res){
                             if((relMPs).indexOf(e)== -1)removeRelated("missing", e, req.body.code, "events");
                         });
                     }
+                    if (profile[0].interviews != interviews) {
+                        interviews.forEach( function (e){
+                            if((profile[0].interviews).indexOf(e)== -1)updateRelated("interviews", e, req.body.code, "events");
+                        });
+                        (profile[0].interviews).forEach( function (e){
+                            if((interviews).indexOf(e)== -1)removeRelated("interviews", e, req.body.code, "events");
+                        });
+                    }
+                    if (profile[0].files != files) {
+                        files.forEach( function (e){
+                            if((profile[0].files).indexOf(e)== -1)updateRelated("files", e, req.body.code, "events");
+                        });
+                        (profile[0].files).forEach( function (e){
+                            if((files).indexOf(e)== -1)removeRelated("files", e, req.body.code, "events");
+                        });
+                    }
+                    if (profile[0].contacts != contacts) {
+                        contacts.forEach( function (e){
+                            if((profile[0].contacts).indexOf(e)== -1)updateRelated("contacts", e, req.body.code, "events");
+                        });
+                        (profile[0].contacts).forEach( function (e){
+                            if((contacts).indexOf(e)== -1)removeRelated("contacts", e, req.body.code, "events");
+                        });
+                    }
                     profile = null;
                     res.redirect('/events');
                     
@@ -1546,11 +1579,12 @@ router.post('/addevent', function(req, res){
                                 "specific" : {
 		                              "latitude" : req.body.location_latitude,
 		                              "longitude" : req.body.location_longitude
-	                           },
+                               },
                                 "dates" : {
                                     "beg" : dateConverter(req.body.date_beg_day,req.body.date_beg_month,req.body.date_beg_year),
                                     "end" : dateConverter(req.body.date_end_day,req.body.date_end_month,req.body.date_end_year)
                                 },
+                                "description" : req.body.description,
                                 "groups_responsible" : groups,
                                 "groups_responsible_name" : req.body.groups_responsible_name,
                                 "related" : {
@@ -1560,39 +1594,35 @@ router.post('/addevent', function(req, res){
                                     "mps" : relMPs
                                 },
                                 "notes" : req.body.notes,
+                                "interviews" : interviews,
                                 "sources" : [{
                                     "type": req.body.source_type_1,
-                                    "interview": req.body.source_interview_1,
                                     "subtype" : req.body.source_subtype_1,
                                     "name" : req.body.source_name_1,
                                     "details" : req.body.source_details_1
                                 },{
                                     "type": req.body.source_type_2,
-                                    "interview": req.body.source_interview_2,
                                     "subtype" : req.body.source_subtype_2,
                                     "name" : req.body.source_name_2,
                                     "details" : req.body.source_details_2
                                 },{
                                     "type": req.body.source_type_3,
-                                    "interview": req.body.source_interview_3,
                                     "subtype" : req.body.source_subtype_3,
                                     "name" : req.body.source_name_3,
                                     "details" : req.body.source_details_3
                                 },{
                                     "type": req.body.source_type_4,
-                                    "interview": req.body.source_interview_4,
                                     "subtype" : req.body.source_subtype_4,
                                     "name" : req.body.source_name_4,
                                     "details" : req.body.source_details_4
                                 },{
                                     "type": req.body.source_type_5,
-                                    "interview": req.body.source_interview_5,
                                     "subtype" : req.body.source_subtype_5,
                                     "name" : req.body.source_name_5,
                                     "details" : req.body.source_details_5
                                 }],
                                 "contacts" : contacts,    
-                                "files" : []
+                                "files" : files
                              };
                 collection.insert([eventnew], function(err, result){
                 if (err){
@@ -1618,6 +1648,21 @@ router.post('/addevent', function(req, res){
                     if (relMPs) {
                         relMPs.forEach( function (e){
                             updateRelated("missing", e, req.body.code, "events");
+                        });
+                    }
+                    if (interviews) {
+                        interviews.forEach( function (e){
+                            updateRelated("interviews", e, req.body.code, "events");
+                        });
+                    }
+                    if (files) {
+                        files.forEach( function (e){
+                            updateRelated("files", e, req.body.code, "events");
+                        });
+                    }
+                    if (contacts) {
+                        contacts.forEach( function (e){
+                            updateRelated("contacts", e, req.body.code, "events");
                         });
                     }
                     res.redirect('/events');
@@ -3695,9 +3740,6 @@ router.post('/deleteEntry', function (req,res){
             if((req.body.related_events).length){
                 var relEvents = (req.body.related_events).slice(1,-1);
                 relEvents.split(",").forEach(function (e){
-                    console.log(e.slice(1,-1));
-                    console.log(req.body.code);
-                    console.log(req.body.collection);
                     removeRelated("events", e.slice(1,-1), req.body.code, req.body.collection);
                 })     
             }
@@ -3719,14 +3761,14 @@ router.post('/deleteEntry', function (req,res){
               removeRelated("missing", e.slice(1,-1), req.body.code, req.body.collection);
              })     
             }
-            if((req.body.related_interviews).length){
-             var relInts = (req.body.related_interviews).slice(1,-1);
+            if((req.body.interviews).length){
+             var relInts = (req.body.interviews).slice(1,-1);
              relInts.split(",").forEach(function (e){
               removeRelated("interviews", e.slice(1,-1), req.body.file, req.body.collection);
              })     
             }
-            if((req.body.related_contacts).length){
-             var relContacts = (req.body.related_contacts).slice(1,-1);
+            if((req.body.contacts).length){
+             var relContacts = (req.body.contacts).slice(1,-1);
              relContacts.split(",").forEach(function (e){
               removeRelated("contacts", e.slice(1,-1), req.body.code, req.body.collection);
              })     

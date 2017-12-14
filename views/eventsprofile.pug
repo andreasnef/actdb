@@ -4,9 +4,12 @@ block content
  each value, i in profile
   div#profileTitle
       h3. 
-         #{value.name.en} - (#{value.type})
+         #{value.name.en}
       
   div#wrapper
+      p
+       span.title Type: 
+       span #{value.type}
       p
        span.title Code: 
        span #{value.code}
@@ -34,11 +37,10 @@ block content
         span #{value.UNHCR.coordinates}
       
   div#wrapper  
+     if(value.dates.beg || value.dates.end) 
       h4 Event Period:
       if(!value.dates.beg)
-        p 
-         span.title From: 
-         span Unknown
+  
       else if(value.dates.beg && ((value.dates.beg).getDate() == 1) && ((value.dates.beg).getMonth() == 0))
         p 
          span.title From: 
@@ -49,9 +51,7 @@ block content
          span #{moment(value.dates.beg).format('MMMM Do, YYYY')}
         
       if (!value.dates.end)
-        p 
-         span.title To: 
-         span Unknown
+
       else if(value.dates.end && ((value.dates.end).getDate() == 1) && ((value.dates.end).getMonth() == 0))
         p 
          span.title To: 
@@ -61,31 +61,53 @@ block content
          span.title To: 
          span #{moment(value.dates.end).format('MMMM Do, YYYY')}
       
-  div#wrapper  
-     if(value.related) 
+  div#wrapper        
+      if((value.related.events && (value.related.events).length>0 )|| (value.related.sites && (value.related.sites).length>0) || (value.related.locations && (value.related.locations).length>0) || (value.related.mps && (value.related.mps).length>0))
       h4 Related: 
       
-      if(value.related.events)
+      if(value.related.events && (value.related.events).length>0)
        p 
         span.title Related Events: 
-        each event, i in value.related.events
-         a(href="#" onclick="loadProfile('events','"+event+"');") #{event} 
-      - if(value.related.sites)
+          - var name = "";
+          each event, i in value.related.events
+            each eventProfile, i in eventsList
+              - if (event == eventProfile.code) name =  eventProfile.name.en
+            a(href="#" onclick="loadProfile('events','"+event+"');") #{event} #{name}
+            br
+      
+      - if(value.related.sites && (value.related.sites).length>0)
        p
         span.title Related Sites: 
-        each site, i in value.related.sites
-         a(href="#" onclick="loadProfile('sites','"+site+"');") #{site} 
-      - if (value.related.locations)
+          - var name = "";
+          each site, i in value.related.sites
+            each siteProfile, i in sitesList
+              - if (site == siteProfile.code) name =  siteProfile.name.en
+            a(href="#" onclick="loadProfile('sites','"+site+"');") #{site} #{name}
+            br
+      
+      - if (value.related.locations && (value.related.locations).length>0)
        p
         span.title Related Locations: 
-        each location, i in value.related.locations
-         a(href="#" onclick="loadProfile('locations','"+location+"');") #{location} 
-      - if (value.related.mps)
+            - var name = "";
+            each location, i in value.related.locations
+             each locationProfile, i in locationsList
+              - if (location == locationProfile.code) name =  locationProfile.name.en
+             a(href="#" onclick="loadProfile('locations','"+location+"');") #{location} #{name}
+             br
+      
+      - if (value.related.mps && (value.related.mps).length>0)
        p
         span.title Related Missing Persons: 
-        each mp, i in value.related.mps
-         a(href="#" onclick="loadProfile('missing','"+mp+"');") #{mp} 
-      
+            - var name = "";
+            each mp, i in value.related.mps
+             each missingProfile, i in missingList
+              - if (mp == missingProfile.code) name =  missingProfile.name.ar.last+" "+missingProfile.name.ar.middle+" "+missingProfile.name.ar.first
+             a(href="#" onclick="loadProfile('missing','"+mp+"');") #{mp} #{name} 
+             br
+
+  div#wrapper
+     if(value.groups_responsible || value.groups_responsible_name)
+      h4 Responsible:    
       - if (value.groups_responsible)
        p 
         span.title Groups responsible: 
@@ -93,43 +115,48 @@ block content
 
       - if (value.groups_responsible_name)
        p 
-        span.title Names of Reponsible Persons: 
+        span.title Names of Responsible Persons: 
         span #{value.groups_responsible_name}  
       
       
   div#wrapper       
       if(user!="public")
-       h4 Sources:  
-      
+       h4 Sources 
+       if(value.interviews && (value.interviews).length>0)
+        p
+         span.title Interviews: 
+         each interview, i in value.interviews
+          a(href="#" onclick="loadProfile('interviews','"+interview+"');") #{interview} 
+
        - if (value.sources)  
            p
-            span.title Sources: 
             each source, i in value.sources
              if(source.type)
               p
-               span #{source.type}: 
-               if(source.interview)
-                a(href="#" onclick="loadProfile('interviews','"+source.interview+"');") #{source.interview}
+               span #{source.type}:
                if(source.subtype)
                 span #{source.subtype} 
                if(source.name)
                 span #{source.name} 
                if(source.details) 
                 span #{source.details}
-       - if(value.files)
+      
+       - if(value.files && (value.files).length>0)
         p 
          span.title Files: 
          each file, i in value.files
-          a(href="#" onclick="loadProfile('files','"+file+"');") #{file}     
+          a(href="#" onclick="loadProfile('files','"+file+"');") #{file}
+
        - if (value.notes)
         p 
          span.title Notes: 
          span #{value.notes} 
-       - if (value.interviews)
+
+       - if (value.contacts && (value.contacts).length>0)
         p 
-         span.title Interviews: 
-         each interview, i in value.interviews
-          a(href="#" onclick="loadProfile('interviews','"+interview+"');") #{interview}        
+         span.title Contacts: 
+         span #{value.contacts}   
+      
       
        div(class='btn menu')
         a(href="/newprofile/?type=event&code="+value.code) Edit
@@ -141,7 +168,8 @@ block content
                     input(type="hidden" name="related_sites" value=value.related.sites)
                     input(type="hidden" name="related_locations" value=value.related.locations)
                     input(type="hidden" name="related_mps" value=value.related.mps)
-                    input(type="hidden" name="related_interviews" value=value.interviews)
-                    input(type="hidden" name="related_contacts" value=value.contacts)
+                    input(type="hidden" name="interviews" value=value.interviews)
+                    input(type="hidden" name="contacts" value=value.contacts)
+                    input(type="hidden" name="files" value=value.files)
                     
                     button#submit_event(class="buttons", type="submit") Delete  

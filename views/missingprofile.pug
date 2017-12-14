@@ -187,23 +187,39 @@ block content
           - if ((value.related.events).length>0)
            p
             span.title Related Events: 
+            - var name = "";
             each event, i in value.related.events
-             a(href="#" onclick="loadProfile('events','"+event+"');") #{event} 
+             each eventProfile, i in eventsList
+               - if (event == eventProfile.code) name =  eventProfile.name.en
+             a(href="#" onclick="loadProfile('events','"+event+"');") #{event} #{name}
+             br
           - if ((value.related.sites).length>0)
            p
             span.title Related Sites: 
+            - var name = "";
             each site, i in value.related.sites
-             a(href="#" onclick="loadProfile('sites','"+site+"');") #{site} 
+             each siteProfile, i in sitesList
+               - if (site == siteProfile.code) name =  siteProfile.name.en
+             a(href="#" onclick="loadProfile('sites','"+site+"');") #{site} #{name}
+             br
           - if ((value.related.locations).length>0)
            p
             span.title Related Locations: 
+            - var name = "";
             each location, i in value.related.locations
-             a(href="#" onclick="loadProfile('locations','"+location+"');") #{location} 
+             each locationProfile, i in locationsList
+               - if (location == locationProfile.code) name =  locationProfile.name.en
+             a(href="#" onclick="loadProfile('locations','"+location+"');") #{location} #{name}
+             br
           - if ((value.related.mps).length>0)
            p
             span.title Related Missing Persons: 
+            - var name = "";
             each mp, i in value.related.mps
-             a(href="#" onclick="loadProfile('missing','"+mp+"');") #{mp} 
+             each missingProfile, i in missingList
+               - if (mp == missingProfile.code) name =  missingProfile.name.ar.last+" "+missingProfile.name.ar.middle+" "+missingProfile.name.ar.first
+             a(href="#" onclick="loadProfile('missing','"+mp+"');") #{mp} #{name} 
+             br
 
        - if (value.fate)
            p
@@ -219,8 +235,13 @@ block content
           if(value.interviews && (value.interviews).length>0)
             p
               span.title Interviews: 
+              - var name = "";
               each interview, i in value.interviews
-                a(href="#" onclick="loadProfile('interviews','"+interview+"');") #{interview} 
+                if(interviewsList) 
+                  each interviewProfile, i in interviewsList
+                    - if (interview == interviewProfile.code) name =  interviewProfile.interviewee
+                a(href="#" onclick="loadProfile('interviews','"+interview+"');") #{interview} #{name}
+                br
     
           - if (value.source)  
            p
@@ -244,8 +265,13 @@ block content
           - if (value.files)
            p
             span.title Files: 
+            - var name = "";
             each file, i in value.files
-             a(href="#" onclick="loadProfile('files','"+file+"');") #{file}
+             if(filesList)
+               each fileProfile, i in filesList
+                  - if (file == fileProfile.code) name =  fileProfile.description
+             a(href="#" onclick="loadProfile('files','"+file+"');") #{file} #{name}
+             br
           br
           
       //- div
@@ -297,11 +323,15 @@ block content
       div
           //if((value.contacts && (value.contacts).length>0) || value.contact || value.contact.phone_1)
           h4 Contact:
-          - if ((value.contacts).length>0)
+          - if (value.contacts && (value.contacts).length>0)
            p
             span.title Contacts: 
+            - var name = "";
             each contact, i in value.contacts
-             a(href="#" onclick="loadProfile('contacts','"+contact+"');") #{contact}
+             if(contactsList)
+               each contactProfile, i in contactsList
+                  - if (contact == contactProfile.code) name =  contactProfile.name.ar.last+" "+contactProfile.name.ar.first
+             a(href="#" onclick="loadProfile('contacts','"+contact+"');") #{contact} #{name}
              
           - if (value.contact)      
               - if (value.contact.name)
@@ -368,8 +398,9 @@ block content
                     input(type="hidden" name="related_sites" value=value.related.sites)
                     input(type="hidden" name="related_locations" value=value.related.locations)
                     input(type="hidden" name="related_mps" value=value.related.mps)
-                    input(type="hidden" name="related_interviews" value=value.interviews)
-                    input(type="hidden" name="related_contacts" value=value.contacts)
+                    input(type="hidden" name="interviews" value=value.interviews)
+                    input(type="hidden" name="contacts" value=value.contacts)
+                    input(type="hidden" name="files" value=value.files)
                     
                     button#submit_event(class="buttons", type="submit") Delete     
                

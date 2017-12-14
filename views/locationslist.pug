@@ -110,7 +110,7 @@ block content
             each barrack in barracks
                 tr
                     td
-                        a(href="#" onclick="loadProfile('locations',"+barrack.code+"');") #{barrack.code}
+                        a(href="#" onclick="loadProfile('locations','"+barrack.code+"');") #{barrack.code}
                     td=barrack.name.en
                     td=barrack.location.district
                     td=barrack.location.governorate
