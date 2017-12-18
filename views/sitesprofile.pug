@@ -235,8 +235,13 @@ block content
       - if (value.files && (value.files).length>0)
        p
         span.title Files: 
-        each file, i in value.files
-         a(href="#" onclick="loadProfile('files','"+file+"');") #{file} 
+            - var name = "";
+            each file, i in value.files
+             if(filesList)
+               each fileProfile, i in filesList
+                  - if (file == fileProfile.code) name =  fileProfile.description
+             a(href="#" onclick="loadProfile('files','"+file+"');") #{file} #{name}
+             br
       
       - if (value.notes)
        p 
@@ -246,8 +251,13 @@ block content
       - if (value.contacts && (value.contacts).length>0)
        p
         span.title Contacts: 
+        - var name = "";
         each contact, i in value.contacts
-         a(href="#" onclick="loadProfile('contacts','"+contact+"');") #{contact}   
+         if(contactsList)
+          each contactProfile, i in contactsList
+            - if (contact == contactProfile.code) name =  contactProfile.name.ar.last+" "+contactProfile.name.ar.first
+         a(href="#" onclick="loadProfile('contacts','"+contact+"');") #{contact} #{name}
+         br   
            
       
       div(class='btn menu')

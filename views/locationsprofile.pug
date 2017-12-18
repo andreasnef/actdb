@@ -130,8 +130,13 @@ block content
       if(value.interviews && (value.interviews).length>0)
        p
         span.title Interviews: 
-        each interview, i in value.interviews
-         a(href="#" onclick="loadProfile('interviews','"+interview+"');") #{interview} 
+              - var name = "";
+              each interview, i in value.interviews
+                if(interviewsList) 
+                  each interviewProfile, i in interviewsList
+                    - if (interview == interviewProfile.code) name =  interviewProfile.interviewee
+                a(href="#" onclick="loadProfile('interviews','"+interview+"');") #{interview} #{name}
+                br
 
       - if (value.sources)  
            p
@@ -149,8 +154,13 @@ block content
       - if(value.files)
        p 
         span.title Files: 
-        each file, i in value.files
-         a(href="#" onclick="loadProfile('files','"+file+"');") #{file}
+            - var name = "";
+            each file, i in value.files
+             if(filesList)
+               each fileProfile, i in filesList
+                  - if (file == fileProfile.code) name =  fileProfile.description
+             a(href="#" onclick="loadProfile('files','"+file+"');") #{file} #{name}
+             br
       - if (value.notes)
        p 
         span.title Notes: 
@@ -158,9 +168,13 @@ block content
         
       - if (value.contacts && (value.contacts).length>0)
        p
-        span.title Contacts: 
-        each contact, i in value.contacts
-         a(href="#" onclick="loadProfile('contacts','"+contact+"');") #{contact}            
+        - var name = "";
+            each contact, i in value.contacts
+             if(contactsList)
+               each contactProfile, i in contactsList
+                  - if (contact == contactProfile.code) name =  contactProfile.name.ar.last+" "+contactProfile.name.ar.first
+             a(href="#" onclick="loadProfile('contacts','"+contact+"');") #{contact} #{name}
+             br           
       
       if (user != "public")
        div(class='btn menu')

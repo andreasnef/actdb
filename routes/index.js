@@ -1113,25 +1113,31 @@ router.post('/addmissing', function(req, res){
                         interviews.forEach( function (e){
                             if((profile[0].interviews).indexOf(e)== -1)updateRelated("interviews", e, req.body.code, "mps");
                         });
-                        (profile[0].interviews).forEach( function (e){
-                            if((interviews).indexOf(e)== -1)removeRelated("interviews", e, req.body.code, "mps");
-                        });
+                        if(profile[0].interviews){
+                            (profile[0].interviews).forEach( function (e){
+                                if((interviews).indexOf(e)== -1)removeRelated("interviews", e, req.body.code, "mps");
+                            });     
+                        }
                     }
                     if (profile[0].files != files) {
                         files.forEach( function (e){
                             if((profile[0].files).indexOf(e)== -1)updateRelated("files", e, req.body.code, "mps");
                         });
-                        (profile[0].files).forEach( function (e){
-                            if((files).indexOf(e)== -1)removeRelated("files", e, req.body.code, "mps");
-                        });
+                        if(profile[0].files){
+                            (profile[0].files).forEach( function (e){
+                                if((files).indexOf(e)== -1)removeRelated("files", e, req.body.code, "mps");
+                            });
+                        }
                     }
                     if (profile[0].contacts != contacts) {
                         contacts.forEach( function (e){
                             if((profile[0].contacts).indexOf(e)== -1)updateRelated("contacts", e, req.body.code, "mps");
                         });
-                        (profile[0].contacts).forEach( function (e){
-                            if((contacts).indexOf(e)== -1)removeRelated("contacts", e, req.body.code, "mps");
-                        });
+                        if(profile[0].contacts){
+                            (profile[0].contacts).forEach( function (e){
+                                if((contacts).indexOf(e)== -1)removeRelated("contacts", e, req.body.code, "mps");
+                            });      
+                        }
                     }
                     profile = null;
                     res.redirect('/missing');

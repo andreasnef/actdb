@@ -16,6 +16,16 @@ block content
             span.title Confidential: 
             span #{value.confidential}
           
+          - if (value.category)
+           p
+            span.title Category: 
+            span #{value.category}  
+
+          - if (value.relationship_missing)
+           p
+            span.title Relationship with the missing person: 
+            span #{value.relationship_missing}  
+          
           p
             span.title Name in Arabic:  
             span #{value.name.ar.last}, #{value.name.ar.first}
@@ -69,11 +79,6 @@ block content
            p
             span.title Status during the war: 
             span #{value.status_war}
-            
-          - if (value.relationship_missing)
-           p
-            span.title Relationship with the missing person: 
-            span #{value.relationship_missing}
             
           - if (value.political_affiliation)
            p

@@ -332,6 +332,7 @@ block content
                each contactProfile, i in contactsList
                   - if (contact == contactProfile.code) name =  contactProfile.name.ar.last+" "+contactProfile.name.ar.first
              a(href="#" onclick="loadProfile('contacts','"+contact+"');") #{contact} #{name}
+             br
              
           - if (value.contact)      
               - if (value.contact.name)
