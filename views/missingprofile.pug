@@ -182,9 +182,9 @@ block content
             span.title Names of Reponsible Persons: 
             span #{value.perpetrators_name}  
 
-       if((value.related.events).length>0 ||(value.related.sites).length>0 || (value.related.locations).length>0 || (value.related.mps).length>0)     
+       if((value.related.events && (value.related.events).length>0) ||(value.related.sites && (value.related.sites).length>0) || (value.related.locations && (value.related.locations).length>0) || (value.related.mps && (value.related.mps).length>0))     
           h4 Related: 
-          - if ((value.related.events).length>0)
+          - if (value.related.events && (value.related.events).length>0)
            p
             span.title Related Events: 
             - var name = "";
@@ -193,7 +193,7 @@ block content
                - if (event == eventProfile.code) name =  eventProfile.name.en
              a(href="#" onclick="loadProfile('events','"+event+"');") #{event} #{name}
              br
-          - if ((value.related.sites).length>0)
+          - if (value.related.sites && (value.related.sites).length>0)
            p
             span.title Related Sites: 
             - var name = "";
@@ -202,7 +202,7 @@ block content
                - if (site == siteProfile.code) name =  siteProfile.name.en
              a(href="#" onclick="loadProfile('sites','"+site+"');") #{site} #{name}
              br
-          - if ((value.related.locations).length>0)
+          - if (value.related.locations && (value.related.locations).length>0)
            p
             span.title Related Locations: 
             - var name = "";
@@ -211,7 +211,7 @@ block content
                - if (location == locationProfile.code) name =  locationProfile.name.en
              a(href="#" onclick="loadProfile('locations','"+location+"');") #{location} #{name}
              br
-          - if ((value.related.mps).length>0)
+          - if (value.related.mps && (value.related.mps).length>0)
            p
             span.title Related Missing Persons: 
             - var name = "";
