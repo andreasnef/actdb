@@ -829,7 +829,7 @@ block content
      span Fate
      br
      select#input_fate(name="fate", value=fate)
-        - var fates = ["Unknown", "Presumed in Syria", "Presumed in Israel", "Presumed Dead", "Location of remains Presumed", "Confirmed dead", "Remains exhumed", "Released"];
+        - var fates = ["Unknown", "Known"];
         each fat in fates
            if(fat==fate)
                 option(value=fat selected="selected") #{fat}

@@ -121,13 +121,13 @@ block content
         p 
          span.title Groups Responsible: 
          span #{value.perpetrators}
-     - if (value.perpetrators_name)
-        p 
-         span.title Names of Reponsible Persons: 
-         span #{value.perpetrators_name}  
+    //-  - if (value.perpetrators_name)
+    //-     p 
+    //-      span.title Names of Reponsible Persons: 
+    //-      span #{value.perpetrators_name}  
       
   div
-      h4 Details: 
+      h4 Description: 
       
       - if (value.status)
        p 
@@ -192,7 +192,7 @@ block content
       
       -if (value.identification.status)
        p
-        span.title Status: 
+        span.title Identified: 
         span #{value.identification.status}
       - if (value.identification.date)
        p 

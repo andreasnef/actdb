@@ -78,838 +78,161 @@ block content
      br
      br
      
-    //- div#wrapper 
-    //-  span Areas of control
-    //-  br
-    //-  span First Area
-    //-  br
-    //-  span Description
-    //-  br
-    //-  textarea#input_area_control_1(type="text", placeholder="Description of the Area", cols="100" rows="10", name="control_1_description")
-    //-     | #{control_1_description}
-    //-  br
-    //-  span Coordinates
-    //-  br
-    //-  span Latitude
-    //-  span &nbsp;
-    //-  input#input_location_coordinates_longitude(type="text", placeholder="Latitude", name="control_1_latitude", value=control_1_latitude)
-    //-  br
-    //-  span Longitude
-    //-  span &nbsp;
-    //-  input#input_location_coordinates_longitude(type="text", placeholder="Longitude", name="control_1_longitude", value=control_1_longitude)
-    //-  br
-    //-  span Beginning Date
-    //-  span &nbsp;
-    //-  select(name="date_beg_day_1", value=date_beg_day_1)
-    //-    option(value="") Select
-    //-    -for(var i = 1;i<32;i++){
-    //-       - i = ("0" + i).slice(-2)
-    //-        if(date_beg_day_1==i)
-    //-             option(value=i selected="selected") #{i}
-    //-        else
-    //-             option(value=i) #{i}
-    //-    -}
-    //-  span &nbsp;
-    //-  select#input_date_beg_month(name="date_beg_month_1", value=date_beg_month_1)
-    //-     if (date_beg_month_1=="01") 
-    //-      option(value="01" selected="selected")  Jan 
-    //-     else 
-    //-      option(value="01")  Jan
-    //-     if (date_beg_month_1=="02")
-    //-      option(value="02" selected="selected")  Feb
-    //-     else
-    //-      option(value="02")  Feb    
-    //-     if (date_beg_month_1=="03")
-    //-      option(value="03" selected="selected")  Mar
-    //-     else
-    //-      option(value="03")  Mar
-    //-     if (date_beg_month_1=="04")
-    //-      option(value="04" selected="selected")  Apr
-    //-     else
-    //-      option(value="04")  Apr
-    //-     if (date_beg_month_1=="05")
-    //-      option(value="05" selected="selected")  May
-    //-     else
-    //-      option(value="05")  May
-    //-     if (date_beg_month_1=="06")
-    //-      option(value="06" selected="selected")  Jun
-    //-     else
-    //-      option(value="06")  Jun
-    //-     if (date_beg_month_1=="07")
-    //-      option(value="07" selected="selected")  Jul
-    //-     else 
-    //-      option(value="07")  Jul
-    //-     if (date_beg_month_1=="08")
-    //-      option(value="08" selected="selected")  Ago
-    //-     else
-    //-      option(value="08")  Ago
-    //-     if (date_beg_month_1=="09")
-    //-      option(value="09" selected="selected")  Sep
-    //-     else
-    //-      option(value="09")  Sep
-    //-     if (date_beg_month_1=="10")
-    //-      option(value="10" selected="selected")  Oct
-    //-     else 
-    //-      option(value="10")  Oct
-    //-     if (date_beg_month_1=="11")
-    //-      option(value="11" selected="selected")  Nov
-    //-     else
-    //-      option(value="11")  Nov
-    //-     if (date_beg_month_1=="12")
-    //-      option(value="12" selected="selected")  Dec
-    //-     else
-    //-      option(value="12")  Dec
-    //-     span &nbsp;
-    //-  select(name="date_beg_year_1", value=date_beg_year_1)
-    //-    option(value="") Select
-    //-    -for(var i = 1973;i<2006;i++){
-    //-        if(date_beg_year_1==i)
-    //-             option(value=i selected="selected") #{i}
-    //-        else
-    //-             option(value=i) #{i}
-    //-    -}  
-    //-  span &nbsp;
-    //-  span End Date
-    //-  span &nbsp;
-    //-  select(name="date_end_day_1", value=date_end_day_1)
-    //-    option(value="") Select
-    //-    -for(var i = 1;i<32;i++){
-    //-       - i = ("0" + i).slice(-2)
-    //-        if(date_end_day_1==i)
-    //-             option(value=i selected="selected") #{i}
-    //-        else
-    //-             option(value=i) #{i}
-    //-    -}
-    //-  span &nbsp;
-    //-  select#input_date_end_month(name="date_end_month_1", value=date_end_month_1)
-    //-     if (date_end_month_1=="01") 
-    //-      option(value="01" selected="selected")  Jan 
-    //-     else 
-    //-      option(value="01")  Jan
-    //-     if (date_end_month_1=="02")
-    //-      option(value="02" selected="selected")  Feb
-    //-     else
-    //-      option(value="02")  Feb    
-    //-     if (date_end_month_1=="03")
-    //-      option(value="03" selected="selected")  Mar
-    //-     else
-    //-      option(value="03")  Mar
-    //-     if (date_end_month_1=="04")
-    //-      option(value="04" selected="selected")  Apr
-    //-     else
-    //-      option(value="04")  Apr
-    //-     if (date_end_month_1=="05")
-    //-      option(value="05" selected="selected")  May
-    //-     else
-    //-      option(value="05")  May
-    //-     if (date_end_month_1=="06")
-    //-      option(value="06" selected="selected")  Jun
-    //-     else
-    //-      option(value="06")  Jun
-    //-     if (date_end_month_1=="07")
-    //-      option(value="07" selected="selected")  Jul
-    //-     else 
-    //-      option(value="07")  Jul
-    //-     if (date_end_month_1=="08")
-    //-      option(value="08" selected="selected")  Ago
-    //-     else
-    //-      option(value="08")  Ago
-    //-     if (date_end_month_1=="09")
-    //-      option(value="09" selected="selected")  Sep
-    //-     else
-    //-      option(value="09")  Sep
-    //-     if (date_end_month_1=="10")
-    //-      option(value="10" selected="selected")  Oct
-    //-     else 
-    //-      option(value="10")  Oct
-    //-     if (date_end_month_1=="11")
-    //-      option(value="11" selected="selected")  Nov
-    //-     else
-    //-      option(value="11")  Nov
-    //-     if (date_end_month_1=="12")
-    //-      option(value="12" selected="selected")  Dec
-    //-     else
-    //-      option(value="12")  Dec
-    //-     span &nbsp;
-    //-  select(name="date_end_year_1", value=date_end_year_1)
-    //-    option(value="") Select
-    //-    -for(var i = 1973;i<2006;i++){
-    //-        if(date_end_year_1==i)
-    //-             option(value=i selected="selected") #{i}
-    //-        else
-    //-             option(value=i) #{i}
-    //-    -}  
-     
-    //- br
-    //- br
-    
-    //- div#wrapper
-    //-  span Second Area
-    //-  br
-    //-  span Description
-    //-  br
-    //-  textarea#input_area_control_2(type="text", placeholder="Description of the Area", cols="100" rows="10", name="control_2_description")
-    //-     | #{control_2_description}
-    //-  br
-    //-  span Coordinates
-    //-  br
-    //-  span Latitude
-    //-  span &nbsp;
-    //-  input#input_location_coordinates_longitude(type="text", placeholder="Latitude", name="control_2_latitude", value=control_2_latitude)
-    //-  br
-    //-  span Longitude
-    //-  span &nbsp;
-    //-  input#input_location_coordinates_longitude(type="text", placeholder="Longitude", name="control_2_longitude", value=control_2_longitude)
-    //-  br
-    //-  span Beginning Date
-    //-  span &nbsp;
-    //-  select(name="date_beg_day_2", value=date_beg_day_2)
-    //-    option(value="") Select
-    //-    -for(var i = 1;i<32;i++){
-    //-       - i = ("0" + i).slice(-2)
-    //-        if(date_beg_day_2==i)
-    //-             option(value=i selected="selected") #{i}
-    //-        else
-    //-             option(value=i) #{i}
-    //-    -}
-    //-  span &nbsp;
-    //-  select#input_date_beg_month(name="date_beg_month_2", value=date_beg_month_2)
-    //-     if (date_beg_month_2=="01") 
-    //-      option(value="01" selected="selected")  Jan 
-    //-     else 
-    //-      option(value="01")  Jan
-    //-     if (date_beg_month_2=="02")
-    //-      option(value="02" selected="selected")  Feb
-    //-     else
-    //-      option(value="02")  Feb    
-    //-     if (date_beg_month_2=="03")
-    //-      option(value="03" selected="selected")  Mar
-    //-     else
-    //-      option(value="03")  Mar
-    //-     if (date_beg_month_2=="04")
-    //-      option(value="04" selected="selected")  Apr
-    //-     else
-    //-      option(value="04")  Apr
-    //-     if (date_beg_month_2=="05")
-    //-      option(value="05" selected="selected")  May
-    //-     else
-    //-      option(value="05")  May
-    //-     if (date_beg_month_2=="06")
-    //-      option(value="06" selected="selected")  Jun
-    //-     else
-    //-      option(value="06")  Jun
-    //-     if (date_beg_month_2=="07")
-    //-      option(value="07" selected="selected")  Jul
-    //-     else 
-    //-      option(value="07")  Jul
-    //-     if (date_beg_month_2=="08")
-    //-      option(value="08" selected="selected")  Ago
-    //-     else
-    //-      option(value="08")  Ago
-    //-     if (date_beg_month_2=="09")
-    //-      option(value="09" selected="selected")  Sep
-    //-     else
-    //-      option(value="09")  Sep
-    //-     if (date_beg_month_2=="10")
-    //-      option(value="10" selected="selected")  Oct
-    //-     else 
-    //-      option(value="10")  Oct
-    //-     if (date_beg_month_2=="11")
-    //-      option(value="11" selected="selected")  Nov
-    //-     else
-    //-      option(value="11")  Nov
-    //-     if (date_beg_month_2=="12")
-    //-      option(value="12" selected="selected")  Dec
-    //-     else
-    //-      option(value="12")  Dec
-    //-     span &nbsp;
-    //-  select(name="date_beg_year_2", value=date_beg_year_2)
-    //-    option(value="") Select
-    //-    -for(var i = 1973;i<2006;i++){
-    //-        if(date_beg_year_2==i)
-    //-             option(value=i selected="selected") #{i}
-    //-        else
-    //-             option(value=i) #{i}
-    //-    -}  
-    //-  span &nbsp;
-    //-  span End Date
-    //-  span &nbsp;
-    //-  select(name="date_end_day_2", value=date_end_day_2)
-    //-    option(value="") Select
-    //-    -for(var i = 1;i<32;i++){
-    //-       - i = ("0" + i).slice(-2)
-    //-        if(date_end_day_2==i)
-    //-             option(value=i selected="selected") #{i}
-    //-        else
-    //-             option(value=i) #{i}
-    //-    -}
-    //-  span &nbsp;
-    //-  select#input_date_end_month(name="date_end_month_2", value=date_end_month_2)
-    //-     if (date_end_month_2=="01") 
-    //-      option(value="01" selected="selected")  Jan 
-    //-     else 
-    //-      option(value="01")  Jan
-    //-     if (date_end_month_2=="02")
-    //-      option(value="02" selected="selected")  Feb
-    //-     else
-    //-      option(value="02")  Feb    
-    //-     if (date_end_month_2=="03")
-    //-      option(value="03" selected="selected")  Mar
-    //-     else
-    //-      option(value="03")  Mar
-    //-     if (date_end_month_2=="04")
-    //-      option(value="04" selected="selected")  Apr
-    //-     else
-    //-      option(value="04")  Apr
-    //-     if (date_end_month_2=="05")
-    //-      option(value="05" selected="selected")  May
-    //-     else
-    //-      option(value="05")  May
-    //-     if (date_end_month_2=="06")
-    //-      option(value="06" selected="selected")  Jun
-    //-     else
-    //-      option(value="06")  Jun
-    //-     if (date_end_month_2=="07")
-    //-      option(value="07" selected="selected")  Jul
-    //-     else 
-    //-      option(value="07")  Jul
-    //-     if (date_end_month_2=="08")
-    //-      option(value="08" selected="selected")  Ago
-    //-     else
-    //-      option(value="08")  Ago
-    //-     if (date_end_month_2=="09")
-    //-      option(value="09" selected="selected")  Sep
-    //-     else
-    //-      option(value="09")  Sep
-    //-     if (date_end_month_2=="10")
-    //-      option(value="10" selected="selected")  Oct
-    //-     else 
-    //-      option(value="10")  Oct
-    //-     if (date_end_month_2=="11")
-    //-      option(value="11" selected="selected")  Nov
-    //-     else
-    //-      option(value="11")  Nov
-    //-     if (date_end_month_2=="12")
-    //-      option(value="12" selected="selected")  Dec
-    //-     else
-    //-      option(value="12")  Dec
-    //-     span &nbsp;
-    //-  select(name="date_end_year_2", value=date_end_year_2)
-    //-    option(value="") Select
-    //-    -for(var i = 1973;i<2006;i++){
-    //-        if(date_end_year_2==i)
-    //-             option(value=i selected="selected") #{i}
-    //-        else
-    //-             option(value=i) #{i}
-    //-    -}  
-     
-    //- br
-    //- br
-    
-    //- div#wrapper
-    //-  span Thrid Area
-    //-  br
-    //-  span Description
-    //-  br
-    //-  textarea#input_area_control(type="text", placeholder="Description of the Area", cols="100" rows="10", name="control_3_description")
-    //-     | #{control_3_description}
-    //-  br
-    //-  span Coordinates
-    //-  br
-    //-  span Latitude
-    //-  span &nbsp;
-    //-  input#input_location_coordinates_longitude(type="text", placeholder="Latitude", name="control_3_latitude", value=control_3_latitude)
-    //-  br
-    //-  span Longitude
-    //-  span &nbsp;
-    //-  input#input_location_coordinates_longitude(type="text", placeholder="Longitude", name="control_3_longitude", value=control_3_longitude)
-    //-  br
-    //-  span Beginning Date
-    //-  span &nbsp;
-    //-  select(name="date_beg_day_2", value=date_beg_day_3)
-    //-    option(value="") Select
-    //-    -for(var i = 1;i<32;i++){
-    //-       - i = ("0" + i).slice(-2)
-    //-        if(date_beg_day_3==i)
-    //-             option(value=i selected="selected") #{i}
-    //-        else
-    //-             option(value=i) #{i}
-    //-    -}
-    //-  span &nbsp;
-    //-  select#input_date_beg_month(name="date_beg_month_3", value=date_beg_month_3)
-    //-     if (date_beg_month_3=="01") 
-    //-      option(value="01" selected="selected")  Jan 
-    //-     else 
-    //-      option(value="01")  Jan
-    //-     if (date_beg_month_3=="02")
-    //-      option(value="02" selected="selected")  Feb
-    //-     else
-    //-      option(value="02")  Feb    
-    //-     if (date_beg_month_3=="03")
-    //-      option(value="03" selected="selected")  Mar
-    //-     else
-    //-      option(value="03")  Mar
-    //-     if (date_beg_month_3=="04")
-    //-      option(value="04" selected="selected")  Apr
-    //-     else
-    //-      option(value="04")  Apr
-    //-     if (date_beg_month_3=="05")
-    //-      option(value="05" selected="selected")  May
-    //-     else
-    //-      option(value="05")  May
-    //-     if (date_beg_month_3=="06")
-    //-      option(value="06" selected="selected")  Jun
-    //-     else
-    //-      option(value="06")  Jun
-    //-     if (date_beg_month_3=="07")
-    //-      option(value="07" selected="selected")  Jul
-    //-     else 
-    //-      option(value="07")  Jul
-    //-     if (date_beg_month_3=="08")
-    //-      option(value="08" selected="selected")  Ago
-    //-     else
-    //-      option(value="08")  Ago
-    //-     if (date_beg_month_3=="09")
-    //-      option(value="09" selected="selected")  Sep
-    //-     else
-    //-      option(value="09")  Sep
-    //-     if (date_beg_month_3=="10")
-    //-      option(value="10" selected="selected")  Oct
-    //-     else 
-    //-      option(value="10")  Oct
-    //-     if (date_beg_month_3=="11")
-    //-      option(value="11" selected="selected")  Nov
-    //-     else
-    //-      option(value="11")  Nov
-    //-     if (date_beg_month_3=="12")
-    //-      option(value="12" selected="selected")  Dec
-    //-     else
-    //-      option(value="12")  Dec
-    //-     span &nbsp;
-    //-  select(name="date_beg_year_3", value=date_beg_year_3)
-    //-    option(value="") Select
-    //-    -for(var i = 1973;i<2006;i++){
-    //-        if(date_beg_year_3==i)
-    //-             option(value=i selected="selected") #{i}
-    //-        else
-    //-             option(value=i) #{i}
-    //-    -}  
-    //-  span &nbsp;
-    //-  span End Date
-    //-  span &nbsp;
-    //-  select(name="date_end_day_2", value=date_end_day_3)
-    //-    option(value="") Select
-    //-    -for(var i = 1;i<32;i++){
-    //-       - i = ("0" + i).slice(-2)
-    //-        if(date_end_day_3==i)
-    //-             option(value=i selected="selected") #{i}
-    //-        else
-    //-             option(value=i) #{i}
-    //-    -}
-    //-  span &nbsp;
-    //-  select#input_date_end_month(name="date_end_month_3", value=date_end_month_3)
-    //-     if (date_end_month_3=="01") 
-    //-      option(value="01" selected="selected")  Jan 
-    //-     else 
-    //-      option(value="01")  Jan
-    //-     if (date_end_month_3=="02")
-    //-      option(value="02" selected="selected")  Feb
-    //-     else
-    //-      option(value="02")  Feb    
-    //-     if (date_end_month_3=="03")
-    //-      option(value="03" selected="selected")  Mar
-    //-     else
-    //-      option(value="03")  Mar
-    //-     if (date_end_month_3=="04")
-    //-      option(value="04" selected="selected")  Apr
-    //-     else
-    //-      option(value="04")  Apr
-    //-     if (date_end_month_3=="05")
-    //-      option(value="05" selected="selected")  May
-    //-     else
-    //-      option(value="05")  May
-    //-     if (date_end_month_3=="06")
-    //-      option(value="06" selected="selected")  Jun
-    //-     else
-    //-      option(value="06")  Jun
-    //-     if (date_end_month_3=="07")
-    //-      option(value="07" selected="selected")  Jul
-    //-     else 
-    //-      option(value="07")  Jul
-    //-     if (date_end_month_3=="08")
-    //-      option(value="08" selected="selected")  Ago
-    //-     else
-    //-      option(value="08")  Ago
-    //-     if (date_end_month_3=="09")
-    //-      option(value="09" selected="selected")  Sep
-    //-     else
-    //-      option(value="09")  Sep
-    //-     if (date_end_month_3=="10")
-    //-      option(value="10" selected="selected")  Oct
-    //-     else 
-    //-      option(value="10")  Oct
-    //-     if (date_end_month_3=="11")
-    //-      option(value="11" selected="selected")  Nov
-    //-     else
-    //-      option(value="11")  Nov
-    //-     if (date_end_month_3=="12")
-    //-      option(value="12" selected="selected")  Dec
-    //-     else
-    //-      option(value="12")  Dec
-    //-     span &nbsp;
-    //-  select(name="date_end_year_3", value=date_end_year_3)
-    //-    option(value="") Select
-    //-    -for(var i = 1973;i<2006;i++){
-    //-        if(date_end_year_3==i)
-    //-             option(value=i selected="selected") #{i}
-    //-        else
-    //-             option(value=i) #{i}
-    //-    -}  
-     
-    //- br
-    //- br
-    
-    //- div#wrapper
-    //-  span Fourth Area
-    //-  br
-    //-  span Description
-    //-  br
-    //-  textarea#input_area_control(type="text", placeholder="Description of the Area", cols="100" rows="10", name="control_4_description")
-    //-     | #{control_4_description}
-    //-  br
-    //-  span Coordinates
-    //-  br
-    //-  span Latitude
-    //-  span &nbsp;
-    //-  input#input_location_coordinates_longitude(type="text", placeholder="Latitude", name="control_4_latitude", value=control_4_latitude)
-    //-  br
-    //-  span Longitude
-    //-  span &nbsp;
-    //-  input#input_location_coordinates_longitude(type="text", placeholder="Longitude", name="control_4_longitude", value=control_4_longitude)
-    //-  br
-    //-  span Beginning Date
-    //-  span &nbsp;
-    //-  select(name="date_beg_day_4", value=date_beg_day_4)
-    //-    option(value="") Select
-    //-    -for(var i = 1;i<32;i++){
-    //-       - i = ("0" + i).slice(-2)
-    //-        if(date_beg_day_4==i)
-    //-             option(value=i selected="selected") #{i}
-    //-        else
-    //-             option(value=i) #{i}
-    //-    -}
-    //-  span &nbsp;
-    //-  select#input_date_beg_month(name="date_beg_month_4", value=date_beg_month_4)
-    //-     if (date_beg_month_4=="01") 
-    //-      option(value="01" selected="selected")  Jan 
-    //-     else 
-    //-      option(value="01")  Jan
-    //-     if (date_beg_month_4=="02")
-    //-      option(value="02" selected="selected")  Feb
-    //-     else
-    //-      option(value="02")  Feb    
-    //-     if (date_beg_month_4=="03")
-    //-      option(value="03" selected="selected")  Mar
-    //-     else
-    //-      option(value="03")  Mar
-    //-     if (date_beg_month_4=="04")
-    //-      option(value="04" selected="selected")  Apr
-    //-     else
-    //-      option(value="04")  Apr
-    //-     if (date_beg_month_4=="05")
-    //-      option(value="05" selected="selected")  May
-    //-     else
-    //-      option(value="05")  May
-    //-     if (date_beg_month_4=="06")
-    //-      option(value="06" selected="selected")  Jun
-    //-     else
-    //-      option(value="06")  Jun
-    //-     if (date_beg_month_4=="07")
-    //-      option(value="07" selected="selected")  Jul
-    //-     else 
-    //-      option(value="07")  Jul
-    //-     if (date_beg_month_4=="08")
-    //-      option(value="08" selected="selected")  Ago
-    //-     else
-    //-      option(value="08")  Ago
-    //-     if (date_beg_month_4=="09")
-    //-      option(value="09" selected="selected")  Sep
-    //-     else
-    //-      option(value="09")  Sep
-    //-     if (date_beg_month_4=="10")
-    //-      option(value="10" selected="selected")  Oct
-    //-     else 
-    //-      option(value="10")  Oct
-    //-     if (date_beg_month_4=="11")
-    //-      option(value="11" selected="selected")  Nov
-    //-     else
-    //-      option(value="11")  Nov
-    //-     if (date_beg_month_4=="12")
-    //-      option(value="12" selected="selected")  Dec
-    //-     else
-    //-      option(value="12")  Dec
-    //-     span &nbsp;
-    //-  select(name="date_beg_year_4", value=date_beg_year_4)
-    //-    option(value="") Select
-    //-    -for(var i = 1973;i<2006;i++){
-    //-        if(date_beg_year_4==i)
-    //-             option(value=i selected="selected") #{i}
-    //-        else
-    //-             option(value=i) #{i}
-    //-    -}  
-    //-  span &nbsp;
-    //-  span End Date
-    //-  span &nbsp;
-    //-  select(name="date_end_day_4", value=date_end_day_4)
-    //-    option(value="") Select
-    //-    -for(var i = 1;i<32;i++){
-    //-       - i = ("0" + i).slice(-2)
-    //-        if(date_end_day_4==i)
-    //-             option(value=i selected="selected") #{i}
-    //-        else
-    //-             option(value=i) #{i}
-    //-    -}
-    //-  span &nbsp;
-    //-  select#input_date_end_month(name="date_end_month_4", value=date_end_month_4)
-    //-     if (date_end_month_4=="01") 
-    //-      option(value="01" selected="selected")  Jan 
-    //-     else 
-    //-      option(value="01")  Jan
-    //-     if (date_end_month_4=="02")
-    //-      option(value="02" selected="selected")  Feb
-    //-     else
-    //-      option(value="02")  Feb    
-    //-     if (date_end_month_4=="03")
-    //-      option(value="03" selected="selected")  Mar
-    //-     else
-    //-      option(value="03")  Mar
-    //-     if (date_end_month_4=="04")
-    //-      option(value="04" selected="selected")  Apr
-    //-     else
-    //-      option(value="04")  Apr
-    //-     if (date_end_month_4=="05")
-    //-      option(value="05" selected="selected")  May
-    //-     else
-    //-      option(value="05")  May
-    //-     if (date_end_month_4=="06")
-    //-      option(value="06" selected="selected")  Jun
-    //-     else
-    //-      option(value="06")  Jun
-    //-     if (date_end_month_4=="07")
-    //-      option(value="07" selected="selected")  Jul
-    //-     else 
-    //-      option(value="07")  Jul
-    //-     if (date_end_month_4=="08")
-    //-      option(value="08" selected="selected")  Ago
-    //-     else
-    //-      option(value="08")  Ago
-    //-     if (date_end_month_4=="09")
-    //-      option(value="09" selected="selected")  Sep
-    //-     else
-    //-      option(value="09")  Sep
-    //-     if (date_end_month_4=="10")
-    //-      option(value="10" selected="selected")  Oct
-    //-     else 
-    //-      option(value="10")  Oct
-    //-     if (date_end_month_4=="11")
-    //-      option(value="11" selected="selected")  Nov
-    //-     else
-    //-      option(value="11")  Nov
-    //-     if (date_end_month_4=="12")
-    //-      option(value="12" selected="selected")  Dec
-    //-     else
-    //-      option(value="12")  Dec
-    //-     span &nbsp;
-    //-  select(name="date_end_year_4", value=date_end_year_4)
-    //-    option(value="") Select
-    //-    -for(var i = 1973;i<2006;i++){
-    //-        if(date_end_year_4==i)
-    //-             option(value=i selected="selected") #{i}
-    //-        else
-    //-             option(value=i) #{i}
-    //-    -}  
-     
-    //- br
-    //- br
-    
-    //- div#wrapper
-    //-  span Fifth Area
-    //-  br
-    //-  span Description
-    //-  br
-    //-  textarea#input_area_control(type="text", placeholder="Description of the Area", cols="100" rows="10", name="control_5_description")
-    //-     | #{control_5_description}
-    //-  br
-    //-  span Coordinates
-    //-  br
-    //-  span Latitude
-    //-  span &nbsp;
-    //-  input#input_location_coordinates_longitude(type="text", placeholder="Latitude", name="control_5_latitude", value=control_5_latitude)
-    //-  br
-    //-  span Longitude
-    //-  span &nbsp;
-    //-  input#input_location_coordinates_longitude(type="text", placeholder="Longitude", name="control_5_longitude", value=control_5_longitude)
-    //-  br
-    //-  span Beginning Date
-    //-  span &nbsp;
-    //-  select(name="date_beg_day_5", value=date_beg_day_5)
-    //-    option(value="") Select
-    //-    -for(var i = 1;i<32;i++){
-    //-       - i = ("0" + i).slice(-2)
-    //-        if(date_beg_day_5==i)
-    //-             option(value=i selected="selected") #{i}
-    //-        else
-    //-             option(value=i) #{i}
-    //-    -}
-    //-  span &nbsp;
-    //-  select#input_date_beg_month(name="date_beg_month_5", value=date_beg_month_5)
-    //-     if (date_beg_month_5=="01") 
-    //-      option(value="01" selected="selected")  Jan 
-    //-     else 
-    //-      option(value="01")  Jan
-    //-     if (date_beg_month_5=="02")
-    //-      option(value="02" selected="selected")  Feb
-    //-     else
-    //-      option(value="02")  Feb    
-    //-     if (date_beg_month_5=="03")
-    //-      option(value="03" selected="selected")  Mar
-    //-     else
-    //-      option(value="03")  Mar
-    //-     if (date_beg_month_5=="04")
-    //-      option(value="04" selected="selected")  Apr
-    //-     else
-    //-      option(value="04")  Apr
-    //-     if (date_beg_month_5=="05")
-    //-      option(value="05" selected="selected")  May
-    //-     else
-    //-      option(value="05")  May
-    //-     if (date_beg_month_5=="06")
-    //-      option(value="06" selected="selected")  Jun
-    //-     else
-    //-      option(value="06")  Jun
-    //-     if (date_beg_month_5=="07")
-    //-      option(value="07" selected="selected")  Jul
-    //-     else 
-    //-      option(value="07")  Jul
-    //-     if (date_beg_month_5=="08")
-    //-      option(value="08" selected="selected")  Ago
-    //-     else
-    //-      option(value="08")  Ago
-    //-     if (date_beg_month_5=="09")
-    //-      option(value="09" selected="selected")  Sep
-    //-     else
-    //-      option(value="09")  Sep
-    //-     if (date_beg_month_5=="10")
-    //-      option(value="10" selected="selected")  Oct
-    //-     else 
-    //-      option(value="10")  Oct
-    //-     if (date_beg_month_5=="11")
-    //-      option(value="11" selected="selected")  Nov
-    //-     else
-    //-      option(value="11")  Nov
-    //-     if (date_beg_month_5=="12")
-    //-      option(value="12" selected="selected")  Dec
-    //-     else
-    //-      option(value="12")  Dec
-    //-     span &nbsp;
-    //-  select(name="date_beg_year_5", value=date_beg_year_5)
-    //-    option(value="") Select
-    //-    -for(var i = 1973;i<2006;i++){
-    //-        if(date_beg_year_5==i)
-    //-             option(value=i selected="selected") #{i}
-    //-        else
-    //-             option(value=i) #{i}
-    //-    -}  
-    //-  span &nbsp;
-    //-  span End Date
-    //-  span &nbsp;
-    //-  select(name="date_end_day_5", value=date_end_day_5)
-    //-    option(value="") Select
-    //-    -for(var i = 1;i<32;i++){
-    //-       - i = ("0" + i).slice(-2)
-    //-        if(date_end_day_5==i)
-    //-             option(value=i selected="selected") #{i}
-    //-        else
-    //-             option(value=i) #{i}
-    //-    -}
-    //-  span &nbsp;
-    //-  select#input_date_end_month(name="date_end_month_5", value=date_end_month_5)
-    //-     if (date_end_month_5=="01") 
-    //-      option(value="01" selected="selected")  Jan 
-    //-     else 
-    //-      option(value="01")  Jan
-    //-     if (date_end_month_5=="02")
-    //-      option(value="02" selected="selected")  Feb
-    //-     else
-    //-      option(value="02")  Feb    
-    //-     if (date_end_month_5=="03")
-    //-      option(value="03" selected="selected")  Mar
-    //-     else
-    //-      option(value="03")  Mar
-    //-     if (date_end_month_5=="04")
-    //-      option(value="04" selected="selected")  Apr
-    //-     else
-    //-      option(value="04")  Apr
-    //-     if (date_end_month_5=="05")
-    //-      option(value="05" selected="selected")  May
-    //-     else
-    //-      option(value="05")  May
-    //-     if (date_end_month_5=="06")
-    //-      option(value="06" selected="selected")  Jun
-    //-     else
-    //-      option(value="06")  Jun
-    //-     if (date_end_month_5=="07")
-    //-      option(value="07" selected="selected")  Jul
-    //-     else 
-    //-      option(value="07")  Jul
-    //-     if (date_end_month_5=="08")
-    //-      option(value="08" selected="selected")  Ago
-    //-     else
-    //-      option(value="08")  Ago
-    //-     if (date_end_month_5=="09")
-    //-      option(value="09" selected="selected")  Sep
-    //-     else
-    //-      option(value="09")  Sep
-    //-     if (date_end_month_5=="10")
-    //-      option(value="10" selected="selected")  Oct
-    //-     else 
-    //-      option(value="10")  Oct
-    //-     if (date_end_month_5=="11")
-    //-      option(value="11" selected="selected")  Nov
-    //-     else
-    //-      option(value="11")  Nov
-    //-     if (date_end_month_5=="12")
-    //-      option(value="12" selected="selected")  Dec
-    //-     else
-    //-      option(value="12")  Dec
-    //-     span &nbsp;
-    //-  select(name="date_end_year_5", value=date_end_year_5)
-    //-    option(value="") Select
-    //-    -for(var i = 1973;i<2006;i++){
-    //-        if(date_end_year_5==i)
-    //-             option(value=i selected="selected") #{i}
-    //-        else
-    //-             option(value=i) #{i}
-    //-    -}  
-     
-    //- br
-    //- br
-    
-    //- div#wrapper 
-    //-  span Flag
-    //-  span &nbsp;
-    //-  input#input_sources(type="text", placeholder="Flag", name="flag_file", value=flag_file)
-    //-  br
-    //-  br
-     
-    //-  span Documents
-    //-  span &nbsp;
-    //-  input#input_documents(type="text", placeholder="Documents", name="documents", value=documents)
-    //-  br
-    //-  br
-     
+    div#wrapper 
+     legend Areas of control
+     br
+     each municipality, i in municipalities.features
+            div.checkbox-inline(class="columns")
+              input.checkbox-input(type='checkbox', name="control_areas", value=municipality.id)
+              label #{municipality.id} - #{municipality.properties.name} 
+              //- span &nbsp;
+              //- span Beginning Date
+              //- span &nbsp;
+              //- select(name="date_beg_day", value=date_beg_day)
+              //-   option(value="") Select
+              //-   -for(var i = 1;i<32;i++){
+              //-     - i = ("0" + i).slice(-2)
+              //-     if(date_beg_day_1==i)
+              //-         option(value=i selected="selected") #{i}
+              //-     else
+              //-         option(value=i) #{i}
+              //-   -}
+
+
+          
+                //-  span &nbsp;
+                //-  select#input_date_beg_month(name="date_beg_month_1", value=date_beg_month_1)
+                //-     if (date_beg_month_1=="01") 
+                //-      option(value="01" selected="selected")  Jan 
+                //-     else 
+                //-      option(value="01")  Jan
+                //-     if (date_beg_month_1=="02")
+                //-      option(value="02" selected="selected")  Feb
+                //-     else
+                //-      option(value="02")  Feb    
+                //-     if (date_beg_month_1=="03")
+                //-      option(value="03" selected="selected")  Mar
+                //-     else
+                //-      option(value="03")  Mar
+                //-     if (date_beg_month_1=="04")
+                //-      option(value="04" selected="selected")  Apr
+                //-     else
+                //-      option(value="04")  Apr
+                //-     if (date_beg_month_1=="05")
+                //-      option(value="05" selected="selected")  May
+                //-     else
+                //-      option(value="05")  May
+                //-     if (date_beg_month_1=="06")
+                //-      option(value="06" selected="selected")  Jun
+                //-     else
+                //-      option(value="06")  Jun
+                //-     if (date_beg_month_1=="07")
+                //-      option(value="07" selected="selected")  Jul
+                //-     else 
+                //-      option(value="07")  Jul
+                //-     if (date_beg_month_1=="08")
+                //-      option(value="08" selected="selected")  Ago
+                //-     else
+                //-      option(value="08")  Ago
+                //-     if (date_beg_month_1=="09")
+                //-      option(value="09" selected="selected")  Sep
+                //-     else
+                //-      option(value="09")  Sep
+                //-     if (date_beg_month_1=="10")
+                //-      option(value="10" selected="selected")  Oct
+                //-     else 
+                //-      option(value="10")  Oct
+                //-     if (date_beg_month_1=="11")
+                //-      option(value="11" selected="selected")  Nov
+                //-     else
+                //-      option(value="11")  Nov
+                //-     if (date_beg_month_1=="12")
+                //-      option(value="12" selected="selected")  Dec
+                //-     else
+                //-      option(value="12")  Dec
+                //-     span &nbsp;
+                //-  select(name="date_beg_year_1", value=date_beg_year_1)
+                //-    option(value="") Select
+                //-    -for(var i = 1973;i<2006;i++){
+                //-        if(date_beg_year_1==i)
+                //-             option(value=i selected="selected") #{i}
+                //-        else
+                //-             option(value=i) #{i}
+                //-    -}  
+                //-  span &nbsp;
+                //-  span End Date
+                //-  span &nbsp;
+                //-  select(name="date_end_day_1", value=date_end_day_1)
+                //-    option(value="") Select
+                //-    -for(var i = 1;i<32;i++){
+                //-       - i = ("0" + i).slice(-2)
+                //-        if(date_end_day_1==i)
+                //-             option(value=i selected="selected") #{i}
+                //-        else
+                //-             option(value=i) #{i}
+                //-    -}
+                //-  span &nbsp;
+                //-  select#input_date_end_month(name="date_end_month_1", value=date_end_month_1)
+                //-     if (date_end_month_1=="01") 
+                //-      option(value="01" selected="selected")  Jan 
+                //-     else 
+                //-      option(value="01")  Jan
+                //-     if (date_end_month_1=="02")
+                //-      option(value="02" selected="selected")  Feb
+                //-     else
+                //-      option(value="02")  Feb    
+                //-     if (date_end_month_1=="03")
+                //-      option(value="03" selected="selected")  Mar
+                //-     else
+                //-      option(value="03")  Mar
+                //-     if (date_end_month_1=="04")
+                //-      option(value="04" selected="selected")  Apr
+                //-     else
+                //-      option(value="04")  Apr
+                //-     if (date_end_month_1=="05")
+                //-      option(value="05" selected="selected")  May
+                //-     else
+                //-      option(value="05")  May
+                //-     if (date_end_month_1=="06")
+                //-      option(value="06" selected="selected")  Jun
+                //-     else
+                //-      option(value="06")  Jun
+                //-     if (date_end_month_1=="07")
+                //-      option(value="07" selected="selected")  Jul
+                //-     else 
+                //-      option(value="07")  Jul
+                //-     if (date_end_month_1=="08")
+                //-      option(value="08" selected="selected")  Ago
+                //-     else
+                //-      option(value="08")  Ago
+                //-     if (date_end_month_1=="09")
+                //-      option(value="09" selected="selected")  Sep
+                //-     else
+                //-      option(value="09")  Sep
+                //-     if (date_end_month_1=="10")
+                //-      option(value="10" selected="selected")  Oct
+                //-     else 
+                //-      option(value="10")  Oct
+                //-     if (date_end_month_1=="11")
+                //-      option(value="11" selected="selected")  Nov
+                //-     else
+                //-      option(value="11")  Nov
+                //-     if (date_end_month_1=="12")
+                //-      option(value="12" selected="selected")  Dec
+                //-     else
+                //-      option(value="12")  Dec
+                //-     span &nbsp;
+                //-  select(name="date_end_year_1", value=date_end_year_1)
+                //-    option(value="") Select
+                //-    -for(var i = 1973;i<2006;i++){
+                //-        if(date_end_year_1==i)
+                //-             option(value=i selected="selected") #{i}
+                //-        else
+                //-             option(value=i) #{i}
+                //-    -}  
+               
     div(class='btn menu')
-      button#submit_site(type="submit" role='submit' class="buttons") submit
+        button#submit_site(type="submit" role='submit' class="buttons") submit
     div(class='btn menu')
-      a(href="/parties") Go back to Parties
+        a(href="/parties") Go back to Parties
     
