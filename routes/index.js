@@ -10,6 +10,7 @@ var async = require('async');
 var xl = require('excel4node');
 var multer  = require('multer');
 var fs = require("fs");
+var municipalities = require("../public/javascripts/lebanonAdministrative.js");
  
 var db;
 var collectionsList;
@@ -101,7 +102,7 @@ router.post('/login', function(req, res){
 function getParties(callback){ 
     if (db) {
         var partiesColl = db.collection('parties');
-        partiesColl.find({},{_id:0, 'name': 1, code: 1}).sort({'name.en':1}).toArray(function(err, result){
+        partiesColl.find({},{_id:0, 'name': 1, code: 1, control_areas:1}).sort({'name.en':1}).toArray(function(err, result){
             if (err){
                     res.send(err);
             } else {
@@ -637,7 +638,8 @@ router.get('/map', function(req, res){
             "barracks": barracksLayer,
             "centres": detentionCentresLayer,
             "sites": sitesLayer,
-            "events": eventsLayer
+            "events": eventsLayer,
+            "parties": partiesList
         });  
     } else {
         res.render('index', { title: 'Login to Database'});
@@ -778,9 +780,9 @@ router.get('/newprofile', function(req, res){
             }
             var type = req.query.type;
             if (req.query.nextrecord){
-                res.render('new'+type, { title: 'Add New '+type, nextrecord : req.query.nextrecord, parties : partiesList, mps: missingList, locations: locationsList, events: eventsList, sites: sitesList, contactslist: contactsList, interviewslist: interviewsList, fileslist: filesList});
+                res.render('new'+type, { title: 'Add New '+type, nextrecord : req.query.nextrecord, parties : partiesList, mps: missingList, locations: locationsList, events: eventsList, sites: sitesList, contactslist: contactsList, interviewslist: interviewsList, fileslist: filesList, municipalities : municipalities});
             } else {
-                res.render('new'+type, { title: 'Edit '+type, editprofile : profile, parties : partiesList, mps: missingList, locations: locationsList, events: eventsList, sites: sitesList, contactslist: contactsList, interviewslist: interviewsList, fileslist: filesList});
+                res.render('new'+type, { title: 'Edit '+type, editprofile : profile, parties : partiesList, mps: missingList, locations: locationsList, events: eventsList, sites: sitesList, contactslist: contactsList, interviewslist: interviewsList, fileslist: filesList, municipalities : municipalities});
             }
         });
     } else {
@@ -892,26 +894,26 @@ router.post('/addmissing', function(req, res){
                     "fate" : req.body.fate,
                     "notes" : req.body.notes,
                     "interviews" : req.body.interviews,
-                    "source_type_1" : req.body.source_type_1,
-                    "source_subtype_1" : req.body.source_subtype_1,
-                    "source_name_1" : req.body.source_name_1,
-                    "source_details_1" : req.body.source_details_1,
-                    "source_type_2" : req.body.source_type_2,
-                    "source_subtype_2" : req.body.source_subtype_2,
-                    "source_name_2" : req.body.source_name_2,
-                    "source_details_2" : req.body.source_details_2,
-                    "source_type_3" : req.body.source_type_3,
-                    "source_subtype_3" : req.body.source_subtype_3,
-                    "source_name_3" : req.body.source_name_3,
-                    "source_details_3" : req.body.source_details_3,
-                    "source_type_4" : req.body.source_type_4,
-                    "source_subtype_4" : req.body.source_subtype_4,
-                    "source_name_4" : req.body.source_name_4,
-                    "source_details_4" : req.body.source_details_4,
-                    "source_type_5" : req.body.source_type_5,
-                    "source_subtype_5" : req.body.source_subtype_5,
-                    "source_name_5" : req.body.source_name_5,
-                    "source_details_5" : req.body.source_details_5,
+                    // "source_type_1" : req.body.source_type_1,
+                    // "source_subtype_1" : req.body.source_subtype_1,
+                    // "source_name_1" : req.body.source_name_1,
+                    // "source_details_1" : req.body.source_details_1,
+                    // "source_type_2" : req.body.source_type_2,
+                    // "source_subtype_2" : req.body.source_subtype_2,
+                    // "source_name_2" : req.body.source_name_2,
+                    // "source_details_2" : req.body.source_details_2,
+                    // "source_type_3" : req.body.source_type_3,
+                    // "source_subtype_3" : req.body.source_subtype_3,
+                    // "source_name_3" : req.body.source_name_3,
+                    // "source_details_3" : req.body.source_details_3,
+                    // "source_type_4" : req.body.source_type_4,
+                    // "source_subtype_4" : req.body.source_subtype_4,
+                    // "source_name_4" : req.body.source_name_4,
+                    // "source_details_4" : req.body.source_details_4,
+                    // "source_type_5" : req.body.source_type_5,
+                    // "source_subtype_5" : req.body.source_subtype_5,
+                    // "source_name_5" : req.body.source_name_5,
+                    // "source_details_5" : req.body.source_details_5,
                     "files": req.body.files,
                     "picture" : req.body.picture,
                     "lists_syria_2000" : req.body.lists_syria_2000,
@@ -1023,33 +1025,33 @@ router.post('/addmissing', function(req, res){
                 if (profile[0].fate!= req.body.fate) updateVal['fate'] =  req.body.fate
                 if (profile[0].notes!= req.body.notes) updateVal['notes'] =  req.body.notes
                 if (profile[0].interviews!= interviews) updateVal['interviews'] = interviews
-                var sourcesBody = [{
-                    "type": req.body.source_type_1,
-                    "subtype" : req.body.source_subtype_1,
-                    "name" : req.body.source_name_1,
-                    "details" : req.body.source_details_1
-                },{
-                    "type": req.body.source_type_2,
-                    "subtype" : req.body.source_subtype_2,
-                    "name" : req.body.source_name_2,
-                    "details" : req.body.source_details_2
-                },{
-                    "type": req.body.source_type_3,
-                    "subtype" : req.body.source_subtype_3,
-                    "name" : req.body.source_name_3,
-                    "details" : req.body.source_details_3
-                },{
-                    "type": req.body.source_type_4,
-                    "subtype" : req.body.source_subtype_4,
-                    "name" : req.body.source_name_4,
-                    "details" : req.body.source_details_4
-                },{
-                    "type": req.body.source_type_5,
-                    "subtype" : req.body.source_subtype_5,
-                    "name" : req.body.source_name_5,
-                    "details" : req.body.source_details_5
-                }]
-                if (profile[0].sources!= sourcesBody) updateVal['sources'] =  sourcesBody
+                // var sourcesBody = [{
+                //     "type": req.body.source_type_1,
+                //     "subtype" : req.body.source_subtype_1,
+                //     "name" : req.body.source_name_1,
+                //     "details" : req.body.source_details_1
+                // },{
+                //     "type": req.body.source_type_2,
+                //     "subtype" : req.body.source_subtype_2,
+                //     "name" : req.body.source_name_2,
+                //     "details" : req.body.source_details_2
+                // },{
+                //     "type": req.body.source_type_3,
+                //     "subtype" : req.body.source_subtype_3,
+                //     "name" : req.body.source_name_3,
+                //     "details" : req.body.source_details_3
+                // },{
+                //     "type": req.body.source_type_4,
+                //     "subtype" : req.body.source_subtype_4,
+                //     "name" : req.body.source_name_4,
+                //     "details" : req.body.source_details_4
+                // },{
+                //     "type": req.body.source_type_5,
+                //     "subtype" : req.body.source_subtype_5,
+                //     "name" : req.body.source_name_5,
+                //     "details" : req.body.source_details_5
+                // }]
+                // if (profile[0].sources!= sourcesBody) updateVal['sources'] =  sourcesBody
                 if (profile[0].files!= files) updateVal['files'] =  files
                 if (profile[0].picture!= req.body.picture) updateVal['picture'] =  req.body.picture
                 if (profile[0].lists.syria_2000!= req.body.lists_syria_2000) updateVal['lists.syria_2000'] =  req.body.lists_syria_2000
@@ -1218,32 +1220,32 @@ router.post('/addmissing', function(req, res){
                                 "fate" : req.body.fate,
                                 "notes" : req.body.notes,
                                 "interviews" : interviews,
-                                "sources" : [{
-                                    "type": req.body.source_type_1,
-                                    "subtype" : req.body.source_subtype_1,
-                                    "name" : req.body.source_name_1,
-                                    "details" : req.body.source_details_1
-                                },{
-                                    "type": req.body.source_type_2,
-                                    "subtype" : req.body.source_subtype_2,
-                                    "name" : req.body.source_name_2,
-                                    "details" : req.body.source_details_2
-                                },{
-                                    "type": req.body.source_type_3,
-                                    "subtype" : req.body.source_subtype_3,
-                                    "name" : req.body.source_name_3,
-                                    "details" : req.body.source_details_3
-                                },{
-                                    "type": req.body.source_type_4,
-                                    "subtype" : req.body.source_subtype_4,
-                                    "name" : req.body.source_name_4,
-                                    "details" : req.body.source_details_4
-                                },{
-                                    "type": req.body.source_type_5,
-                                    "subtype" : req.body.source_subtype_5,
-                                    "name" : req.body.source_name_5,
-                                    "details" : req.body.source_details_5
-                                }],
+                                // "sources" : [{
+                                //     "type": req.body.source_type_1,
+                                //     "subtype" : req.body.source_subtype_1,
+                                //     "name" : req.body.source_name_1,
+                                //     "details" : req.body.source_details_1
+                                // },{
+                                //     "type": req.body.source_type_2,
+                                //     "subtype" : req.body.source_subtype_2,
+                                //     "name" : req.body.source_name_2,
+                                //     "details" : req.body.source_details_2
+                                // },{
+                                //     "type": req.body.source_type_3,
+                                //     "subtype" : req.body.source_subtype_3,
+                                //     "name" : req.body.source_name_3,
+                                //     "details" : req.body.source_details_3
+                                // },{
+                                //     "type": req.body.source_type_4,
+                                //     "subtype" : req.body.source_subtype_4,
+                                //     "name" : req.body.source_name_4,
+                                //     "details" : req.body.source_details_4
+                                // },{
+                                //     "type": req.body.source_type_5,
+                                //     "subtype" : req.body.source_subtype_5,
+                                //     "name" : req.body.source_name_5,
+                                //     "details" : req.body.source_details_5
+                                // }],
                                 "picture" : req.body.picture,
                                 "files" : files,
                                 "lists" : {
@@ -1367,26 +1369,26 @@ router.post('/addevent', function(req, res){
                     "related_mps" : req.body.related_mps,
                     "notes" : req.body.notes,
                     "interviews" : req.body.interviews,
-                    "source_type_1" : req.body.source_type_1,
-                    "source_subtype_1" : req.body.source_subtype_1,
-                    "source_name_1" : req.body.source_name_1,
-                    "source_details_1" : req.body.source_details_1,
-                    "source_type_2" : req.body.source_type_2,
-                    "source_subtype_2" : req.body.source_subtype_2,
-                    "source_name_2" : req.body.source_name_2,
-                    "source_details_2" : req.body.source_details_2,
-                    "source_type_3" : req.body.source_type_3,
-                    "source_subtype_3" : req.body.source_subtype_3,
-                    "source_name_3" : req.body.source_name_3,
-                    "source_details_3" : req.body.source_details_3,
-                    "source_type_4" : req.body.source_type_4,
-                    "source_subtype_4" : req.body.source_subtype_4,
-                    "source_name_4" : req.body.source_name_4,
-                    "source_details_4" : req.body.source_details_4,
-                    "source_type_5" : req.body.source_type_5,
-                    "source_subtype_5" : req.body.source_subtype_5,
-                    "source_name_5" : req.body.source_name_5,
-                    "source_details_5" : req.body.source_details_5,
+                    // "source_type_1" : req.body.source_type_1,
+                    // "source_subtype_1" : req.body.source_subtype_1,
+                    // "source_name_1" : req.body.source_name_1,
+                    // "source_details_1" : req.body.source_details_1,
+                    // "source_type_2" : req.body.source_type_2,
+                    // "source_subtype_2" : req.body.source_subtype_2,
+                    // "source_name_2" : req.body.source_name_2,
+                    // "source_details_2" : req.body.source_details_2,
+                    // "source_type_3" : req.body.source_type_3,
+                    // "source_subtype_3" : req.body.source_subtype_3,
+                    // "source_name_3" : req.body.source_name_3,
+                    // "source_details_3" : req.body.source_details_3,
+                    // "source_type_4" : req.body.source_type_4,
+                    // "source_subtype_4" : req.body.source_subtype_4,
+                    // "source_name_4" : req.body.source_name_4,
+                    // "source_details_4" : req.body.source_details_4,
+                    // "source_type_5" : req.body.source_type_5,
+                    // "source_subtype_5" : req.body.source_subtype_5,
+                    // "source_name_5" : req.body.source_name_5,
+                    // "source_details_5" : req.body.source_details_5,
                     "files" : req.body.files,
                     "contacts" : req.body.contacts,
                     
@@ -1459,33 +1461,33 @@ router.post('/addevent', function(req, res){
                 if (profile[0].related.mps!= relMPs) updateVal['related.mps'] = relMPs
                 if (profile[0].notes!= req.body.notes) updateVal['notes'] =  req.body.notes
                 if (profile[0].interviews!= interviews) updateVal['interviews'] = interviews
-                var sourcesBody = [{
-                    "type": req.body.source_type_1,
-                    "subtype" : req.body.source_subtype_1,
-                    "name" : req.body.source_name_1,
-                    "details" : req.body.source_details_1
-                },{
-                    "type": req.body.source_type_2,
-                    "subtype" : req.body.source_subtype_2,
-                    "name" : req.body.source_name_2,
-                    "details" : req.body.source_details_2
-                },{
-                    "type": req.body.source_type_3,
-                    "subtype" : req.body.source_subtype_3,
-                    "name" : req.body.source_name_3,
-                    "details" : req.body.source_details_3
-                },{
-                    "type": req.body.source_type_4,
-                    "subtype" : req.body.source_subtype_4,
-                    "name" : req.body.source_name_4,
-                    "details" : req.body.source_details_4
-                },{
-                    "type": req.body.source_type_5,
-                    "subtype" : req.body.source_subtype_5,
-                    "name" : req.body.source_name_5,
-                    "details" : req.body.source_details_5
-                }]
-                if (profile[0].sources!= sourcesBody) updateVal['sources'] =  sourcesBody
+                // var sourcesBody = [{
+                //     "type": req.body.source_type_1,
+                //     "subtype" : req.body.source_subtype_1,
+                //     "name" : req.body.source_name_1,
+                //     "details" : req.body.source_details_1
+                // },{
+                //     "type": req.body.source_type_2,
+                //     "subtype" : req.body.source_subtype_2,
+                //     "name" : req.body.source_name_2,
+                //     "details" : req.body.source_details_2
+                // },{
+                //     "type": req.body.source_type_3,
+                //     "subtype" : req.body.source_subtype_3,
+                //     "name" : req.body.source_name_3,
+                //     "details" : req.body.source_details_3
+                // },{
+                //     "type": req.body.source_type_4,
+                //     "subtype" : req.body.source_subtype_4,
+                //     "name" : req.body.source_name_4,
+                //     "details" : req.body.source_details_4
+                // },{
+                //     "type": req.body.source_type_5,
+                //     "subtype" : req.body.source_subtype_5,
+                //     "name" : req.body.source_name_5,
+                //     "details" : req.body.source_details_5
+                // }]
+                // if (profile[0].sources!= sourcesBody) updateVal['sources'] =  sourcesBody
                 if (profile[0].contacts!=contacts) updateVal['contacts'] = contacts
                 if (profile[0].files!=files) updateVal['files'] = files
 
@@ -1601,32 +1603,32 @@ router.post('/addevent', function(req, res){
                                 },
                                 "notes" : req.body.notes,
                                 "interviews" : interviews,
-                                "sources" : [{
-                                    "type": req.body.source_type_1,
-                                    "subtype" : req.body.source_subtype_1,
-                                    "name" : req.body.source_name_1,
-                                    "details" : req.body.source_details_1
-                                },{
-                                    "type": req.body.source_type_2,
-                                    "subtype" : req.body.source_subtype_2,
-                                    "name" : req.body.source_name_2,
-                                    "details" : req.body.source_details_2
-                                },{
-                                    "type": req.body.source_type_3,
-                                    "subtype" : req.body.source_subtype_3,
-                                    "name" : req.body.source_name_3,
-                                    "details" : req.body.source_details_3
-                                },{
-                                    "type": req.body.source_type_4,
-                                    "subtype" : req.body.source_subtype_4,
-                                    "name" : req.body.source_name_4,
-                                    "details" : req.body.source_details_4
-                                },{
-                                    "type": req.body.source_type_5,
-                                    "subtype" : req.body.source_subtype_5,
-                                    "name" : req.body.source_name_5,
-                                    "details" : req.body.source_details_5
-                                }],
+                                // "sources" : [{
+                                //     "type": req.body.source_type_1,
+                                //     "subtype" : req.body.source_subtype_1,
+                                //     "name" : req.body.source_name_1,
+                                //     "details" : req.body.source_details_1
+                                // },{
+                                //     "type": req.body.source_type_2,
+                                //     "subtype" : req.body.source_subtype_2,
+                                //     "name" : req.body.source_name_2,
+                                //     "details" : req.body.source_details_2
+                                // },{
+                                //     "type": req.body.source_type_3,
+                                //     "subtype" : req.body.source_subtype_3,
+                                //     "name" : req.body.source_name_3,
+                                //     "details" : req.body.source_details_3
+                                // },{
+                                //     "type": req.body.source_type_4,
+                                //     "subtype" : req.body.source_subtype_4,
+                                //     "name" : req.body.source_name_4,
+                                //     "details" : req.body.source_details_4
+                                // },{
+                                //     "type": req.body.source_type_5,
+                                //     "subtype" : req.body.source_subtype_5,
+                                //     "name" : req.body.source_name_5,
+                                //     "details" : req.body.source_details_5
+                                // }],
                                 "contacts" : contacts,    
                                 "files" : files
                              };
@@ -1726,26 +1728,26 @@ router.post('/addlocation', function(req, res){
                     "related_mps" : req.body.related_mps,
                     "notes" : req.body.notes,
                     "interviews" : req.body.interviews,
-                    "source_type_1" : req.body.source_type_1,
-                    "source_subtype_1" : req.body.source_subtype_1,
-                    "source_name_1" : req.body.source_name_1,
-                    "source_details_1" : req.body.source_details_1,
-                    "source_type_2" : req.body.source_type_2,
-                    "source_subtype_2" : req.body.source_subtype_2,
-                    "source_name_2" : req.body.source_name_2,
-                    "source_details_2" : req.body.source_details_2,
-                    "source_type_3" : req.body.source_type_3,
-                    "source_subtype_3" : req.body.source_subtype_3,
-                    "source_name_3" : req.body.source_name_3,
-                    "source_details_3" : req.body.source_details_3,
-                    "source_type_4" : req.body.source_type_4,
-                    "source_subtype_4" : req.body.source_subtype_4,
-                    "source_name_4" : req.body.source_name_4,
-                    "source_details_4" : req.body.source_details_4,
-                    "source_type_5" : req.body.source_type_5,
-                    "source_subtype_5" : req.body.source_subtype_5,
-                    "source_name_5" : req.body.source_name_5,
-                    "source_details_5" : req.body.source_details_5,
+                    // "source_type_1" : req.body.source_type_1,
+                    // "source_subtype_1" : req.body.source_subtype_1,
+                    // "source_name_1" : req.body.source_name_1,
+                    // "source_details_1" : req.body.source_details_1,
+                    // "source_type_2" : req.body.source_type_2,
+                    // "source_subtype_2" : req.body.source_subtype_2,
+                    // "source_name_2" : req.body.source_name_2,
+                    // "source_details_2" : req.body.source_details_2,
+                    // "source_type_3" : req.body.source_type_3,
+                    // "source_subtype_3" : req.body.source_subtype_3,
+                    // "source_name_3" : req.body.source_name_3,
+                    // "source_details_3" : req.body.source_details_3,
+                    // "source_type_4" : req.body.source_type_4,
+                    // "source_subtype_4" : req.body.source_subtype_4,
+                    // "source_name_4" : req.body.source_name_4,
+                    // "source_details_4" : req.body.source_details_4,
+                    // "source_type_5" : req.body.source_type_5,
+                    // "source_subtype_5" : req.body.source_subtype_5,
+                    // "source_name_5" : req.body.source_name_5,
+                    // "source_details_5" : req.body.source_details_5,
                     "files" : req.body.files,
                     "contacts" : req.body.contacts,
                     
@@ -1817,33 +1819,33 @@ router.post('/addlocation', function(req, res){
                 if (profile[0].related.mps!= relMPs) updateVal['related.mps'] = relMPs
                 if (profile[0].notes!= req.body.notes) updateVal['notes'] =  req.body.notes
                 if (profile[0].interviews!= interviews) updateVal['interviews'] = interviews
-                var sourcesBody = [{
-                    "type": req.body.source_type_1,
-                    "subtype" : req.body.source_subtype_1,
-                    "name" : req.body.source_name_1,
-                    "details" : req.body.source_details_1
-                },{
-                    "type": req.body.source_type_2,
-                    "subtype" : req.body.source_subtype_2,
-                    "name" : req.body.source_name_2,
-                    "details" : req.body.source_details_2
-                },{
-                    "type": req.body.source_type_3,
-                    "subtype" : req.body.source_subtype_3,
-                    "name" : req.body.source_name_3,
-                    "details" : req.body.source_details_3
-                },{
-                    "type": req.body.source_type_4,
-                    "subtype" : req.body.source_subtype_4,
-                    "name" : req.body.source_name_4,
-                    "details" : req.body.source_details_4
-                },{
-                    "type": req.body.source_type_5,
-                    "subtype" : req.body.source_subtype_5,
-                    "name" : req.body.source_name_5,
-                    "details" : req.body.source_details_5
-                }]
-                if (profile[0].sources!= sourcesBody) updateVal['sources'] =  sourcesBody
+                // var sourcesBody = [{
+                //     "type": req.body.source_type_1,
+                //     "subtype" : req.body.source_subtype_1,
+                //     "name" : req.body.source_name_1,
+                //     "details" : req.body.source_details_1
+                // },{
+                //     "type": req.body.source_type_2,
+                //     "subtype" : req.body.source_subtype_2,
+                //     "name" : req.body.source_name_2,
+                //     "details" : req.body.source_details_2
+                // },{
+                //     "type": req.body.source_type_3,
+                //     "subtype" : req.body.source_subtype_3,
+                //     "name" : req.body.source_name_3,
+                //     "details" : req.body.source_details_3
+                // },{
+                //     "type": req.body.source_type_4,
+                //     "subtype" : req.body.source_subtype_4,
+                //     "name" : req.body.source_name_4,
+                //     "details" : req.body.source_details_4
+                // },{
+                //     "type": req.body.source_type_5,
+                //     "subtype" : req.body.source_subtype_5,
+                //     "name" : req.body.source_name_5,
+                //     "details" : req.body.source_details_5
+                // }]
+                // if (profile[0].sources!= sourcesBody) updateVal['sources'] =  sourcesBody
                 if (profile[0].files!= files) updateVal['files'] = files
                 if (profile[0].contacts!=contacts) updateVal['contacts'] = contacts
 
@@ -1977,32 +1979,32 @@ router.post('/addlocation', function(req, res){
                                 },
                                 "notes" : req.body.notes,
                                 "interviews" : req.body.interviews,
-                                "sources" : [{
-                                    "type": req.body.source_type_1,
-                                    "subtype" : req.body.source_subtype_1,
-                                    "name" : req.body.source_name_1,
-                                    "details" : req.body.source_details_1
-                                },{
-                                    "type": req.body.source_type_2,
-                                    "subtype" : req.body.source_subtype_2,
-                                    "name" : req.body.source_name_2,
-                                    "details" : req.body.source_details_2
-                                },{
-                                    "type": req.body.source_type_3,
-                                    "subtype" : req.body.source_subtype_3,
-                                    "name" : req.body.source_name_3,
-                                    "details" : req.body.source_details_3
-                                },{
-                                    "type": req.body.source_type_4,
-                                    "subtype" : req.body.source_subtype_4,
-                                    "name" : req.body.source_name_4,
-                                    "details" : req.body.source_details_4
-                                },{
-                                    "type": req.body.source_type_5,
-                                    "subtype" : req.body.source_subtype_5,
-                                    "name" : req.body.source_name_5,
-                                    "details" : req.body.source_details_5
-                                }],
+                                // "sources" : [{
+                                //     "type": req.body.source_type_1,
+                                //     "subtype" : req.body.source_subtype_1,
+                                //     "name" : req.body.source_name_1,
+                                //     "details" : req.body.source_details_1
+                                // },{
+                                //     "type": req.body.source_type_2,
+                                //     "subtype" : req.body.source_subtype_2,
+                                //     "name" : req.body.source_name_2,
+                                //     "details" : req.body.source_details_2
+                                // },{
+                                //     "type": req.body.source_type_3,
+                                //     "subtype" : req.body.source_subtype_3,
+                                //     "name" : req.body.source_name_3,
+                                //     "details" : req.body.source_details_3
+                                // },{
+                                //     "type": req.body.source_type_4,
+                                //     "subtype" : req.body.source_subtype_4,
+                                //     "name" : req.body.source_name_4,
+                                //     "details" : req.body.source_details_4
+                                // },{
+                                //     "type": req.body.source_type_5,
+                                //     "subtype" : req.body.source_subtype_5,
+                                //     "name" : req.body.source_name_5,
+                                //     "details" : req.body.source_details_5
+                                // }],
                                 "contacts" : contacts,
                                 "files" : files
                              };
@@ -2121,26 +2123,26 @@ router.post('/addsite', function(req, res){
                     "identification_dna" : req.body.identification_dna,
                     "notes" : req.body.notes,
                     "interviews" : req.body.interviews,
-                    "source_type_1" : req.body.source_type_1,
-                    "source_subtype_1" : req.body.source_subtype_1,
-                    "source_name_1" : req.body.source_name_1,
-                    "source_details_1" : req.body.source_details_1,
-                    "source_type_2" : req.body.source_type_2,
-                    "source_subtype_2" : req.body.source_subtype_2,
-                    "source_name_2" : req.body.source_name_2,
-                    "source_details_2" : req.body.source_details_2,
-                    "source_type_3" : req.body.source_type_3,
-                    "source_subtype_3" : req.body.source_subtype_3,
-                    "source_name_3" : req.body.source_name_3,
-                    "source_details_3" : req.body.source_details_3,
-                    "source_type_4" : req.body.source_type_4,
-                    "source_subtype_4" : req.body.source_subtype_4,
-                    "source_name_4" : req.body.source_name_4,
-                    "source_details_4" : req.body.source_details_4,
-                    "source_type_5" : req.body.source_type_5,
-                    "source_subtype_5" : req.body.source_subtype_5,
-                    "source_name_5" : req.body.source_name_5,
-                    "source_details_5" : req.body.source_details_5,
+                    // "source_type_1" : req.body.source_type_1,
+                    // "source_subtype_1" : req.body.source_subtype_1,
+                    // "source_name_1" : req.body.source_name_1,
+                    // "source_details_1" : req.body.source_details_1,
+                    // "source_type_2" : req.body.source_type_2,
+                    // "source_subtype_2" : req.body.source_subtype_2,
+                    // "source_name_2" : req.body.source_name_2,
+                    // "source_details_2" : req.body.source_details_2,
+                    // "source_type_3" : req.body.source_type_3,
+                    // "source_subtype_3" : req.body.source_subtype_3,
+                    // "source_name_3" : req.body.source_name_3,
+                    // "source_details_3" : req.body.source_details_3,
+                    // "source_type_4" : req.body.source_type_4,
+                    // "source_subtype_4" : req.body.source_subtype_4,
+                    // "source_name_4" : req.body.source_name_4,
+                    // "source_details_4" : req.body.source_details_4,
+                    // "source_type_5" : req.body.source_type_5,
+                    // "source_subtype_5" : req.body.source_subtype_5,
+                    // "source_name_5" : req.body.source_name_5,
+                    // "source_details_5" : req.body.source_details_5,
                     "files" : req.body.files,
                     "contacts" : req.body.contacts,
                     
@@ -2226,33 +2228,33 @@ router.post('/addsite', function(req, res){
                 if (!profile[0].identification || profile[0].identification.number!=req.body.identification_number)updateVal['identification.number'] =  req.body.identification_number
                 if (!profile[0].identification || profile[0].identification.dna!=req.body.identification_dna)updateVal['identification.dna'] =  req.body.identification_dna
                 if (profile[0].interviews!= interviews) updateVal['interviews'] = interviews
-                var sourcesBody = [{
-                    "type": req.body.source_type_1,
-                    "subtype" : req.body.source_subtype_1,
-                    "name" : req.body.source_name_1,
-                    "details" : req.body.source_details_1
-                },{
-                    "type": req.body.source_type_2,
-                    "subtype" : req.body.source_subtype_2,
-                    "name" : req.body.source_name_2,
-                    "details" : req.body.source_details_2
-                },{
-                    "type": req.body.source_type_3,
-                    "subtype" : req.body.source_subtype_3,
-                    "name" : req.body.source_name_3,
-                    "details" : req.body.source_details_3
-                },{
-                    "type": req.body.source_type_4,
-                    "subtype" : req.body.source_subtype_4,
-                    "name" : req.body.source_name_4,
-                    "details" : req.body.source_details_4
-                },{
-                    "type": req.body.source_type_5,
-                    "subtype" : req.body.source_subtype_5,
-                    "name" : req.body.source_name_5,
-                    "details" : req.body.source_details_5
-                }]
-                if (profile[0].sources!= sourcesBody) updateVal['sources'] =  sourcesBody
+                // var sourcesBody = [{
+                //     "type": req.body.source_type_1,
+                //     "subtype" : req.body.source_subtype_1,
+                //     "name" : req.body.source_name_1,
+                //     "details" : req.body.source_details_1
+                // },{
+                //     "type": req.body.source_type_2,
+                //     "subtype" : req.body.source_subtype_2,
+                //     "name" : req.body.source_name_2,
+                //     "details" : req.body.source_details_2
+                // },{
+                //     "type": req.body.source_type_3,
+                //     "subtype" : req.body.source_subtype_3,
+                //     "name" : req.body.source_name_3,
+                //     "details" : req.body.source_details_3
+                // },{
+                //     "type": req.body.source_type_4,
+                //     "subtype" : req.body.source_subtype_4,
+                //     "name" : req.body.source_name_4,
+                //     "details" : req.body.source_details_4
+                // },{
+                //     "type": req.body.source_type_5,
+                //     "subtype" : req.body.source_subtype_5,
+                //     "name" : req.body.source_name_5,
+                //     "details" : req.body.source_details_5
+                // }]
+                // if (profile[0].sources!= sourcesBody) updateVal['sources'] =  sourcesBody
                 if (profile[0].files!= files) updateVal['files'] = files
                 if (profile[0].contacts!=contacts) updateVal['contacts'] = contacts
                 if (profile[0].notes!= req.body.notes) updateVal['notes'] =  req.body.notes  
@@ -2401,32 +2403,32 @@ router.post('/addsite', function(req, res){
                                     "dna" : req.body.identification_dna
                                 },
                                 "interviews" : interviews,
-	                            "sources" : [{
-                                    "type": req.body.source_type_1,
-                                    "subtype" : req.body.source_subtype_1,
-                                    "name" : req.body.source_name_1,
-                                    "details" : req.body.source_details_1
-                                },{
-                                    "type": req.body.source_type_2,
-                                    "subtype" : req.body.source_subtype_2,
-                                    "name" : req.body.source_name_2,
-                                    "details" : req.body.source_details_2
-                                },{
-                                    "type": req.body.source_type_3,
-                                    "subtype" : req.body.source_subtype_3,
-                                    "name" : req.body.source_name_3,
-                                    "details" : req.body.source_details_3
-                                },{
-                                    "type": req.body.source_type_4,
-                                    "subtype" : req.body.source_subtype_4,
-                                    "name" : req.body.source_name_4,
-                                    "details" : req.body.source_details_4
-                                },{
-                                    "type": req.body.source_type_5,
-                                    "subtype" : req.body.source_subtype_5,
-                                    "name" : req.body.source_name_5,
-                                    "details" : req.body.source_details_5
-                                }],
+	                            // "sources" : [{
+                                //     "type": req.body.source_type_1,
+                                //     "subtype" : req.body.source_subtype_1,
+                                //     "name" : req.body.source_name_1,
+                                //     "details" : req.body.source_details_1
+                                // },{
+                                //     "type": req.body.source_type_2,
+                                //     "subtype" : req.body.source_subtype_2,
+                                //     "name" : req.body.source_name_2,
+                                //     "details" : req.body.source_details_2
+                                // },{
+                                //     "type": req.body.source_type_3,
+                                //     "subtype" : req.body.source_subtype_3,
+                                //     "name" : req.body.source_name_3,
+                                //     "details" : req.body.source_details_3
+                                // },{
+                                //     "type": req.body.source_type_4,
+                                //     "subtype" : req.body.source_subtype_4,
+                                //     "name" : req.body.source_name_4,
+                                //     "details" : req.body.source_details_4
+                                // },{
+                                //     "type": req.body.source_type_5,
+                                //     "subtype" : req.body.source_subtype_5,
+                                //     "name" : req.body.source_name_5,
+                                //     "details" : req.body.source_details_5
+                                // }],
                                 "contacts" : contacts,
                                 "files" : files,
                                 "notes" : req.body.notes,
@@ -2508,58 +2510,59 @@ router.post('/addparty', function(req, res){
                     "hq_description" : req.body.hq_description,
                     "hq_latitude" : req.body.hq_latitude,
                     "hq_longitude" : req.body.hq_longitude,
-                    "control_1_description" : req.body.control_1_description,
-                    "control_1_latitude" : req.body.control_1_latitude,
-                    "control_1_longitude" : req.body.control_1_longitude,
-                    "date_beg_day_1": req.body.date_beg_day_1, 
-                    "date_beg_month_1": req.body.date_beg_month_1,
-                    "date_beg_year_1" : req.body.date_beg_year_1,
-                    "date_end_day_1": req.body.date_end_day_1,
-                    "date_end_month_1": req.body.date_end_month_2,
-                    "date_end_year_1" : req.body.date_end_year_2,
+                    "control_areas" : control_areas,
+                    // "control_1_description" : req.body.control_1_description,
+                    // "control_1_latitude" : req.body.control_1_latitude,
+                    // "control_1_longitude" : req.body.control_1_longitude,
+                    // "date_beg_day_1": req.body.date_beg_day_1, 
+                    // "date_beg_month_1": req.body.date_beg_month_1,
+                    // "date_beg_year_1" : req.body.date_beg_year_1,
+                    // "date_end_day_1": req.body.date_end_day_1,
+                    // "date_end_month_1": req.body.date_end_month_2,
+                    // "date_end_year_1" : req.body.date_end_year_2,
                     
-                    "control_2_description" : req.body.control_2_description,
-                    "control_2_latitude" : req.body.control_2_latitude,
-                    "control_2_longitude" : req.body.control_2_longitude,
-                    "date_beg_day_2": req.body.date_beg_day_2, 
-                    "date_beg_month_2": req.body.date_beg_month_2,
-                    "date_beg_year_2" : req.body.date_beg_year_2,
-                    "date_end_day_2": req.body.date_end_day_2,
-                    "date_end_month_2": req.body.date_end_month_2,
-                    "date_end_year_2" : req.body.date_end_year_2,
+                    // "control_2_description" : req.body.control_2_description,
+                    // "control_2_latitude" : req.body.control_2_latitude,
+                    // "control_2_longitude" : req.body.control_2_longitude,
+                    // "date_beg_day_2": req.body.date_beg_day_2, 
+                    // "date_beg_month_2": req.body.date_beg_month_2,
+                    // "date_beg_year_2" : req.body.date_beg_year_2,
+                    // "date_end_day_2": req.body.date_end_day_2,
+                    // "date_end_month_2": req.body.date_end_month_2,
+                    // "date_end_year_2" : req.body.date_end_year_2,
                     
-                    "control_3_description" : req.body.control_3_description,
-                    "control_3_latitude" : req.body.control_3_latitude,
-                    "control_3_longitude" : req.body.control_3_longitude,
-                    "date_beg_day_3": req.body.date_beg_day_3, 
-                    "date_beg_month_3": req.body.date_beg_month_3,
-                    "date_beg_year_3" : req.body.date_beg_year_3,
-                    "date_end_day_3": req.body.date_end_day_3,
-                    "date_end_month_3": req.body.date_end_month_3,
-                    "date_end_year_3" : req.body.date_end_year_3,
+                    // "control_3_description" : req.body.control_3_description,
+                    // "control_3_latitude" : req.body.control_3_latitude,
+                    // "control_3_longitude" : req.body.control_3_longitude,
+                    // "date_beg_day_3": req.body.date_beg_day_3, 
+                    // "date_beg_month_3": req.body.date_beg_month_3,
+                    // "date_beg_year_3" : req.body.date_beg_year_3,
+                    // "date_end_day_3": req.body.date_end_day_3,
+                    // "date_end_month_3": req.body.date_end_month_3,
+                    // "date_end_year_3" : req.body.date_end_year_3,
                     
-                    "control_4_description" : req.body.control_4_description,
-                    "control_4_latitude" : req.body.control_4_latitude,
-                    "control_4_longitude" : req.body.control_4_longitude,
-                    "date_beg_day_4": req.body.date_beg_day_4, 
-                    "date_beg_month_4": req.body.date_beg_month_4,
-                    "date_beg_year_4" : req.body.date_beg_year_4,
-                    "date_end_day_4": req.body.date_end_day_4,
-                    "date_end_month_4": req.body.date_end_month_4,
-                    "date_end_year_4" : req.body.date_end_year_4,
+                    // "control_4_description" : req.body.control_4_description,
+                    // "control_4_latitude" : req.body.control_4_latitude,
+                    // "control_4_longitude" : req.body.control_4_longitude,
+                    // "date_beg_day_4": req.body.date_beg_day_4, 
+                    // "date_beg_month_4": req.body.date_beg_month_4,
+                    // "date_beg_year_4" : req.body.date_beg_year_4,
+                    // "date_end_day_4": req.body.date_end_day_4,
+                    // "date_end_month_4": req.body.date_end_month_4,
+                    // "date_end_year_4" : req.body.date_end_year_4,
                     
-                    "control_5_description" : req.body.control_5_description,
-                    "control_5_latitude" : req.body.control_5_latitude,
-                    "control_5_longitude" : req.body.control_5_longitude,
-                    "date_beg_day_5": req.body.date_beg_day_5, 
-                    "date_beg_month_5": req.body.date_beg_month_5,
-                    "date_beg_year_5" : req.body.date_beg_year_5,
-                    "date_end_day_5": req.body.date_end_day_5,
-                    "date_end_month_5": req.body.date_end_month_5,
-                    "date_end_year_5" : req.body.date_end_year_5,
+                    // "control_5_description" : req.body.control_5_description,
+                    // "control_5_latitude" : req.body.control_5_latitude,
+                    // "control_5_longitude" : req.body.control_5_longitude,
+                    // "date_beg_day_5": req.body.date_beg_day_5, 
+                    // "date_beg_month_5": req.body.date_beg_month_5,
+                    // "date_beg_year_5" : req.body.date_beg_year_5,
+                    // "date_end_day_5": req.body.date_end_day_5,
+                    // "date_end_month_5": req.body.date_end_month_5,
+                    // "date_end_year_5" : req.body.date_end_year_5,
                     
-                    "flaf" : req.body.flag_file,
-                    "documenta" : req.body.documents,
+                    "flag" : req.body.flag_file,
+                    "files" : req.body.files,
                     
                     parties : partiesList, mps: missingList, locations: locationsList, events: eventsList, sites: sitesList,
 
@@ -2589,12 +2592,13 @@ router.post('/addparty', function(req, res){
                 if (profile[0].hq.latitude!= req.body.hq_latitude || profile[0].hq.longitude!= req.body.hq_longitude) {
                     updateVal['hq.coordinates'] =  [long, lat]
                 }
-                for(var i = 1;i<6;i++){  
-                    if (profile[0].control_areas.i.description!= req.body.control_i_description) updateVal['control_areas.'+i+'.description'] =  req.body.control_i_description
-                    if (profile[0].control_areas.i.coordinates[1]!= req.body.control_i_latitude || profile[0].control_areas.i.coordinates[0]!= req.body.control_i_longitude) updateVal['control_areas.'+1+'.coordinates'] = [parseFloat( req.body.control_i_longitude), parseFloat(req.body.control_i_latitude)] 
-                    if (profile[0].control_areas.i.beg!= dateConverter(req.body.date_beg_day_i,req.body.date_beg_month_i, req.body.date_beg_year_i)) updateVal['control_areas.'+1+'.beg'] =  dateConverter(req.body.date_beg_day_i,req.body.date_beg_month_i, req.body.date_beg_year_i)
-                    if (profile[0].control_areas.i.end!= dateConverter(req.body.date_end_day_i,req.body.date_end_month_i, req.body.date_end_year_i)) updateVal['control_areas.'+1+'.end'] =  dateConverter(req.body.date_end_day_i,req.body.date_end_month_i, req.body.date_end_year_i)
-                }
+                if (profile[0].control_areas!= req.body.control_areas) updateVal['control_areas'] =  req.body.control_areas
+                // for(var i = 1;i<6;i++){  
+                //     if (profile[0].control_areas.i.description!= req.body.control_i_description) updateVal['control_areas.'+i+'.description'] =  req.body.control_i_description
+                //     if (profile[0].control_areas.i.coordinates[1]!= req.body.control_i_latitude || profile[0].control_areas.i.coordinates[0]!= req.body.control_i_longitude) updateVal['control_areas.'+1+'.coordinates'] = [parseFloat( req.body.control_i_longitude), parseFloat(req.body.control_i_latitude)] 
+                //     if (profile[0].control_areas.i.beg!= dateConverter(req.body.date_beg_day_i,req.body.date_beg_month_i, req.body.date_beg_year_i)) updateVal['control_areas.'+1+'.beg'] =  dateConverter(req.body.date_beg_day_i,req.body.date_beg_month_i, req.body.date_beg_year_i)
+                //     if (profile[0].control_areas.i.end!= dateConverter(req.body.date_end_day_i,req.body.date_end_month_i, req.body.date_end_year_i)) updateVal['control_areas.'+1+'.end'] =  dateConverter(req.body.date_end_day_i,req.body.date_end_month_i, req.body.date_end_year_i)
+                // }
                 
                 if (profile[0].flag.file!= req.body.flag_file) updateVal['flag.file'] =  req.body.flag_file
                 if (profile[0].documents!= req.body.documents) updateVal['documents'] =  req.body.documents  
@@ -2630,43 +2634,44 @@ router.post('/addparty', function(req, res){
                                     "coordinates" : [long, lat],
                                     "type" : "Point"
                                 },
-                                "control_areas" : {
-                                        "1" : {
-                                                "description" : req.body.control_1_description,
-                                                "coordinates" : [parseFloat(req.body.control_1_longitude),parseFloat(req.body.control_1_latitude)],
-                                                "type" : "Point",
-                                                "beg" : dateConverter(req.body.date_beg_day_1,req.body.date_beg_month_1,req.body.date_beg_year_1),
-                                                "end" : dateConverter(req.body.date_end_day_1,req.body.date_end_month_1,req.body.date_end_year_1)
-                                              },
-                                        "2" : {
-                                                "description" : req.body.control_2_description,
-                                                "coordinates" : [parseFloat(req.body.control_2_longitude),parseFloat(req.body.control_2_latitude)],
-                                                "type" : "Point",
-                                                "beg" : dateConverter(req.body.date_beg_day_2,req.body.date_beg_month_2,req.body.date_beg_year_2),
-                                                "end" : dateConverter(req.body.date_end_day_2,req.body.date_end_month_2,req.body.date_end_year_2)
-                                              },
-                                        "3" : {
-                                                "description" : req.body.control_3_description,
-                                                "coordinates" : [parseFloat(req.body.control_3_longitude),parseFloat(req.body.control_3_latitude)],
-                                                "type" : "Point",
-                                                "beg" : dateConverter(req.body.date_beg_day_3,req.body.date_beg_month_3,req.body.date_beg_year_3),
-                                                "end" : dateConverter(req.body.date_end_day_3,req.body.date_end_month_3,req.body.date_end_year_3)
-                                              },
-                                        "4" : {
-                                                "description" : req.body.control_4_description,
-                                                "coordinates" : [parseFloat(req.body.control_4_longitude),parseFloat(req.body.control_4_latitude)],
-                                                "type" : "Point",
-                                                "beg" : dateConverter(req.body.date_beg_day_4,req.body.date_beg_month_4,req.body.date_beg_year_4),
-                                                "end" : dateConverter(req.body.date_end_day_4,req.body.date_end_month_4,req.body.date_end_year_4)
-                                              },
-                                        "5" : {
-                                                "description" : req.body.control_5_description,
-                                                "coordinates" : [parseFloat(req.body.control_5_longitude),parseFloat(req.body.control_5_latitude)],
-                                                "type" : "Point",
-                                                "beg" : dateConverter(req.body.date_beg_day_5,req.body.date_beg_month_5,req.body.date_beg_year_5),
-                                                "end" : dateConverter(req.body.date_end_day_5,req.body.date_end_month_5,req.body.date_end_year_5)
-                                              }
-                                },
+                                "control_areas" : req.body.control_areas,
+                                // "control_areas" : {
+                                //         "1" : {
+                                //                 "description" : req.body.control_1_description,
+                                //                 "coordinates" : [parseFloat(req.body.control_1_longitude),parseFloat(req.body.control_1_latitude)],
+                                //                 "type" : "Point",
+                                //                 "beg" : dateConverter(req.body.date_beg_day_1,req.body.date_beg_month_1,req.body.date_beg_year_1),
+                                //                 "end" : dateConverter(req.body.date_end_day_1,req.body.date_end_month_1,req.body.date_end_year_1)
+                                //               },
+                                //         "2" : {
+                                //                 "description" : req.body.control_2_description,
+                                //                 "coordinates" : [parseFloat(req.body.control_2_longitude),parseFloat(req.body.control_2_latitude)],
+                                //                 "type" : "Point",
+                                //                 "beg" : dateConverter(req.body.date_beg_day_2,req.body.date_beg_month_2,req.body.date_beg_year_2),
+                                //                 "end" : dateConverter(req.body.date_end_day_2,req.body.date_end_month_2,req.body.date_end_year_2)
+                                //               },
+                                //         "3" : {
+                                //                 "description" : req.body.control_3_description,
+                                //                 "coordinates" : [parseFloat(req.body.control_3_longitude),parseFloat(req.body.control_3_latitude)],
+                                //                 "type" : "Point",
+                                //                 "beg" : dateConverter(req.body.date_beg_day_3,req.body.date_beg_month_3,req.body.date_beg_year_3),
+                                //                 "end" : dateConverter(req.body.date_end_day_3,req.body.date_end_month_3,req.body.date_end_year_3)
+                                //               },
+                                //         "4" : {
+                                //                 "description" : req.body.control_4_description,
+                                //                 "coordinates" : [parseFloat(req.body.control_4_longitude),parseFloat(req.body.control_4_latitude)],
+                                //                 "type" : "Point",
+                                //                 "beg" : dateConverter(req.body.date_beg_day_4,req.body.date_beg_month_4,req.body.date_beg_year_4),
+                                //                 "end" : dateConverter(req.body.date_end_day_4,req.body.date_end_month_4,req.body.date_end_year_4)
+                                //               },
+                                //         "5" : {
+                                //                 "description" : req.body.control_5_description,
+                                //                 "coordinates" : [parseFloat(req.body.control_5_longitude),parseFloat(req.body.control_5_latitude)],
+                                //                 "type" : "Point",
+                                //                 "beg" : dateConverter(req.body.date_beg_day_5,req.body.date_beg_month_5,req.body.date_beg_year_5),
+                                //                 "end" : dateConverter(req.body.date_end_day_5,req.body.date_end_month_5,req.body.date_end_year_5)
+                                //               }
+                                // },
                                 "flag" : {
 		                              "file" : req.body.flag_file
 	                           },

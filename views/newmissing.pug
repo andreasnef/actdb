@@ -87,34 +87,34 @@ block content
         - fate = value.fate
         - notes = value.notes
         - interviews = value.interviews
-        - sources = value.sources
-        if(value.sources)
-         each source, i in value.sources  
-            if(i == 0)
-                - source_type_1 = source.type
-                - source_subtype_1 = source.subtype
-                - source_name_1 = source.name
-                - source_details_1 = source.details
-            if(i == 1)
-                - source_type_2 = source.type
-                - source_subtype_2 = source.subtype
-                - source_name_2 = source.name
-                - source_details_2 = source.details
-            if(i == 2)
-                - source_type_3 = source.type
-                - source_subtype_3 = source.subtype
-                - source_name_3 = source.name
-                - source_details_3 = source.details
-            if(i == 3)
-                - source_type_4 = source.type
-                - source_subtype_4 = source.subtype
-                - source_name_4 = source.name
-                - source_details_4 = source.details
-            if(i == 4)
-                - source_type_5 = source.type
-                - source_subtype_5 = source.subtype
-                - source_name_5 = source.name
-                - source_details_5 = source.details 
+        //- - sources = value.sources
+        //- if(value.sources)
+        //-  each source, i in value.sources  
+        //-     if(i == 0)
+        //-         - source_type_1 = source.type
+        //-         - source_subtype_1 = source.subtype
+        //-         - source_name_1 = source.name
+        //-         - source_details_1 = source.details
+        //-     if(i == 1)
+        //-         - source_type_2 = source.type
+        //-         - source_subtype_2 = source.subtype
+        //-         - source_name_2 = source.name
+        //-         - source_details_2 = source.details
+        //-     if(i == 2)
+        //-         - source_type_3 = source.type
+        //-         - source_subtype_3 = source.subtype
+        //-         - source_name_3 = source.name
+        //-         - source_details_3 = source.details
+        //-     if(i == 3)
+        //-         - source_type_4 = source.type
+        //-         - source_subtype_4 = source.subtype
+        //-         - source_name_4 = source.name
+        //-         - source_details_4 = source.details
+        //-     if(i == 4)
+        //-         - source_type_5 = source.type
+        //-         - source_subtype_5 = source.subtype
+        //-         - source_name_5 = source.name
+        //-         - source_details_5 = source.details 
         - files = value.files
         - picture = value.picture
         - lists_syria_2000 = value.lists.syria_2000
@@ -874,110 +874,110 @@ block content
 
      br
      br       
-     span Other sources
-     br
-     div#source1
-        select#sources_1(name="source_type_1", value=source_type_1)
-            - var types = ["Open Source","Closed Source"];
-            option(value="") Select
-            each type in types
-             if(source_type_1 == type)
-              option(value=type selected="selected") #{type}
-             else
-              option(value=type) #{type}  
-        br
-        input#input_subtype_source(type="text", placeholder="Type of Source", name="source_subtype_1", value=source_subtype_1)
-        br
-        input#input_name_source(type="text", placeholder="Name of Source", name="source_name_1", value=source_name_1)
-        br
-        textarea#input_details_source(type="text", placeholder="Details", cols="120" rows="10", name="source_details_1", value=source_details_1)
-            | #{source_details_1}
+    //-  span Other sources
+    //-  br
+    //-  div#source1
+    //-     select#sources_1(name="source_type_1", value=source_type_1)
+    //-         - var types = ["Open Source","Closed Source"];
+    //-         option(value="") Select
+    //-         each type in types
+    //-          if(source_type_1 == type)
+    //-           option(value=type selected="selected") #{type}
+    //-          else
+    //-           option(value=type) #{type}  
+    //-     br
+    //-     input#input_subtype_source(type="text", placeholder="Type of Source", name="source_subtype_1", value=source_subtype_1)
+    //-     br
+    //-     input#input_name_source(type="text", placeholder="Name of Source", name="source_name_1", value=source_name_1)
+    //-     br
+    //-     textarea#input_details_source(type="text", placeholder="Details", cols="120" rows="10", name="source_details_1", value=source_details_1)
+    //-         | #{source_details_1}
 
-        br
-        br
+    //-     br
+    //-     br
      
-     div#source2
-        select#sources_2(name="source_type_2", value=source_type_2)
-            - var types = ["Open Source","Closed Source"];
-            option(value="") Select
-            each type in types
-             if(source_type_2 == type)
-                option(value=type selected="selected") #{type}
-             else
-                option(value=type) #{type}  
-        br
-        input#input_subtype_source(type="text", placeholder="Type of Source", name="source_subtype_2", value=source_subtype_2)
-        br
-        input#input_name_source(type="text", placeholder="Name of Source", name="source_name_2", value=source_name_2)
-        br
-        textarea#input_details_source(type="text", placeholder="Details", cols="120" rows="10", name="source_details_2", value=source_details_2)
-            | #{source_details_2}
+    //-  div#source2
+    //-     select#sources_2(name="source_type_2", value=source_type_2)
+    //-         - var types = ["Open Source","Closed Source"];
+    //-         option(value="") Select
+    //-         each type in types
+    //-          if(source_type_2 == type)
+    //-             option(value=type selected="selected") #{type}
+    //-          else
+    //-             option(value=type) #{type}  
+    //-     br
+    //-     input#input_subtype_source(type="text", placeholder="Type of Source", name="source_subtype_2", value=source_subtype_2)
+    //-     br
+    //-     input#input_name_source(type="text", placeholder="Name of Source", name="source_name_2", value=source_name_2)
+    //-     br
+    //-     textarea#input_details_source(type="text", placeholder="Details", cols="120" rows="10", name="source_details_2", value=source_details_2)
+    //-         | #{source_details_2}
 
-        br
-        br
+    //-     br
+    //-     br
 
-     div#source3
-        select#sources_3(name="source_type_3", value=source_type_3)
-            - var types = ["Open Source","Closed Source"];
-            option(value="") Select
-            each type in types
-             if(source_type_3 == type)
-                option(value=type selected="selected") #{type}
-             else
-                option(value=type) #{type}  
+    //-  div#source3
+    //-     select#sources_3(name="source_type_3", value=source_type_3)
+    //-         - var types = ["Open Source","Closed Source"];
+    //-         option(value="") Select
+    //-         each type in types
+    //-          if(source_type_3 == type)
+    //-             option(value=type selected="selected") #{type}
+    //-          else
+    //-             option(value=type) #{type}  
 
-        br
-        input#input_subtype_source(type="text", placeholder="Type of Source", name="source_subtype_3", value=source_subtype_3)
-        br
-        input#input_name_source(type="text", placeholder="Name of Source", name="source_name_3", value=source_name_3)
-        br
-        textarea#input_details_source(type="text", placeholder="Details", cols="120" rows="10", name="source_details_3", value=source_details_3)
-            | #{source_details_3}
+    //-     br
+    //-     input#input_subtype_source(type="text", placeholder="Type of Source", name="source_subtype_3", value=source_subtype_3)
+    //-     br
+    //-     input#input_name_source(type="text", placeholder="Name of Source", name="source_name_3", value=source_name_3)
+    //-     br
+    //-     textarea#input_details_source(type="text", placeholder="Details", cols="120" rows="10", name="source_details_3", value=source_details_3)
+    //-         | #{source_details_3}
 
-        br
-        br
+    //-     br
+    //-     br
 
-     div#source4
-        select#sources_4(name="source_type_4", value=source_type_4)
-            - var types = ["Open Source","Closed Source"];
-            option(value="") Select
-            each type in types
-             if(source_type_4 == type)
-                option(value=type selected="selected") #{type}
-             else
-                option(value=type) #{type}  
+    //-  div#source4
+    //-     select#sources_4(name="source_type_4", value=source_type_4)
+    //-         - var types = ["Open Source","Closed Source"];
+    //-         option(value="") Select
+    //-         each type in types
+    //-          if(source_type_4 == type)
+    //-             option(value=type selected="selected") #{type}
+    //-          else
+    //-             option(value=type) #{type}  
         
-        br
-        input#input_subtype_source(type="text", placeholder="Type of Source", name="source_subtype_4", value=source_subtype_4)
-        br
-        input#input_name_source(type="text", placeholder="Name of Source", name="source_name_4", value=source_name_4)
-        br
-        textarea#input_details_source(type="text", placeholder="Details", cols="120" rows="10", name="source_details_4", value=source_details_4)
-            | #{source_details_4}
+    //-     br
+    //-     input#input_subtype_source(type="text", placeholder="Type of Source", name="source_subtype_4", value=source_subtype_4)
+    //-     br
+    //-     input#input_name_source(type="text", placeholder="Name of Source", name="source_name_4", value=source_name_4)
+    //-     br
+    //-     textarea#input_details_source(type="text", placeholder="Details", cols="120" rows="10", name="source_details_4", value=source_details_4)
+    //-         | #{source_details_4}
 
-        br
-        br
+    //-     br
+    //-     br
  
-     div#source5
-        select#sources_5(name="source_type_5", value=source_type_5)
-            - var types = ["Open Source","Closed Source"];
-            option(value="") Select
-            each type in types
-             if(source_type_5 == type)
-                option(value=type selected="selected") #{type}
-             else
-                option(value=type) #{type}  
+    //-  div#source5
+    //-     select#sources_5(name="source_type_5", value=source_type_5)
+    //-         - var types = ["Open Source","Closed Source"];
+    //-         option(value="") Select
+    //-         each type in types
+    //-          if(source_type_5 == type)
+    //-             option(value=type selected="selected") #{type}
+    //-          else
+    //-             option(value=type) #{type}  
         
-        br
-        input#input_subtype_source(type="text", placeholder="Type of Source", name="source_subtype_5", value=source_subtype_5)
-        br
-        input#input_name_source(type="text", placeholder="Name of Source", name="source_name_5", value=source_name_5)
-        br
-        textarea#input_details_source(type="text", placeholder="Details", cols="120" rows="10", name="source_details_5", value=source_details_5)
-            | #{source_details_5}
+    //-     br
+    //-     input#input_subtype_source(type="text", placeholder="Type of Source", name="source_subtype_5", value=source_subtype_5)
+    //-     br
+    //-     input#input_name_source(type="text", placeholder="Name of Source", name="source_name_5", value=source_name_5)
+    //-     br
+    //-     textarea#input_details_source(type="text", placeholder="Details", cols="120" rows="10", name="source_details_5", value=source_details_5)
+    //-         | #{source_details_5}
 
-        br 
-        br        
+    //-     br 
+    //-     br        
     div#wrapper 
       a(href="#" onclick="return toggle_visibility('relatedFiles');") Files #{files} (click to modify)
       

@@ -135,13 +135,13 @@ block content
       select(name="date_year", value=date_year)
        option(value="") Select
        - var today = new Date();
-       -for(var i = 2010;i<=today.getFullYear();i++){
+       -for(var i = 1973;i<=today.getFullYear();i++){
            if(date_year==i)
                 option(value=i selected="selected") #{i}
            else
                 option(value=i) #{i}
        -}  
-     span &nbsp;
+     br
      
      span Language
      br
