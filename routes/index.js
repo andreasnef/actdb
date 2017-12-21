@@ -3183,7 +3183,7 @@ router.post('/addfile', function(req, res){
 
                         //Validate Fields
                         req.check('code', 'Code cannot be empty').notEmpty();
-                        req.check('file', 'File must be selected').notEmpty();
+                        //req.check('file', 'File must be selected').notEmpty();
                         // req.checkBody('files', 'File must be selected').notEmpty();
 
                         var errors = req.validationErrors();
@@ -3193,7 +3193,7 @@ router.post('/addfile', function(req, res){
                                 "code":req.body.code,
                                 "type": req.body.type,
                                 "description": req.body.description,
-                                "file": req.files,
+                                "file": req.file,
                                 "date_day" : req.body.date_day,
                                 "date_month": req.body.date_month, 
                                 "date_year": req.body.date_year,
@@ -3250,7 +3250,7 @@ router.post('/addfile', function(req, res){
                                 if (profile[0].related.locations!= relLocations) updateVal['related.locations'] = relLocations
                                 if (profile[0].related.mps!= relMPs) updateVal['related.mps'] = relMPs
                                 if (filesArray.length>0) {
-                                    var oldFiles = profile[0].files;
+                                    var oldFiles = profile[0].file;
                                     if (!oldFiles) oldFiles = [];
                                     filesArray.forEach(function(f) {
                                         oldFiles.push(f)
