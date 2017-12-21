@@ -58,8 +58,8 @@ block content
      div#wrapper 
      input(type="text", placeholder="Description of File", name="description" value=description)
      br
-     
-     if (file)
+     br
+     if (file && file.length)
         span.title Attached file:  
           a(href="/files/"+file target="_blank") #{file}
      else
@@ -67,7 +67,7 @@ block content
         span &nbsp;
         input#files(type="file", name="file", value=file multiple)
      br
-     
+     br
      span Date
       br
       select#birth_date_day(name="date_day", value=date_day)

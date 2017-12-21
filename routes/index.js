@@ -3028,8 +3028,6 @@ router.post('/addinterview', function(req, res){
                                         if (profile[0].place!= req.body.place) updateVal['place'] =  req.body.place
                                         if (profile[0].language!= req.body.language) updateVal['language'] =  req.body.language
                                         if (profile[0].duration!= req.body.duration) updateVal['duration'] =  req.body.duration
-                                        //console.log("new files edit "+newFiles);
-                                        console.log("filesArray "+filesArray);
                                         if (filesArray.length>0) {
                                             var oldFiles = profile[0].files;
                                             if (!oldFiles) oldFiles = [];
@@ -3161,17 +3159,11 @@ router.post('/addinterview', function(req, res){
                                     }
                                 }                    
                             });        
-                            
-
-
                         } else { 
                         res.render('index', { title: 'Login to Database'});
                         }    
                        }
-                        
-
                     });    
-                     
                 }
             });   
 });
@@ -3191,7 +3183,7 @@ router.post('/addfile', function(req, res){
 
                         //Validate Fields
                         req.check('code', 'Code cannot be empty').notEmpty();
-                        // req.check('file', 'File must be selected').notEmpty();
+                        req.check('file', 'File must be selected').notEmpty();
                         // req.checkBody('files', 'File must be selected').notEmpty();
 
                         var errors = req.validationErrors();
@@ -3257,6 +3249,14 @@ router.post('/addfile', function(req, res){
                                 if (profile[0].related.sites!= relSites)updateVal['related.sites'] = relSites  
                                 if (profile[0].related.locations!= relLocations) updateVal['related.locations'] = relLocations
                                 if (profile[0].related.mps!= relMPs) updateVal['related.mps'] = relMPs
+                                if (filesArray.length>0) {
+                                    var oldFiles = profile[0].files;
+                                    if (!oldFiles) oldFiles = [];
+                                    filesArray.forEach(function(f) {
+                                        oldFiles.push(f)
+                                    });
+                                    updateVal['file'] =  oldFiles    
+                                } 
 
                                 collection.update({_id: profile[0]._id}, {$set: updateVal}, function(err, result){
                                     if (err){
