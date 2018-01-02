@@ -33,27 +33,9 @@ block content
        span.title Coordinates: 
        span #{value.hq.coordinates}
       
-                //-   div  
-                //-       h4 Areas of Control:
-                    
-                //-       -for(var i = 1;i<6;i++){
-                //-           p #{i}    
-                //-           - var desc = 'value.control_areas.'+i+'.description'
-                //-           p Description: #{desc}
-                //-           //p #{value.control_areas.i.coordinates}
-                //-           p #{desc}
-                //-           //span #{value.control_areas.1.description}
-                //-           //#{value.control_areas.1.description}
-                //-           p Coordinates: #{'value.control_areas.'+i+'.coordinates'}
-                //-           p Begining value.control_areas.i.beg
-                //-           p End value.control_areas.i.end
-                //-       -}
-                    
-
-                //- div       
-                //-   h4 Flag: 
-                //-   #{value.flag.file}
-                
+      p 
+        span.title Color:
+        span #{value.color}          
       
       div(class='btn menu')
        a(href="/newprofile/?type=party&code="+value.code) Edit

@@ -102,7 +102,7 @@ router.post('/login', function(req, res){
 function getParties(callback){ 
     if (db) {
         var partiesColl = db.collection('parties');
-        partiesColl.find({},{_id:0, 'name': 1, code: 1, control_areas:1}).sort({'name.en':1}).toArray(function(err, result){
+        partiesColl.find({},{_id:0, 'name': 1, code: 1, control_areas:1, color:1}).sort({'name.en':1}).toArray(function(err, result){
             if (err){
                     res.send(err);
             } else {
@@ -2511,56 +2511,7 @@ router.post('/addparty', function(req, res){
                     "hq_latitude" : req.body.hq_latitude,
                     "hq_longitude" : req.body.hq_longitude,
                     "control_areas" : control_areas,
-                    // "control_1_description" : req.body.control_1_description,
-                    // "control_1_latitude" : req.body.control_1_latitude,
-                    // "control_1_longitude" : req.body.control_1_longitude,
-                    // "date_beg_day_1": req.body.date_beg_day_1, 
-                    // "date_beg_month_1": req.body.date_beg_month_1,
-                    // "date_beg_year_1" : req.body.date_beg_year_1,
-                    // "date_end_day_1": req.body.date_end_day_1,
-                    // "date_end_month_1": req.body.date_end_month_2,
-                    // "date_end_year_1" : req.body.date_end_year_2,
-                    
-                    // "control_2_description" : req.body.control_2_description,
-                    // "control_2_latitude" : req.body.control_2_latitude,
-                    // "control_2_longitude" : req.body.control_2_longitude,
-                    // "date_beg_day_2": req.body.date_beg_day_2, 
-                    // "date_beg_month_2": req.body.date_beg_month_2,
-                    // "date_beg_year_2" : req.body.date_beg_year_2,
-                    // "date_end_day_2": req.body.date_end_day_2,
-                    // "date_end_month_2": req.body.date_end_month_2,
-                    // "date_end_year_2" : req.body.date_end_year_2,
-                    
-                    // "control_3_description" : req.body.control_3_description,
-                    // "control_3_latitude" : req.body.control_3_latitude,
-                    // "control_3_longitude" : req.body.control_3_longitude,
-                    // "date_beg_day_3": req.body.date_beg_day_3, 
-                    // "date_beg_month_3": req.body.date_beg_month_3,
-                    // "date_beg_year_3" : req.body.date_beg_year_3,
-                    // "date_end_day_3": req.body.date_end_day_3,
-                    // "date_end_month_3": req.body.date_end_month_3,
-                    // "date_end_year_3" : req.body.date_end_year_3,
-                    
-                    // "control_4_description" : req.body.control_4_description,
-                    // "control_4_latitude" : req.body.control_4_latitude,
-                    // "control_4_longitude" : req.body.control_4_longitude,
-                    // "date_beg_day_4": req.body.date_beg_day_4, 
-                    // "date_beg_month_4": req.body.date_beg_month_4,
-                    // "date_beg_year_4" : req.body.date_beg_year_4,
-                    // "date_end_day_4": req.body.date_end_day_4,
-                    // "date_end_month_4": req.body.date_end_month_4,
-                    // "date_end_year_4" : req.body.date_end_year_4,
-                    
-                    // "control_5_description" : req.body.control_5_description,
-                    // "control_5_latitude" : req.body.control_5_latitude,
-                    // "control_5_longitude" : req.body.control_5_longitude,
-                    // "date_beg_day_5": req.body.date_beg_day_5, 
-                    // "date_beg_month_5": req.body.date_beg_month_5,
-                    // "date_beg_year_5" : req.body.date_beg_year_5,
-                    // "date_end_day_5": req.body.date_end_day_5,
-                    // "date_end_month_5": req.body.date_end_month_5,
-                    // "date_end_year_5" : req.body.date_end_year_5,
-                    
+                    "color" : req.body.color,
                     "flag" : req.body.flag_file,
                     "files" : req.body.files,
                     
@@ -2593,12 +2544,7 @@ router.post('/addparty', function(req, res){
                     updateVal['hq.coordinates'] =  [long, lat]
                 }
                 if (profile[0].control_areas!= req.body.control_areas) updateVal['control_areas'] =  req.body.control_areas
-                // for(var i = 1;i<6;i++){  
-                //     if (profile[0].control_areas.i.description!= req.body.control_i_description) updateVal['control_areas.'+i+'.description'] =  req.body.control_i_description
-                //     if (profile[0].control_areas.i.coordinates[1]!= req.body.control_i_latitude || profile[0].control_areas.i.coordinates[0]!= req.body.control_i_longitude) updateVal['control_areas.'+1+'.coordinates'] = [parseFloat( req.body.control_i_longitude), parseFloat(req.body.control_i_latitude)] 
-                //     if (profile[0].control_areas.i.beg!= dateConverter(req.body.date_beg_day_i,req.body.date_beg_month_i, req.body.date_beg_year_i)) updateVal['control_areas.'+1+'.beg'] =  dateConverter(req.body.date_beg_day_i,req.body.date_beg_month_i, req.body.date_beg_year_i)
-                //     if (profile[0].control_areas.i.end!= dateConverter(req.body.date_end_day_i,req.body.date_end_month_i, req.body.date_end_year_i)) updateVal['control_areas.'+1+'.end'] =  dateConverter(req.body.date_end_day_i,req.body.date_end_month_i, req.body.date_end_year_i)
-                // }
+                if (profile[0].color!= req.body.color) updateVal['color'] =  req.body.color
                 
                 if (profile[0].flag.file!= req.body.flag_file) updateVal['flag.file'] =  req.body.flag_file
                 if (profile[0].documents!= req.body.documents) updateVal['documents'] =  req.body.documents  
@@ -2635,43 +2581,7 @@ router.post('/addparty', function(req, res){
                                     "type" : "Point"
                                 },
                                 "control_areas" : req.body.control_areas,
-                                // "control_areas" : {
-                                //         "1" : {
-                                //                 "description" : req.body.control_1_description,
-                                //                 "coordinates" : [parseFloat(req.body.control_1_longitude),parseFloat(req.body.control_1_latitude)],
-                                //                 "type" : "Point",
-                                //                 "beg" : dateConverter(req.body.date_beg_day_1,req.body.date_beg_month_1,req.body.date_beg_year_1),
-                                //                 "end" : dateConverter(req.body.date_end_day_1,req.body.date_end_month_1,req.body.date_end_year_1)
-                                //               },
-                                //         "2" : {
-                                //                 "description" : req.body.control_2_description,
-                                //                 "coordinates" : [parseFloat(req.body.control_2_longitude),parseFloat(req.body.control_2_latitude)],
-                                //                 "type" : "Point",
-                                //                 "beg" : dateConverter(req.body.date_beg_day_2,req.body.date_beg_month_2,req.body.date_beg_year_2),
-                                //                 "end" : dateConverter(req.body.date_end_day_2,req.body.date_end_month_2,req.body.date_end_year_2)
-                                //               },
-                                //         "3" : {
-                                //                 "description" : req.body.control_3_description,
-                                //                 "coordinates" : [parseFloat(req.body.control_3_longitude),parseFloat(req.body.control_3_latitude)],
-                                //                 "type" : "Point",
-                                //                 "beg" : dateConverter(req.body.date_beg_day_3,req.body.date_beg_month_3,req.body.date_beg_year_3),
-                                //                 "end" : dateConverter(req.body.date_end_day_3,req.body.date_end_month_3,req.body.date_end_year_3)
-                                //               },
-                                //         "4" : {
-                                //                 "description" : req.body.control_4_description,
-                                //                 "coordinates" : [parseFloat(req.body.control_4_longitude),parseFloat(req.body.control_4_latitude)],
-                                //                 "type" : "Point",
-                                //                 "beg" : dateConverter(req.body.date_beg_day_4,req.body.date_beg_month_4,req.body.date_beg_year_4),
-                                //                 "end" : dateConverter(req.body.date_end_day_4,req.body.date_end_month_4,req.body.date_end_year_4)
-                                //               },
-                                //         "5" : {
-                                //                 "description" : req.body.control_5_description,
-                                //                 "coordinates" : [parseFloat(req.body.control_5_longitude),parseFloat(req.body.control_5_latitude)],
-                                //                 "type" : "Point",
-                                //                 "beg" : dateConverter(req.body.date_beg_day_5,req.body.date_beg_month_5,req.body.date_beg_year_5),
-                                //                 "end" : dateConverter(req.body.date_end_day_5,req.body.date_end_month_5,req.body.date_end_year_5)
-                                //               }
-                                // },
+                                "color" : req.body.color,
                                 "flag" : {
 		                              "file" : req.body.flag_file
 	                           },
