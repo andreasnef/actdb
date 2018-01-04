@@ -779,6 +779,7 @@ router.get('/newprofile', function(req, res){
                 return console.error(err);
             }
             var type = req.query.type;
+            //console.log(municipalities)
             if (req.query.nextrecord){
                 res.render('new'+type, { title: 'Add New '+type, nextrecord : req.query.nextrecord, parties : partiesList, mps: missingList, locations: locationsList, events: eventsList, sites: sitesList, contactslist: contactsList, interviewslist: interviewsList, fileslist: filesList, municipalities : municipalities});
             } else {
@@ -1004,7 +1005,7 @@ router.post('/addmissing', function(req, res){
                 if (profile[0].disappearance.place.district!= req.body.disappearance_place_district) updateVal['disappearance.place.district'] =  req.body.disappearance_place_district
                 if (profile[0].disappearance.place.governorate!= req.body.disappearance_place_governorate) updateVal['disappearance.place.governorate'] =  req.body.disappearance_place_governorate
                 if (profile[0].disappearance.place.alt_place!= req.body.disappearance_place_alt_place) updateVal['disappearance.place.alt_place'] =  req.body.disappearance_place_alt_place
-                if (profile[0].disappearance.location.latitude && profile[0].disappearance.location.longitude && (profile[0].disappearance.location.latitude!= req.body.disappearance_location_latitude || profile[0].disappearance.location.longitude!= req.body.disappearance_location_longitude)) {
+                if (profile[0].disappearance.location.latitude!= req.body.disappearance_location_latitude || profile[0].disappearance.location.longitude!= req.body.disappearance_location_longitude) {
                     updateVal['location.coordinates'] =  [long, lat]
                     updateVal['disappearance.location.latitude'] =  req.body.disappearance_location_latitude
                     updateVal['disappearance.location.longitude'] =  req.body.disappearance_location_longitude
@@ -1025,33 +1026,6 @@ router.post('/addmissing', function(req, res){
                 if (profile[0].fate!= req.body.fate) updateVal['fate'] =  req.body.fate
                 if (profile[0].notes!= req.body.notes) updateVal['notes'] =  req.body.notes
                 if (profile[0].interviews!= interviews) updateVal['interviews'] = interviews
-                // var sourcesBody = [{
-                //     "type": req.body.source_type_1,
-                //     "subtype" : req.body.source_subtype_1,
-                //     "name" : req.body.source_name_1,
-                //     "details" : req.body.source_details_1
-                // },{
-                //     "type": req.body.source_type_2,
-                //     "subtype" : req.body.source_subtype_2,
-                //     "name" : req.body.source_name_2,
-                //     "details" : req.body.source_details_2
-                // },{
-                //     "type": req.body.source_type_3,
-                //     "subtype" : req.body.source_subtype_3,
-                //     "name" : req.body.source_name_3,
-                //     "details" : req.body.source_details_3
-                // },{
-                //     "type": req.body.source_type_4,
-                //     "subtype" : req.body.source_subtype_4,
-                //     "name" : req.body.source_name_4,
-                //     "details" : req.body.source_details_4
-                // },{
-                //     "type": req.body.source_type_5,
-                //     "subtype" : req.body.source_subtype_5,
-                //     "name" : req.body.source_name_5,
-                //     "details" : req.body.source_details_5
-                // }]
-                // if (profile[0].sources!= sourcesBody) updateVal['sources'] =  sourcesBody
                 if (profile[0].files!= files) updateVal['files'] =  files
                 if (profile[0].picture!= req.body.picture) updateVal['picture'] =  req.body.picture
                 if (profile[0].lists.syria_2000!= req.body.lists_syria_2000) updateVal['lists.syria_2000'] =  req.body.lists_syria_2000
@@ -1220,32 +1194,6 @@ router.post('/addmissing', function(req, res){
                                 "fate" : req.body.fate,
                                 "notes" : req.body.notes,
                                 "interviews" : interviews,
-                                // "sources" : [{
-                                //     "type": req.body.source_type_1,
-                                //     "subtype" : req.body.source_subtype_1,
-                                //     "name" : req.body.source_name_1,
-                                //     "details" : req.body.source_details_1
-                                // },{
-                                //     "type": req.body.source_type_2,
-                                //     "subtype" : req.body.source_subtype_2,
-                                //     "name" : req.body.source_name_2,
-                                //     "details" : req.body.source_details_2
-                                // },{
-                                //     "type": req.body.source_type_3,
-                                //     "subtype" : req.body.source_subtype_3,
-                                //     "name" : req.body.source_name_3,
-                                //     "details" : req.body.source_details_3
-                                // },{
-                                //     "type": req.body.source_type_4,
-                                //     "subtype" : req.body.source_subtype_4,
-                                //     "name" : req.body.source_name_4,
-                                //     "details" : req.body.source_details_4
-                                // },{
-                                //     "type": req.body.source_type_5,
-                                //     "subtype" : req.body.source_subtype_5,
-                                //     "name" : req.body.source_name_5,
-                                //     "details" : req.body.source_details_5
-                                // }],
                                 "picture" : req.body.picture,
                                 "files" : files,
                                 "lists" : {

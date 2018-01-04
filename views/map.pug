@@ -31,12 +31,12 @@ block content
         var markerArraySites = new Array(sitesArray.length)
         var markerArrayEvents = new Array(eventsArray.length)
 
-        var missingIcon = L.icon({ iconUrl: '/stylesheets/images/man.png', iconSize: [25, 30]});
-        var checkpointIcon = L.icon({ iconUrl: '/stylesheets/images/checkpoint.png', iconSize: [25, 35]});
-        var barrackIcon = L.icon({ iconUrl: '/stylesheets/images/barracks.png', iconSize: [35, 35]});
-        var detentionCentreIcon = L.icon({ iconUrl: '/stylesheets/images/detention.png', iconSize: [30, 40]});
-        var sitesIcon = L.icon({ iconUrl: '/stylesheets/images/grave2.png', iconSize: [40, 30]});
-        var eventsIcon = L.icon({ iconUrl: '/stylesheets/images/explosion.png', iconSize: [30, 30]});
+        var missingIcon = L.icon({ iconUrl: '/stylesheets/images/icon-purple.png', iconSize: [20, 30]});
+        var checkpointIcon = L.icon({ iconUrl: '/stylesheets/images/icon-red.png', iconSize: [20, 35]});
+        var barrackIcon = L.icon({ iconUrl: '/stylesheets/images/icon-blue.png', iconSize: [20, 30]});
+        var detentionCentreIcon = L.icon({ iconUrl: '/stylesheets/images/icon-green.png', iconSize: [20, 30]});
+        var sitesIcon = L.icon({ iconUrl: '/stylesheets/images/icon-yellow.png', iconSize: [20, 30]});
+        var eventsIcon = L.icon({ iconUrl: '/stylesheets/images/icon-purple2.png', iconSize: [20, 30]});
         
         for(var i = 0; i < eventsArray.length; i++){
           e = eventsArray[i];
@@ -68,11 +68,6 @@ block content
           markerArrayMissing[i] = L.marker([e.location.coordinates[1], e.location.coordinates[0]],{icon: missingIcon}).bindPopup("<a href='#' onclick=loadProfile('missing','"+e.code+"');>"+e.name.ar.first+" "+e.name.ar.middle+" "+e.name.ar.last+"</a>");
         }
 
-        //- for(var i = 0; i < partiesArray.length; i++){
-        //-   if((partiesArray[i].control_areas) && (partiesArray[i].control_areas).length)
-        //-    console.log(partiesArray[i]);
-        //- }
-
         var missingLayer = L.layerGroup(markerArrayMissing);
         var checkpointsLayer = L.layerGroup(markerArrayCheckpoints);
         var barracksLayer = L.layerGroup(markerArrayBarracks);
@@ -81,6 +76,8 @@ block content
         var eventsLayer = L.layerGroup(markerArrayEvents);
 
         var municipalitiesLayer = L.geoJson(municipalities, {style: style, onEachFeature: onEachFeature});
+
+        
         
         var basemap = L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
              attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
@@ -110,15 +107,27 @@ block content
         //- functions
         function style(feature) {
           var color;
+          //var color = [];
           for(var i = 0; i < partiesArray.length; i++){
             if((partiesArray[i].control_areas) && (partiesArray[i].control_areas).length)
               if ((partiesArray[i].control_areas).indexOf(feature.id) != -1)
                 color = partiesArray[i].color;
+                //color.push(partiesArray[i].color);
           }
 
           return {
             //fillColor: getColor(feature.id),
             fillColor: color,
+            //- background: #466368,
+            //- background: -webkit-linear-gradient(red, blue),
+            //- background:    -moz-linear-gradient(red, blue),
+            //- background:         linear-gradient(red, blue),
+            //-   //45deg,
+            //-   #7F7E7E 10px,
+            //-   #606dbc 10px,
+            //-   #465298 10px,
+            //-   #465298 20px
+            //- ),
             weight: 2,
             opacity: 1,
             color: 'white',
@@ -162,7 +171,7 @@ block content
         info.update = function (props) {
           this._div.innerHTML = '<h4>Municipality: </h4>' +  (props ? '<b>' + props.name + '</b><br />' : 'Hover over a municipality');
         };
-
+        
         info.addTo(map);
 
         var legend = L.control({position: 'bottomright'});
