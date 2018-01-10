@@ -32,32 +32,32 @@ block content
         var markerArrayEvents = new Array(eventsArray.length)
 
         var redMarker = L.AwesomeMarkers.icon({
-          icon: 'star',
+          icon: 'ban-circle',
           markerColor: 'red'
         });
 
         var orangeMarker = L.AwesomeMarkers.icon({
-          icon: 'home',
+          icon: 'glyphicon-fire',
           markerColor: 'orange'
         });
 
         var blueMarker = L.AwesomeMarkers.icon({
-          icon: 'ion-man',
+          icon: 'home',
           markerColor: 'blue'
         });
         
         var greenMarker = L.AwesomeMarkers.icon({
-          icon: 'fa-male',
+          icon: 'link',
           markerColor: 'green'
         });
 
         var purpleMarker = L.AwesomeMarkers.icon({
-          icon: 'ion-man',
+          icon: 'user',
           markerColor: 'purple'
         });
 
         var darkgreenMarker = L.AwesomeMarkers.icon({
-          icon: 'ion-man',
+          icon: 'glyphicon-record',
           markerColor: 'darkgreen'
         });
 
@@ -322,14 +322,14 @@ block content
         L.control.search({
           layer: poiLayers,
           initial: false,
-          propertyName: 'code',
+          propertyName: 'name',
           position:'topleft',
           zoom: 16,
           marker: false,
           buildTip: function(text, val) {
-            //console.log("val "+val);
+            console.log("val "+val);
             //- var type = val.layer.feature.properties.amenity;
-            //- return '<a href="#" class="'+type+'">'+text+'<b>'+type+'</b></a>';
+            return '<a href="#" class="'+val+'">'+val+'<b>'+text+'</b></a>';
           }
       	})
         .addTo(map);
