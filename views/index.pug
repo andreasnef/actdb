@@ -4,13 +4,8 @@ block content
   h3. 
      Login to Database
   form#form_login(name="login", method="post", action="/login")
-    span User
-    span &nbsp;
     input#input_user(type="text", placeholder="User Name", name="user")
     br
-    br
-    span Password
-    span &nbsp;
     input#input_pass(type="password", placeholder="Password", name="pass")
     br
     br
@@ -20,7 +15,10 @@ block content
     if errormessage
      p #{errormessage} 
      
-    if validationErrors 
+    if validationErrors
      each valError, i in validationErrors
        li#valErrors_list_item
-         p #{valError.msg} 
+        //if (valError && valError.msg && !valError.msg.isEmpty())
+         p #{validationErrors}
+         p #{valError.msg}
+         p #{valError} 

@@ -55,27 +55,21 @@ router.post('/login', function(req, res){
     var ip = req.connection.remoteAddress;
     var date = new Date().toISOString();
     var MongoClient = mongodb.MongoClient;
-    //var url = 'mongodb://'+user+':'+pass+'@localhost:27017,localhost:27018,localhost:27019/Act?replicaSet=mongo-repl&authSource=admin';
+    //var url = 'mongodb://'+user+':'+pass+'@localhost:27017/Act';
     var url = 'mongodb://'+user+':'+pass+'@cluster0-shard-00-00-tey75.mongodb.net:27017,cluster0-shard-00-01-tey75.mongodb.net:27017,cluster0-shard-00-02-tey75.mongodb.net:27017/Act?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin';
 
     //Validate Fields
     req.check('user', 'User cannot be empty').notEmpty();
     req.check('pass', 'Password cannot be empty').notEmpty();
-    //var errors = req.validationErrors();
-    var errors = req.getValidationResult();
-    errors.then(function (result) {
-     if (!result.isEmpty()) {
-        console.log(result.mapped());
-        console.log(result.array());
-            res.render('index', {
-                "validationErrors" : result.mapped()
-            });    
-
+    var errors = req.validationErrors();
+     if (errors) {
+        res.render('index', {
+            "validationErrors" : errors
+        });
      } else {
         /*Connect to the BD*/
-        //MongoClient.connect(url, function(err,client){
         MongoClient.connect(url, function(err,database){
-            if (err){
+        if (err){
             console.log("User:"+user+" Unable to connect to server", err);
             res.render('index', {
                 "errormessage" : err
@@ -83,23 +77,9 @@ router.post('/login', function(req, res){
         } else {
             console.log('User:'+user+' Connected to server');
             //Store the connection globally
-            //db = client.db("Act");
             db = database;
             //save user in session
             req.session.user = user;
-            
-            //open change stream and record any changes
-            const missingCollection = db.collection('missing');
-            var changeStream = missingCollection.watch();
-            changeStream.on("change", function(change) {
-                var newChange = {user: user, date: date, collection: change.ns.coll, operation: change.operationType, fullDocument: change.fullDocument, updateDescription: change.updateDescription};
-                db.collection('updates').insert([newChange],function(err,result){
-                    if (err){
-                        console.log(err)
-                     }
-                });
-                console.log(newChange);
-            });
             
             if(user != "public"){
                //save the login info in the db
@@ -116,7 +96,6 @@ router.post('/login', function(req, res){
          }   
         })   
     }
- });
 });
 
 /*retrieve list of parties*/
@@ -853,7 +832,6 @@ router.post('/addmissing', function(req, res){
             req.check('disappearance_location_longitude','Longitude should be xx.xxxxx').isDecimal;
 
             var errors = req.validationErrors();
-            //var errors = req.getValidationResult();
             if (errors) {
                 res.render('newmissing', {
                     "_id":req.body._id,
@@ -917,6 +895,26 @@ router.post('/addmissing', function(req, res){
                     "fate" : req.body.fate,
                     "notes" : req.body.notes,
                     "interviews" : req.body.interviews,
+                    // "source_type_1" : req.body.source_type_1,
+                    // "source_subtype_1" : req.body.source_subtype_1,
+                    // "source_name_1" : req.body.source_name_1,
+                    // "source_details_1" : req.body.source_details_1,
+                    // "source_type_2" : req.body.source_type_2,
+                    // "source_subtype_2" : req.body.source_subtype_2,
+                    // "source_name_2" : req.body.source_name_2,
+                    // "source_details_2" : req.body.source_details_2,
+                    // "source_type_3" : req.body.source_type_3,
+                    // "source_subtype_3" : req.body.source_subtype_3,
+                    // "source_name_3" : req.body.source_name_3,
+                    // "source_details_3" : req.body.source_details_3,
+                    // "source_type_4" : req.body.source_type_4,
+                    // "source_subtype_4" : req.body.source_subtype_4,
+                    // "source_name_4" : req.body.source_name_4,
+                    // "source_details_4" : req.body.source_details_4,
+                    // "source_type_5" : req.body.source_type_5,
+                    // "source_subtype_5" : req.body.source_subtype_5,
+                    // "source_name_5" : req.body.source_name_5,
+                    // "source_details_5" : req.body.source_details_5,
                     "files": req.body.files,
                     "picture" : req.body.picture,
                     "lists_syria_2000" : req.body.lists_syria_2000,
@@ -1289,7 +1287,6 @@ router.post('/addevent', function(req, res){
             req.check('location_longitude','Longitude should be xx.xxxxx').isDecimal;
 
             var errors = req.validationErrors();
-            //var errors = req.getValidationResult();
             if (errors) {
                 res.render('newevent', {
                     "_id":req.body._id,
@@ -1487,31 +1484,25 @@ router.post('/addevent', function(req, res){
                         interviews.forEach( function (e){
                             if((profile[0].interviews).indexOf(e)== -1)updateRelated("interviews", e, req.body.code, "events");
                         });
-                        if(profile[0].interviews){
-                            (profile[0].interviews).forEach( function (e){
-                                if((interviews).indexOf(e)== -1)removeRelated("interviews", e, req.body.code, "events");
-                            });
-                        }
+                        (profile[0].interviews).forEach( function (e){
+                            if((interviews).indexOf(e)== -1)removeRelated("interviews", e, req.body.code, "events");
+                        });
                     }
                     if (profile[0].files != files) {
                         files.forEach( function (e){
                             if((profile[0].files).indexOf(e)== -1)updateRelated("files", e, req.body.code, "events");
                         });
-                        if(profile[0].files){
-                            (profile[0].files).forEach( function (e){
-                                if((files).indexOf(e)== -1)removeRelated("files", e, req.body.code, "events");
-                            });
-                        }
+                        (profile[0].files).forEach( function (e){
+                            if((files).indexOf(e)== -1)removeRelated("files", e, req.body.code, "events");
+                        });
                     }
                     if (profile[0].contacts != contacts) {
                         contacts.forEach( function (e){
                             if((profile[0].contacts).indexOf(e)== -1)updateRelated("contacts", e, req.body.code, "events");
                         });
-                        if(profile[0].contacts){
-                            (profile[0].contacts).forEach( function (e){
-                                if((contacts).indexOf(e)== -1)removeRelated("contacts", e, req.body.code, "events");
-                            });
-                        }
+                        (profile[0].contacts).forEach( function (e){
+                            if((contacts).indexOf(e)== -1)removeRelated("contacts", e, req.body.code, "events");
+                        });
                     }
                     profile = null;
                     res.redirect('/events');
@@ -1655,7 +1646,6 @@ router.post('/addlocation', function(req, res){
             //req.check('location_longitude','Longitude should be xx.xxxxx').isDecimal;
 
             var errors = req.validationErrors();
-            //var errors = req.getValidationResult();
             if (errors) {
                 res.render('newlocation', {
                     "_id":req.body._id,
@@ -2032,7 +2022,6 @@ router.post('/addsite', function(req, res){
             req.check('location_longitude','Longitude should be xx.xxxxx').isDecimal;
 
             var errors = req.validationErrors();
-            //var errors = req.getValidationResult();
             if (errors) {
                 res.render('newsite', {
                     "_id":req.body._id,
@@ -2079,10 +2068,29 @@ router.post('/addsite', function(req, res){
                     "identification_date_month" : req.body.identification_date_month,
                     "identification_date_year" : req.body.identification_date_year,
                     "identification_number" : req.body.identification_number,
-                    "identification_notes" : req.body.identification_notes,
                     "identification_dna" : req.body.identification_dna,
                     "notes" : req.body.notes,
                     "interviews" : req.body.interviews,
+                    // "source_type_1" : req.body.source_type_1,
+                    // "source_subtype_1" : req.body.source_subtype_1,
+                    // "source_name_1" : req.body.source_name_1,
+                    // "source_details_1" : req.body.source_details_1,
+                    // "source_type_2" : req.body.source_type_2,
+                    // "source_subtype_2" : req.body.source_subtype_2,
+                    // "source_name_2" : req.body.source_name_2,
+                    // "source_details_2" : req.body.source_details_2,
+                    // "source_type_3" : req.body.source_type_3,
+                    // "source_subtype_3" : req.body.source_subtype_3,
+                    // "source_name_3" : req.body.source_name_3,
+                    // "source_details_3" : req.body.source_details_3,
+                    // "source_type_4" : req.body.source_type_4,
+                    // "source_subtype_4" : req.body.source_subtype_4,
+                    // "source_name_4" : req.body.source_name_4,
+                    // "source_details_4" : req.body.source_details_4,
+                    // "source_type_5" : req.body.source_type_5,
+                    // "source_subtype_5" : req.body.source_subtype_5,
+                    // "source_name_5" : req.body.source_name_5,
+                    // "source_details_5" : req.body.source_details_5,
                     "files" : req.body.files,
                     "contacts" : req.body.contacts,
                     
@@ -2166,9 +2174,35 @@ router.post('/addsite', function(req, res){
                 if (!profile[0].identification || profile[0].identification.status!=req.body.identification_status) updateVal['identification.status'] =  req.body.identification_status
                 if (!profile[0].identification || profile[0].identification.date!= dateConverter(req.body.identification_date_day,req.body.identification_date_month, req.body.identification_date_year)) updateVal['identification.date'] =  dateConverter(req.body.identification_date_day,req.body.identification_date_month,req.body.identification_date_year)
                 if (!profile[0].identification || profile[0].identification.number!=req.body.identification_number)updateVal['identification.number'] =  req.body.identification_number
-                if (!profile[0].identification || profile[0].identification.notes!=req.body.identification_notes)updateVal['identification.notes'] =  req.body.identification_notes
                 if (!profile[0].identification || profile[0].identification.dna!=req.body.identification_dna)updateVal['identification.dna'] =  req.body.identification_dna
                 if (profile[0].interviews!= interviews) updateVal['interviews'] = interviews
+                // var sourcesBody = [{
+                //     "type": req.body.source_type_1,
+                //     "subtype" : req.body.source_subtype_1,
+                //     "name" : req.body.source_name_1,
+                //     "details" : req.body.source_details_1
+                // },{
+                //     "type": req.body.source_type_2,
+                //     "subtype" : req.body.source_subtype_2,
+                //     "name" : req.body.source_name_2,
+                //     "details" : req.body.source_details_2
+                // },{
+                //     "type": req.body.source_type_3,
+                //     "subtype" : req.body.source_subtype_3,
+                //     "name" : req.body.source_name_3,
+                //     "details" : req.body.source_details_3
+                // },{
+                //     "type": req.body.source_type_4,
+                //     "subtype" : req.body.source_subtype_4,
+                //     "name" : req.body.source_name_4,
+                //     "details" : req.body.source_details_4
+                // },{
+                //     "type": req.body.source_type_5,
+                //     "subtype" : req.body.source_subtype_5,
+                //     "name" : req.body.source_name_5,
+                //     "details" : req.body.source_details_5
+                // }]
+                // if (profile[0].sources!= sourcesBody) updateVal['sources'] =  sourcesBody
                 if (profile[0].files!= files) updateVal['files'] = files
                 if (profile[0].contacts!=contacts) updateVal['contacts'] = contacts
                 if (profile[0].notes!= req.body.notes) updateVal['notes'] =  req.body.notes  
@@ -2245,7 +2279,9 @@ router.post('/addsite', function(req, res){
                         } 
                     }
                     profile = null;
-                    res.redirect('/sites');   
+                    res.redirect('/sites');
+                    
+                    
                 }
                });
                 
@@ -2312,10 +2348,35 @@ router.post('/addsite', function(req, res){
                                     "status" : req.body.identification_status,
                                     "date" : dateConverter(req.body.identification_date_day, req.body.identification_date_month, req.body.identification_date_year),
                                     "number" : req.body.identification_number,
-                                    "notes" : req.body.identification_notes,
                                     "dna" : req.body.identification_dna
                                 },
                                 "interviews" : interviews,
+	                            // "sources" : [{
+                                //     "type": req.body.source_type_1,
+                                //     "subtype" : req.body.source_subtype_1,
+                                //     "name" : req.body.source_name_1,
+                                //     "details" : req.body.source_details_1
+                                // },{
+                                //     "type": req.body.source_type_2,
+                                //     "subtype" : req.body.source_subtype_2,
+                                //     "name" : req.body.source_name_2,
+                                //     "details" : req.body.source_details_2
+                                // },{
+                                //     "type": req.body.source_type_3,
+                                //     "subtype" : req.body.source_subtype_3,
+                                //     "name" : req.body.source_name_3,
+                                //     "details" : req.body.source_details_3
+                                // },{
+                                //     "type": req.body.source_type_4,
+                                //     "subtype" : req.body.source_subtype_4,
+                                //     "name" : req.body.source_name_4,
+                                //     "details" : req.body.source_details_4
+                                // },{
+                                //     "type": req.body.source_type_5,
+                                //     "subtype" : req.body.source_subtype_5,
+                                //     "name" : req.body.source_name_5,
+                                //     "details" : req.body.source_details_5
+                                // }],
                                 "contacts" : contacts,
                                 "files" : files,
                                 "notes" : req.body.notes,
@@ -2385,8 +2446,7 @@ router.post('/addparty', function(req, res){
             req.check('hq_latitude','Latitude should be xx.xxxxx').isDecimal;
             req.check('hq_longitude','Longitude should be xx.xxxxx').isDecimal;
 
-            //var errors = req.validationErrors();
-            var errors = req.getValidationResult();
+            var errors = req.validationErrors();
             if (errors) {
                 res.render('newparty', {
                     "_id":req.body._id,
@@ -2504,7 +2564,6 @@ router.post('/addcontact', function(req, res){
             //req.check('name_en', 'Name in English cannot be empty').notEmpty();
 
             var errors = req.validationErrors();
-            //var errors = req.getValidationResult();
             if (errors) {
                 res.render('newcontact', {
                     "_id":req.body._id,
@@ -2785,7 +2844,6 @@ router.post('/addinterview', function(req, res){
                                 req.check('date_year', 'Year cannot be empty').notEmpty();
     
                                 var errors = req.validationErrors();
-                                //var errors = req.getValidationResult();
                                 if (errors) {
                                     res.render('newinterview', {
                                         "_id":req.body._id,
@@ -2987,7 +3045,6 @@ router.post('/addfile', function(req, res){
                         // req.checkBody('files', 'File must be selected').notEmpty();
 
                         var errors = req.validationErrors();
-                        //var errors = req.getValidationResult();
                         if (errors) {
                             res.render('newfile', {
                                 "_id":req.body._id,
@@ -3593,10 +3650,6 @@ router.post('/deleteEntry', function (req,res){
                }
             res.redirect('/'+req.body.collection);   
         }
-        // var cursor = collection.aggregate([
-        //     { $changeStream: { fullDocument: 'updateLookup' } }
-        // ]);
-        // console.log(cursor);    
     }); 
 
 });

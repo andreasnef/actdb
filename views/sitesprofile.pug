@@ -127,7 +127,6 @@ block content
     //-      span #{value.perpetrators_name}  
       
   div
-      h4 Description: 
       
       - if (value.status)
        p 
@@ -184,7 +183,7 @@ block content
         span #{value.exhumed.contact}
       - if (value.exhumed.notes)
        p 
-       span.title Notes: 
+       span.title Notes on Exhumation: 
        span #{value.exhumed.notes}
 
    if(value.identification)
@@ -202,6 +201,10 @@ block content
        p
         span.title Number of bodies identified: 
         span #{value.identification.number}
+      - if (value.identification.notes)
+       p 
+       span.title Notes on Identification: 
+       span #{value.identification.notes}  
       - if (value.identification.dna)
        p 
         span.title DNA conducted: 
