@@ -88,19 +88,6 @@ router.post('/login', function(req, res){
             //save user in session
             req.session.user = user;
             
-            //open change stream and record any changes
-            const missingCollection = db.collection('missing');
-            var changeStream = missingCollection.watch();
-            changeStream.on("change", function(change) {
-                var newChange = {user: user, date: date, collection: change.ns.coll, operation: change.operationType, fullDocument: change.fullDocument, updateDescription: change.updateDescription};
-                db.collection('updates').insert([newChange],function(err,result){
-                    if (err){
-                        console.log(err)
-                     }
-                });
-                console.log(newChange);
-            });
-            
             if(user != "public"){
                //save the login info in the db
                 var collection = db.collection('logins');
