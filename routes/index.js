@@ -488,7 +488,8 @@ router.get('/missing', function(req, res){
             getEvents.bind(null, req.session.user),
             getLocations.bind(null, req.session.user),
             getParties,
-            getSites.bind(null, req.session.user)
+            getSites.bind(null, req.session.user),
+            getFiles
         ], function(err){
             if (err) {
                 return console.error(err);
