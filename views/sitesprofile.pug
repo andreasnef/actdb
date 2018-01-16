@@ -237,13 +237,16 @@ block content
       
       - if (value.files && (value.files).length>0)
        p
-        span.title Files: 
+        span.title Files:
+        span 
             - var name = "";
+            - var type = "";
             each file, i in value.files
              if(filesList)
                each fileProfile, i in filesList
-                  - if (file == fileProfile.code) name =  fileProfile.description
-             a(href="#" onclick="loadProfile('files','"+file+"');") #{file} #{name}
+                  - if (file == fileProfile.code)name =  fileProfile.description
+                  - if (file == fileProfile.code)type =  fileProfile.type
+             a(href="#" onclick="loadProfile('files','"+file+"');") #{type} - #{name} (#{file})
              br
       
       - if (value.notes)

@@ -154,7 +154,8 @@ block content
              if(filesList)
                each fileProfile, i in filesList
                   - if (file == fileProfile.code) name =  fileProfile.description
-             a(href="#" onclick="loadProfile('files','"+file+"');") #{file} #{name}
+                  - if (file == fileProfile.code)type =  fileProfile.type
+             a(href="#" onclick="loadProfile('files','"+file+"');") #{type} - #{name} (#{file})
              br
 
        - if (value.notes)
