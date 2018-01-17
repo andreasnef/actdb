@@ -3599,8 +3599,7 @@ router.post('/removeFile', function(req,res){
         if ( err ) {
            console.log('ERROR: ' + err); 
         }
-        else {
-           //update database
+        //update database
            var collection = db.collection(type);
 
            collection.deleteOne({code: req.body.code}, function(err, result){
@@ -3645,9 +3644,7 @@ router.post('/removeFile', function(req,res){
                    }  
                    res.redirect('/'+type);   
                }
-           });    
-        }
-
+           });
     });
 
     
