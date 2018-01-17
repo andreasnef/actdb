@@ -80,8 +80,8 @@ router.post('/login', function(req, res){
         } else {
             console.log('User:'+user+' Connected to server');
             //Store the connection globally
-            db = client.db("Act");
-            //db = database;
+            //db = client.db("Act");
+            db = database;
             //save user in session
             req.session.user = user;
             
