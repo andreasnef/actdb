@@ -10,7 +10,6 @@ block content
      
   if validationErrors 
      each valError, i in validationErrors
-       li#valErrors_list_item
          p #{valError.msg}  
          
   if editprofile
@@ -59,7 +58,6 @@ block content
         else
             option(value=material) #{material} 
      br
-
      div#wrapper 
      input(type="text", placeholder="Subject of the Interview", name="subject" value=subject)
      br
@@ -84,7 +82,7 @@ block content
      br
      
      span Date
-     span &nbsp;
+      br
       select#birth_date_day(name="date_day", value=date_day)
        option(value="") Select
        -for(var i = 1;i<32;i++){
@@ -208,9 +206,9 @@ block content
         | #{notes}
      
      br
+     br
     div#wrapper
       legend Related
-      br
       //span Related Events 
       a(href="#" onclick="return toggle_visibility('relatedEvents');") Related Events #{related_events} (click to modify)
     

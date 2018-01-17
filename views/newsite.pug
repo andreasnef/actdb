@@ -10,7 +10,6 @@ block content
      
   if validationErrors 
      each valError, i in validationErrors
-       li#valErrors_list_item
          p #{valError.msg}  
          
   if editprofile
@@ -100,10 +99,9 @@ block content
             option(value="Yes" selected="Selected")  Yes
         else    
             option(value="Yes")  Yes 
-     
+    br 
     div#wrapper 
      legend Location
-     br
      input#input_location_place(type="text", placeholder="Place", name="location_place", value=location_place)
      br
      span District
@@ -142,8 +140,6 @@ block content
      
     div#wrapper 
      legend Event Period
-     br
-     br
      span Beginning Date
      span &nbsp;
      select(name="date_beg_day", value=date_beg_day)
@@ -316,7 +312,7 @@ block content
      span &nbsp;
      if (parties)
         each party, i in parties
-            div.checkbox-inline
+            div(class="columns")
              if (perpetrators && perpetrators.includes(party.name.en))
               input.checkbox-input(type='checkbox', name="perpetrators", value=party.name.en, checked)
               label #{party.name.en}
@@ -325,7 +321,8 @@ block content
               label #{party.name.en}
           
      br
-     textarea#input_perpetrators_name(type="text", placeholder="Names of Reponsible Persons or Fractions within the group", cols="120" rows="10", name="perpetrators_name", value=perpetrators_name)
+     br
+     textarea#input_perpetrators_name(type="text", placeholder="Fractions within the group", cols="120" rows="10", name="perpetrators_name", value=perpetrators_name)
         | #{perpetrators_name}
      br
      br  
@@ -448,6 +445,7 @@ block content
        -}
      span &nbsp;
      br
+     br
      span Reasons
      br
      textarea#input_reasons(type="text", placeholder="Reasons for risk of destruction", cols="120" rows="10", name="risk_reasons", value=risk_reasons)
@@ -468,6 +466,7 @@ block content
                 option(value=i) #{i}
        -}
      span &nbsp;
+     br
      br
      span Reasons
      br
@@ -490,6 +489,7 @@ block content
                 option(value=i) #{i}
        -}
      span &nbsp;
+     br
      br
      span Reasons
      br
@@ -700,8 +700,9 @@ block content
      
     div#wrapper 
      legend Sources
-     span Interviews
-     div#interviews
+     a(href="#" onclick="return toggle_visibility('interviews');") Interviews #{interviews} (click to modify)
+    
+     div#interviews(class='dropMenu')
         if(interviewslist)
                 table(id="interviewsList")
                  thead    
@@ -761,9 +762,11 @@ block content
     br
     div#wrapper 
      legend Contact Information
-     br
-     if (contactslist)
-      table(id="contactsList")
+     a(href="#" onclick="return toggle_visibility('contacts');") Contacts #{contacts} (click to modify)
+    
+     div#contacts(class='dropMenu')
+      if (contactslist)
+       table(id="contactsList")
           thead    
             tr#headtag
                 th Select

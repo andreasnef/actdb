@@ -10,7 +10,6 @@ block content
      
   if validationErrors 
      each valError, i in validationErrors
-       li#valErrors_list_item
          p #{valError.msg}  
          
   if editprofile
@@ -164,7 +163,6 @@ block content
      br
      div#wrapper
      legend Related
-     br
      //span Related Events 
      a(href="#" onclick="return toggle_visibility('relatedEvents');") Related Events #{related_events} (click to modify)
     

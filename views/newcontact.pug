@@ -10,7 +10,6 @@ block content
      
   if validationErrors 
      each valError, i in validationErrors
-       li#valErrors_list_item
          p #{valError.msg}  
          
   if editprofile
@@ -69,6 +68,7 @@ block content
      if (confidential && confidential=="Yes")
         input(type='radio', name="confidential", value="Yes", checked)
         label Yes
+        span &nbsp;
         input(type='radio', name="confidential", value="No") 
         label No
               
@@ -138,7 +138,6 @@ block content
     
     div#wrapper 
      legend Birth
-     br
      input#input_birth_place(type="text", placeholder="Birth Place", name="birth_place", value=birth_place)
      br
      br
@@ -240,8 +239,7 @@ block content
      input#input_status(type="text", placeholder="Area present during the war", name="area_present", value=area_present)
      br
      br
-     span Spoken Languages
-     br
+     legend Spoken Languages
      - var languageslist = ["Arabic", "English", "French", "Other"];
      each language, i in languageslist
             div.checkbox-inline
@@ -253,7 +251,9 @@ block content
               label #{language}
      
      br
+     br
      div#wrapper
+     legend Related
      //span Related Events 
      a(href="#" onclick="return toggle_visibility('relatedEvents');") Related Events #{related_events} (click to modify)
     
@@ -380,6 +380,8 @@ block content
      br
      br
      
+     div#wrapper
+     legend Contact Information
      input#input_phone_1(type="text", placeholder="First Contact Phone", name="phone_1", value=phone_1)
      br
      input#input_phone_2(type="text", placeholder="Second Contact Phone", name="phone_2", value=phone_2)
@@ -414,7 +416,7 @@ block content
      br
      br
      span Family Associations
-     span &nbsp;
+     br
      - var associations = ["Committee of Families of the Kidnapped and Disappeared in Lebanon", "SOLIDE"];
      each assoc, i in associations
             div.checkbox-inline

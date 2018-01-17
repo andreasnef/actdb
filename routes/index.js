@@ -61,12 +61,9 @@ router.post('/login', function(req, res){
     //Validate Fields
     req.check('user', 'User cannot be empty').notEmpty();
     req.check('pass', 'Password cannot be empty').notEmpty();
-    //var errors = req.validationErrors();
     var errors = req.getValidationResult();
     errors.then(function (result) {
      if (!result.isEmpty()) {
-        console.log(result.mapped());
-        console.log(result.array());
             res.render('index', {
                 "validationErrors" : result.mapped()
             });    
@@ -83,10 +80,11 @@ router.post('/login', function(req, res){
         } else {
             console.log('User:'+user+' Connected to server');
             //Store the connection globally
-            //db = client.db("Act");
-            db = database;
+            db = client.db("Act");
+            //db = database;
             //save user in session
             req.session.user = user;
+            
             
             if(user != "public"){
                //save the login info in the db
@@ -840,10 +838,10 @@ router.post('/addmissing', function(req, res){
             req.check('disappearance_location_latitude','Latitude should be xx.xxxxx').isDecimal;
             req.check('disappearance_location_longitude','Longitude should be xx.xxxxx').isDecimal;
 
-            var errors = req.validationErrors();
-            //var errors = req.getValidationResult();
-            if (errors) {
-                res.render('newmissing', {
+            var errors = req.getValidationResult();
+            errors.then(function (result) {
+                if (!result.isEmpty()) {
+                 res.render('newmissing', {
                     "_id":req.body._id,
                     "code":req.body.code,
                     "public": req.body.public,
@@ -923,7 +921,7 @@ router.post('/addmissing', function(req, res){
                     
                     parties : partiesList, mps: missingList, locations: locationsList, events: eventsList, sites: sitesList,
 
-                    "validationErrors" : errors
+                    "validationErrors" : result.mapped()
                 });
 
              } else {
@@ -1258,7 +1256,7 @@ router.post('/addmissing', function(req, res){
                 
             }
           }
-            
+         });   
         } else { 
         res.render('index', { title: 'Login to Database'});
     }      
@@ -1276,9 +1274,9 @@ router.post('/addevent', function(req, res){
             req.check('location_latitude','Latitude should be xx.xxxxx').isDecimal;
             req.check('location_longitude','Longitude should be xx.xxxxx').isDecimal;
 
-            var errors = req.validationErrors();
-            //var errors = req.getValidationResult();
-            if (errors) {
+            var errors = req.getValidationResult();
+            errors.then(function (result) {
+             if (!result.isEmpty()) {
                 res.render('newevent', {
                     "_id":req.body._id,
                     "code":req.body.code,
@@ -1308,32 +1306,12 @@ router.post('/addevent', function(req, res){
                     "related_mps" : req.body.related_mps,
                     "notes" : req.body.notes,
                     "interviews" : req.body.interviews,
-                    // "source_type_1" : req.body.source_type_1,
-                    // "source_subtype_1" : req.body.source_subtype_1,
-                    // "source_name_1" : req.body.source_name_1,
-                    // "source_details_1" : req.body.source_details_1,
-                    // "source_type_2" : req.body.source_type_2,
-                    // "source_subtype_2" : req.body.source_subtype_2,
-                    // "source_name_2" : req.body.source_name_2,
-                    // "source_details_2" : req.body.source_details_2,
-                    // "source_type_3" : req.body.source_type_3,
-                    // "source_subtype_3" : req.body.source_subtype_3,
-                    // "source_name_3" : req.body.source_name_3,
-                    // "source_details_3" : req.body.source_details_3,
-                    // "source_type_4" : req.body.source_type_4,
-                    // "source_subtype_4" : req.body.source_subtype_4,
-                    // "source_name_4" : req.body.source_name_4,
-                    // "source_details_4" : req.body.source_details_4,
-                    // "source_type_5" : req.body.source_type_5,
-                    // "source_subtype_5" : req.body.source_subtype_5,
-                    // "source_name_5" : req.body.source_name_5,
-                    // "source_details_5" : req.body.source_details_5,
                     "files" : req.body.files,
                     "contacts" : req.body.contacts,
                     
-                    parties : partiesList, mps: missingList, locations: locationsList, events: eventsList, sites: sitesList,
+                    parties : partiesList, mps: missingList, locations: locationsList, events: eventsList, sites: sitesList, contactslist: contactsList, interviewslist: interviewsList, fileslist: filesList,
 
-                    "validationErrors" : errors
+                    "validationErrors" : result.mapped()
                 });
 
              } else {
@@ -1624,7 +1602,7 @@ router.post('/addevent', function(req, res){
                 
             }
           }
-            
+         });   
         } else { 
         res.render('index', { title: 'Login to Database'});
     }      
@@ -1642,9 +1620,9 @@ router.post('/addlocation', function(req, res){
             //req.check('location_latitude','Latitude should be xx.xxxxx').isDecimal;
             //req.check('location_longitude','Longitude should be xx.xxxxx').isDecimal;
 
-            var errors = req.validationErrors();
-            //var errors = req.getValidationResult();
-            if (errors) {
+            var errors = req.getValidationResult();
+            errors.then(function (result) {
+             if (!result.isEmpty()) {
                 res.render('newlocation', {
                     "_id":req.body._id,
                     "code":req.body.code,
@@ -1699,7 +1677,7 @@ router.post('/addlocation', function(req, res){
                     
                     parties : partiesList, mps: missingList, locations: locationsList, events: eventsList, sites: sitesList,
 
-                    "validationErrors" : errors
+                    "validationErrors" : result.mapped()
                 });
 
              } else {
@@ -2001,7 +1979,7 @@ router.post('/addlocation', function(req, res){
                 
             }
           }
-            
+         });   
         } else { 
         res.render('index', { title: 'Login to Database'});
     }      
@@ -2019,9 +1997,9 @@ router.post('/addsite', function(req, res){
             req.check('location_latitude','Latitude should be xx.xxxxx').isDecimal;
             req.check('location_longitude','Longitude should be xx.xxxxx').isDecimal;
 
-            var errors = req.validationErrors();
-            //var errors = req.getValidationResult();
-            if (errors) {
+            var errors = req.getValidationResult();
+            errors.then(function (result) {
+             if (!result.isEmpty()) {
                 res.render('newsite', {
                     "_id":req.body._id,
                     "code":req.body.code,
@@ -2074,9 +2052,9 @@ router.post('/addsite', function(req, res){
                     "files" : req.body.files,
                     "contacts" : req.body.contacts,
                     
-                    parties : partiesList, mps: missingList, locations: locationsList, events: eventsList, sites: sitesList,
+                    parties : partiesList, mps: missingList, locations: locationsList, events: eventsList, sites: sitesList, contactslist: contactsList, interviewslist: interviewsList, fileslist: filesList,
 
-                    "validationErrors" : errors
+                    "validationErrors" : result.mapped()
                 });
 
              } else {
@@ -2355,7 +2333,7 @@ router.post('/addsite', function(req, res){
                 
             }
           }
-            
+         });  
         } else { 
         res.render('index', { title: 'Login to Database'});
     }      
@@ -2373,9 +2351,9 @@ router.post('/addparty', function(req, res){
             req.check('hq_latitude','Latitude should be xx.xxxxx').isDecimal;
             req.check('hq_longitude','Longitude should be xx.xxxxx').isDecimal;
 
-            //var errors = req.validationErrors();
             var errors = req.getValidationResult();
-            if (errors) {
+            errors.then(function (result) {
+             if (!result.isEmpty()) {
                 res.render('newparty', {
                     "_id":req.body._id,
                     "code":req.body.code,
@@ -2393,7 +2371,7 @@ router.post('/addparty', function(req, res){
                     
                     parties : partiesList, mps: missingList, locations: locationsList, events: eventsList, sites: sitesList,
 
-                    "validationErrors" : errors
+                    "validationErrors" : result.mapped()
                 });
 
              } else {
@@ -2475,7 +2453,7 @@ router.post('/addparty', function(req, res){
                 
             }
           }
-            
+         });  
         } else { 
         res.render('index', { title: 'Login to Database'});
     }      
@@ -2491,9 +2469,9 @@ router.post('/addcontact', function(req, res){
             req.check('code', 'Code cannot be empty').notEmpty();
             //req.check('name_en', 'Name in English cannot be empty').notEmpty();
 
-            var errors = req.validationErrors();
-            //var errors = req.getValidationResult();
-            if (errors) {
+            var errors = req.getValidationResult();
+            errors.then(function (result) {
+             if (!result.isEmpty()) {
                 res.render('newcontact', {
                     "_id":req.body._id,
                     "code":req.body.code,
@@ -2534,7 +2512,7 @@ router.post('/addcontact', function(req, res){
                     
                     parties : partiesList, mps: missingList, locations: locationsList, events: eventsList, sites: sitesList,
 
-                    "validationErrors" : errors
+                    "validationErrors" : result.mapped()
                 });
 
              } else {
@@ -2717,7 +2695,7 @@ router.post('/addcontact', function(req, res){
                     });  
                 }
             }
-          
+         });
             
         } else { 
         res.render('index', { title: 'Login to Database'});
@@ -2772,9 +2750,9 @@ router.post('/addinterview', function(req, res){
                                 req.check('date_month', 'Month cannot be empty').notEmpty();
                                 req.check('date_year', 'Year cannot be empty').notEmpty();
     
-                                var errors = req.validationErrors();
-                                //var errors = req.getValidationResult();
-                                if (errors) {
+                                var errors = req.getValidationResult();
+                                errors.then(function (result) {
+                                 if (!result.isEmpty()) {
                                     res.render('newinterview', {
                                         "_id":req.body._id,
                                         "code":req.body.code,
@@ -2799,7 +2777,7 @@ router.post('/addinterview', function(req, res){
     
                                         parties : partiesList, mps: missingList, locations: locationsList, events: eventsList, sites: sitesList, contactslist: contactsList, interviewslist: interviewsList,
     
-                                        "validationErrors" : errors
+                                        "validationErrors" : result.mapped()
                                     });
     
                                     } else {
@@ -2945,7 +2923,8 @@ router.post('/addinterview', function(req, res){
                                             }
                                         });      
                                     }
-                                }                    
+                                } 
+                             });                    
                             });        
                         } else { 
                         res.render('index', { title: 'Login to Database'});
@@ -2974,9 +2953,9 @@ router.post('/addfile', function(req, res){
                         //req.check('file', 'File must be selected').notEmpty();
                         // req.checkBody('files', 'File must be selected').notEmpty();
 
-                        var errors = req.validationErrors();
-                        //var errors = req.getValidationResult();
-                        if (errors) {
+                        var errors = req.getValidationResult();
+                        errors.then(function (result) {
+                         if (!result.isEmpty()) {
                             res.render('newfile', {
                                 "_id":req.body._id,
                                 "code":req.body.code,
@@ -2998,7 +2977,7 @@ router.post('/addfile', function(req, res){
 
                                 parties : partiesList, mps: missingList, locations: locationsList, events: eventsList, sites: sitesList,
 
-                                "validationErrors" : errors
+                                "validationErrors" : result.mapped()
                             });
 
                          } else {
@@ -3174,7 +3153,7 @@ router.post('/addfile', function(req, res){
                                 });      
                             }
                         }
-
+                     });       
 
                     } else { 
                     res.render('index', { title: 'Login to Database'});
@@ -3599,7 +3578,7 @@ router.post('/removeFile', function(req,res){
         if ( err ) {
            console.log('ERROR: ' + err); 
         }
-        //update database
+        //update database either way
            var collection = db.collection(type);
 
            collection.deleteOne({code: req.body.code}, function(err, result){

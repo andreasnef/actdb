@@ -10,7 +10,6 @@ block content
      
   if validationErrors 
      each valError, i in validationErrors
-       li#valErrors_list_item
          p #{valError.msg}  
          
   if editprofile
@@ -47,33 +46,6 @@ block content
         - related_mps = value.related.mps
         - notes = value.notes
         - interviews = value.interviews
-        //- - sources = value.sources
-        //- each source, i in value.sources  
-        //-   if(i == 0)
-        //-     - source_type_1 = source.type
-        //-     - source_subtype_1 = source.subtype
-        //-     - source_name_1 = source.name
-        //-     - source_details_1 = source.details
-        //-   if(i == 1)
-        //-     - source_type_2 = source.type
-        //-     - source_subtype_2 = source.subtype
-        //-     - source_name_2 = source.name
-        //-     - source_details_2 = source.details
-        //-   if(i == 2)
-        //-     - source_type_3 = source.type
-        //-     - source_subtype_3 = source.subtype
-        //-     - source_name_3 = source.name
-        //-     - source_details_3 = source.details
-        //-   if(i == 3)
-        //-     - source_type_4 = source.type
-        //-     - source_subtype_4 = source.subtype
-        //-     - source_name_4 = source.name
-        //-     - source_details_4 = source.details
-        //-   if(i == 4)
-        //-     - source_type_5 = source.type
-        //-     - source_subtype_5 = source.subtype
-        //-     - source_name_5 = source.name
-        //-     - source_details_5 = source.details
         - contacts = value.contacts
         - files = value.files
         - reports = value.reports
@@ -123,7 +95,6 @@ block content
      
     div#wrapper 
      legend Location
-     br
      input#input_location_place(type="text", placeholder="Place", name="location_place", value=location_place)
      br
      span District
@@ -161,7 +132,6 @@ block content
      
     div#wrapper 
      legend Event Period
-     br
      span Beginning Date
      span &nbsp;
      select(name="date_beg_day", value=date_beg_day)
@@ -315,11 +285,9 @@ block content
     
     div#wrapper
      legend Groups Responsible
-     br
-     br
      if (parties)
         each party, i in parties
-            div.checkbox-inline(class="columns")
+            div(class="columns")
              if (groups_responsible && groups_responsible.includes(party.name.en))
               input.checkbox-input(type='checkbox', name="groups_responsible", value=party.name.en, checked)
               label #{party.name.en}
@@ -333,13 +301,13 @@ block content
               input.checkbox-input(type='checkbox', name="groups_responsible", value=party.name.en)
               label #{party.name.en}
      br
-     textarea#input_perpetrators_name(type="text", placeholder="Names of Reponsible Persons or Fractions within the group", cols="120" rows="10", name="groups_responsible_name", value=groups_responsible_name)
+     br
+     textarea#input_perpetrators_name(type="text", placeholder="Fractions within the group", cols="120" rows="10", name="groups_responsible_name", value=groups_responsible_name)
         | #{groups_responsible_name}
      br
      br 
     div#wrapper
      legend Related
-     br
      //span Related Events 
      a(href="#" onclick="return toggle_visibility('relatedEvents');") Related Events #{related_events} (click to modify)
     
@@ -453,10 +421,9 @@ block content
      
     div#wrapper 
      legend Sources
-     br
-     br
-     span Interviews
-     div#interviews
+     a(href="#" onclick="return toggle_visibility('interviews');") Interviews #{interviews} (click to modify)
+    
+     div#interviews(class='dropMenu')
         if(interviewslist)
                 table(id="interviewsList")
                  thead    
@@ -480,110 +447,7 @@ block content
 
      br
      br       
-    //-  span Other sources
-    //-  div#source1
-    //-     select#sources_1(name="source_type_1", value=source_type_1)
-    //-         - var types = ["Open Source","Closed Source"];
-    //-         option(value="") Select
-    //-         each type in types
-    //-          if(source_type_1 == type)
-    //-           option(value=type selected="selected") #{type}
-    //-          else
-    //-           option(value=type) #{type}  
-    //-     br
-    //-     input#input_subtype_source(type="text", placeholder="Type of Source", name="source_subtype_1", value=source_subtype_1)
-    //-     br
-    //-     input#input_name_source(type="text", placeholder="Name of Source", name="source_name_1", value=source_name_1)
-    //-     br
-    //-     textarea#input_details_source(type="text", placeholder="Details", cols="120" rows="10", name="source_details_1", value=source_details_1)
-    //-         | #{source_details_1}
 
-    //-     br
-    //-     br
-     
-    //-  div#source2
-    //-     select#sources_2(name="source_type_2", value=source_type_2)
-    //-         - var types = ["Open Source","Closed Source"];
-    //-         option(value="") Select
-    //-         each type in types
-    //-          if(source_type_2 == type)
-    //-             option(value=type selected="selected") #{type}
-    //-          else
-    //-             option(value=type) #{type}  
-    //-     br
-    //-     input#input_subtype_source(type="text", placeholder="Type of Source", name="source_subtype_2", value=source_subtype_2)
-    //-     br
-    //-     input#input_name_source(type="text", placeholder="Name of Source", name="source_name_2", value=source_name_2)
-    //-     br
-    //-     textarea#input_details_source(type="text", placeholder="Details", cols="120" rows="10", name="source_details_2", value=source_details_2)
-    //-         | #{source_details_2}
-
-    //-     br
-    //-     br
-
-    //-  div#source3
-    //-     select#sources_3(name="source_type_3", value=source_type_3)
-    //-         - var types = ["Open Source","Closed Source"];
-    //-         option(value="") Select
-    //-         each type in types
-    //-          if(source_type_3 == type)
-    //-             option(value=type selected="selected") #{type}
-    //-          else
-    //-             option(value=type) #{type}  
-
-    //-     br
-    //-     input#input_subtype_source(type="text", placeholder="Type of Source", name="source_subtype_3", value=source_subtype_3)
-    //-     br
-    //-     input#input_name_source(type="text", placeholder="Name of Source", name="source_name_3", value=source_name_3)
-    //-     br
-    //-     textarea#input_details_source(type="text", placeholder="Details", cols="120" rows="10", name="source_details_3", value=source_details_3)
-    //-         | #{source_details_3}
-
-    //-     br
-    //-     br
-
-    //-  div#source4
-    //-     select#sources_4(name="source_type_4", value=source_type_4)
-    //-         - var types = ["Open Source","Closed Source"];
-    //-         option(value="") Select
-    //-         each type in types
-    //-          if(source_type_4 == type)
-    //-             option(value=type selected="selected") #{type}
-    //-          else
-    //-             option(value=type) #{type}  
-        
-    //-     br
-    //-     input#input_subtype_source(type="text", placeholder="Type of Source", name="source_subtype_4", value=source_subtype_4)
-    //-     br
-    //-     input#input_name_source(type="text", placeholder="Name of Source", name="source_name_4", value=source_name_4)
-    //-     br
-    //-     textarea#input_details_source(type="text", placeholder="Details", cols="120" rows="10", name="source_details_4", value=source_details_4)
-    //-         | #{source_details_4}
-
-    //-     br
-    //-     br
- 
-    //-  div#source5
-    //-     select#sources_5(name="source_type_5", value=source_type_5)
-    //-         - var types = ["Open Source","Closed Source"];
-    //-         option(value="") Select
-    //-         each type in types
-    //-          if(source_type_5 == type)
-    //-             option(value=type selected="selected") #{type}
-    //-          else
-    //-             option(value=type) #{type}  
-        
-    //-     br
-    //-     input#input_subtype_source(type="text", placeholder="Type of Source", name="source_subtype_5", value=source_subtype_5)
-    //-     br
-    //-     input#input_name_source(type="text", placeholder="Name of Source", name="source_name_5", value=source_name_5)
-    //-     br
-    //-     textarea#input_details_source(type="text", placeholder="Details", cols="120" rows="10", name="source_details_5", value=source_details_5)
-    //-         | #{source_details_5}
-
-    //-     br 
-    //-     br 
-    
     div#wrapper 
       a(href="#" onclick="return toggle_visibility('relatedFiles');") Files #{files} (click to modify)
       
@@ -611,10 +475,12 @@ block content
     br
     br
     div#wrapper 
-     span Contacts
-     br
-     if (contactslist)
-      table(id="contactsList")
+     legend Contacts
+     a(href="#" onclick="return toggle_visibility('contacts');") Contacts #{contacts} (click to modify)
+    
+     div#contacts(class='dropMenu')
+      if (contactslist)
+       table(id="contactsList")
           thead    
             tr#headtag
                 th Select

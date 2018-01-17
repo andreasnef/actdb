@@ -11,7 +11,6 @@ block content
      
   if validationErrors 
      each valError, i in validationErrors
-       li#valErrors_list_item
          p #{valError.msg}  
          
   if editprofile
@@ -106,7 +105,6 @@ block content
   form#form_add_missing(name="addmissing", method="post", action="/addmissing")
     div#wrapper
      legend Add New missing
-     br
      if (_id)
         input#input_code(type="text", value=code, name="code" readonly)
         input#input_edit(type="hidden", value=_id, name="_id")
@@ -128,7 +126,6 @@ block content
     br
     div#wrapper 
      legend Personal Information
-     br
      span Name in Arabic
      br
      input#input_name_ar_first(type="text", placeholder="First", name="name_ar_first" value=name_ar_first)
@@ -387,7 +384,6 @@ block content
     br
     div#wrapper 
      legend Disappearance
-     br
      span Date
      br
      select(name="disappearance_date_day", value=disappearance_date_day)
@@ -575,7 +571,6 @@ block content
     br
     div#wrapper 
      legend Last Seen
-     br
      span Reported Last Seen
      br
      select#input_last_seen_reported(name="last_seen_reported", value=last_seen_reported)
@@ -672,7 +667,6 @@ block content
     br
     div#wrapper
      legend Itinerary Description
-     br
      textarea#input_itinerary(type="text", placeholder="Itinerary Description", cols="120" rows="10", name="itinerary", value=itinerary)
         | #{itinerary}
      br
@@ -682,7 +676,7 @@ block content
      span &nbsp;
      if (parties)
         each party, i in parties
-            div.checkbox-inline
+            div(class="columns")
              if (perpetrators && perpetrators.includes(party.name.en))
               input.checkbox-input(type='checkbox', name="perpetrators", value=party.name.en, checked)
               label #{party.name.en}
@@ -819,10 +813,9 @@ block content
 
     div#wrapper
      legend Sources
-     br
-     br
-     span Interviews
-     div#interviews
+     a(href="#" onclick="return toggle_visibility('interviews');") Interviews #{interviews} (click to modify)
+    
+     div#interviews(class='dropMenu')
         if(interviewslist)
                 table(id="interviewsList")
                  thead    
@@ -845,111 +838,7 @@ block content
                        td= moment(interview.date).utc().format('MMMM Do, YYYY')
 
      br
-     br       
-    //-  span Other sources
-    //-  br
-    //-  div#source1
-    //-     select#sources_1(name="source_type_1", value=source_type_1)
-    //-         - var types = ["Open Source","Closed Source"];
-    //-         option(value="") Select
-    //-         each type in types
-    //-          if(source_type_1 == type)
-    //-           option(value=type selected="selected") #{type}
-    //-          else
-    //-           option(value=type) #{type}  
-    //-     br
-    //-     input#input_subtype_source(type="text", placeholder="Type of Source", name="source_subtype_1", value=source_subtype_1)
-    //-     br
-    //-     input#input_name_source(type="text", placeholder="Name of Source", name="source_name_1", value=source_name_1)
-    //-     br
-    //-     textarea#input_details_source(type="text", placeholder="Details", cols="120" rows="10", name="source_details_1", value=source_details_1)
-    //-         | #{source_details_1}
-
-    //-     br
-    //-     br
-     
-    //-  div#source2
-    //-     select#sources_2(name="source_type_2", value=source_type_2)
-    //-         - var types = ["Open Source","Closed Source"];
-    //-         option(value="") Select
-    //-         each type in types
-    //-          if(source_type_2 == type)
-    //-             option(value=type selected="selected") #{type}
-    //-          else
-    //-             option(value=type) #{type}  
-    //-     br
-    //-     input#input_subtype_source(type="text", placeholder="Type of Source", name="source_subtype_2", value=source_subtype_2)
-    //-     br
-    //-     input#input_name_source(type="text", placeholder="Name of Source", name="source_name_2", value=source_name_2)
-    //-     br
-    //-     textarea#input_details_source(type="text", placeholder="Details", cols="120" rows="10", name="source_details_2", value=source_details_2)
-    //-         | #{source_details_2}
-
-    //-     br
-    //-     br
-
-    //-  div#source3
-    //-     select#sources_3(name="source_type_3", value=source_type_3)
-    //-         - var types = ["Open Source","Closed Source"];
-    //-         option(value="") Select
-    //-         each type in types
-    //-          if(source_type_3 == type)
-    //-             option(value=type selected="selected") #{type}
-    //-          else
-    //-             option(value=type) #{type}  
-
-    //-     br
-    //-     input#input_subtype_source(type="text", placeholder="Type of Source", name="source_subtype_3", value=source_subtype_3)
-    //-     br
-    //-     input#input_name_source(type="text", placeholder="Name of Source", name="source_name_3", value=source_name_3)
-    //-     br
-    //-     textarea#input_details_source(type="text", placeholder="Details", cols="120" rows="10", name="source_details_3", value=source_details_3)
-    //-         | #{source_details_3}
-
-    //-     br
-    //-     br
-
-    //-  div#source4
-    //-     select#sources_4(name="source_type_4", value=source_type_4)
-    //-         - var types = ["Open Source","Closed Source"];
-    //-         option(value="") Select
-    //-         each type in types
-    //-          if(source_type_4 == type)
-    //-             option(value=type selected="selected") #{type}
-    //-          else
-    //-             option(value=type) #{type}  
-        
-    //-     br
-    //-     input#input_subtype_source(type="text", placeholder="Type of Source", name="source_subtype_4", value=source_subtype_4)
-    //-     br
-    //-     input#input_name_source(type="text", placeholder="Name of Source", name="source_name_4", value=source_name_4)
-    //-     br
-    //-     textarea#input_details_source(type="text", placeholder="Details", cols="120" rows="10", name="source_details_4", value=source_details_4)
-    //-         | #{source_details_4}
-
-    //-     br
-    //-     br
- 
-    //-  div#source5
-    //-     select#sources_5(name="source_type_5", value=source_type_5)
-    //-         - var types = ["Open Source","Closed Source"];
-    //-         option(value="") Select
-    //-         each type in types
-    //-          if(source_type_5 == type)
-    //-             option(value=type selected="selected") #{type}
-    //-          else
-    //-             option(value=type) #{type}  
-        
-    //-     br
-    //-     input#input_subtype_source(type="text", placeholder="Type of Source", name="source_subtype_5", value=source_subtype_5)
-    //-     br
-    //-     input#input_name_source(type="text", placeholder="Name of Source", name="source_name_5", value=source_name_5)
-    //-     br
-    //-     textarea#input_details_source(type="text", placeholder="Details", cols="120" rows="10", name="source_details_5", value=source_details_5)
-    //-         | #{source_details_5}
-
-    //-     br 
-    //-     br        
+     br        
     div#wrapper 
       a(href="#" onclick="return toggle_visibility('relatedFiles');") Files #{files} (click to modify)
       
@@ -985,7 +874,6 @@ block content
     div#wrapper
      
      legend Lists
-     br
      span المعتقلون اللبنانيون في سوريا حسب اللائحة التي نشرتها السلطات اللبنانية في 16 كانون الأول 2000
      span &nbsp;
      select#select_lists_syria_2000(name="lists_syria_2000", value=lists_syria_2000)
@@ -1025,8 +913,6 @@ block content
     br
     div#wrapper
      legend Fushat Amal
-     br
-     br
      span Published
      br
      select#select_fushatamal_published(name="fushatamal_published", value=fushatamal_published)
@@ -1050,9 +936,11 @@ block content
     br
     div#wrapper 
      legend Contact Information
-     br
-     if (contactslist)
-      table(id="contactsList")
+     a(href="#" onclick="return toggle_visibility('contactslist');") Contacts #{contacts} (click to modify)
+    
+     div#contactslist(class='dropMenu')
+      if (contactslist)
+       table(id="contactsList")
           thead    
             tr#headtag
                 th Select

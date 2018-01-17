@@ -10,7 +10,6 @@ block content
      
   if validationErrors 
      each valError, i in validationErrors
-       li#valErrors_list_item
          p #{valError.msg}  
          
   if editprofile
@@ -22,8 +21,10 @@ block content
         - name_alt_name = value.name.alt_name
         - hq_place = value.hq.place
         - hq_description = value.hq.description
-        - hq_latitude = value.hq.coordinates[1]
-        - hq_longitude = value.hq.coordinates[0]
+        - if(value.hq.coordinates){
+          hq_latitude = value.hq.coordinates[1]
+          hq_longitude = value.hq.coordinates[0]
+        -  } 
         - color = value.color
         - flag_file = value.flag.file
         - documents = value.documents
@@ -50,7 +51,6 @@ block content
      
     div#wrapper 
      legend Headquarters
-     br
      input#input_location_place(type="text", placeholder="Place", name="hq_place", value=hq_place)
      br
      input#input_location_place(type="text", placeholder="Description", name="hq_description", value=hq_description)
@@ -64,15 +64,15 @@ block content
      
     div#wrapper 
      legend Areas of control
-     br
       //-  - console.dir(municipalities, { depth: null })
-     if (municipalities)
+     if (municipalities.features)
        each municipality, i in municipalities.features
-            div.checkbox-inline(class="columns")
-              input.checkbox-input(type='checkbox', name="control_areas", value=municipality.id)
+            div(class="columns")
+              input(type='checkbox', name="control_areas", value=municipality.id)
               label #{municipality.id} - #{municipality.properties.name} 
               
     
+    br
     div#wrapper 
      legend Pick a color
      br
