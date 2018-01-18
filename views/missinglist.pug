@@ -222,7 +222,8 @@ block content
                         td=missing.disappearance.place.district
                         td=missing.disappearance.place.governorate
                         if(missing.disappearance.date) 
-                            td=moment(missing.disappearance.date).format('MMMM DD, YYYY')
+                            td=moment(missing.disappearance.date, 'MMM DD YYYY').format('MMMM DD, YYYY')
+                            //td=missing.disappearance.date
                         else
                             td="Unknown"
 
