@@ -44,7 +44,6 @@ app.use(session({
   cookie: {
     path: "/",
     httpOnly: true,
-    secure: true,
     maxAge:  7200000  //2 hours
   },
   name: "id"
