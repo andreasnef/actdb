@@ -244,8 +244,8 @@ block content
             each file, i in value.files
              if(filesList)
                each fileProfile, i in filesList
-                  - if (file == fileProfile.code)name =  fileProfile.description
-                  - if (file == fileProfile.code)type =  fileProfile.type
+                  - if (file == fileProfile.code) name =  fileProfile.description
+                  - if (file == fileProfile.code) type =  fileProfile.type
              a(href="#" onclick="loadProfile('files','"+file+"');") #{type} - #{name} (#{file})
              br
       

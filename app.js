@@ -36,13 +36,23 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(expressValidator());
 
 app.use(express.static(path.join(__dirname, 'public')));
-//app.use(session({secret: "ewjdasnkqwiluyrfgbcnxaiureyfhbca", saveUninitialized: true, resave: true}));
 app.use(session({
-  secret: "ewjdasnkqwiluyrfgbcnxaiureyfhbca", 
+  secret: "ewjdasnkqwiluyrfgbcnxaiureyfhbca",
   saveUninitialized: false, 
   resave: false,
-  store: new MongoStore({ url: process.env.MONGODB_URI, ttl: 1 * 24 * 60 * 60 })
+  store: new MongoStore({ url: process.env.MONGODB_URI, ttl: 12 * 60 * 60 }),
+  cookie: {
+    path: "/",
+    httpOnly: true,
+    maxAge:  7200000  //2 hours
+  },
+  name: "id"
 }));
+//set cookie to secure in production env
+if (app.get('env') === 'production') {
+  app.set('trust proxy', 1) // trust first proxy
+  sess.cookie.secure = true // serve secure cookies
+}
 app.use('/', index);
 app.use('/users', users);
 

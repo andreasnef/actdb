@@ -11,6 +11,12 @@ var xl = require('excel4node');
 var multer  = require('multer');
 var fs = require("fs");
 var municipalities = require("../public/javascripts/lebanonAdministrative.js");
+var cloudinary = require('cloudinary');
+cloudinary.config({ 
+    cloud_name: 'hxxbdvyzc', 
+    api_key: '971837284457376', 
+    api_secret: 'q__oUqJiwGAcJhDoYl3zaQjEPx4'
+});
  
 var db;
 var collectionsList;
@@ -20,11 +26,9 @@ var eventsList;
 var sitesList;
 var sitesResult;
 var missingList;
-var missingResult;
 var contactsList;
 var interviewsList;
 var filesList;
-var profile;
 var filesArray = [];
 
 
@@ -55,7 +59,6 @@ router.post('/login', function(req, res){
     var ip = req.connection.remoteAddress;
     var date = new Date().toISOString();
     var MongoClient = mongodb.MongoClient;
-    //var url = 'mongodb://'+user+':'+pass+'@localhost:27017,localhost:27018,localhost:27019/Act?replicaSet=mongo-repl&authSource=admin';
     var url = 'mongodb://'+user+':'+pass+'@cluster0-shard-00-00-tey75.mongodb.net:27017,cluster0-shard-00-01-tey75.mongodb.net:27017,cluster0-shard-00-02-tey75.mongodb.net:27017/Act?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin';
 
     //Validate Fields
@@ -79,12 +82,26 @@ router.post('/login', function(req, res){
             });
         } else {
             console.log('User:'+user+' Connected to server');
+            console.log("session afer login: "+ req.sessionID);
             //Store the connection globally
             //db = client.db("Act");
             db = database;
             //save user in session
             req.session.user = user;
+            console.log("user:" + req.session.user);
             
+            //open change stream and record any changes
+            // const missingCollection = db.collection('missing');
+            // var changeStream = missingCollection.watch();
+            // changeStream.on("change", function(change) {
+            //     var newChange = {user: user, date: date, collection: change.ns.coll, operation: change.operationType, fullDocument: change.fullDocument, updateDescription: change.updateDescription};
+            //     db.collection('updates').insert([newChange],function(err,result){
+            //         if (err){
+            //             console.log(err)
+            //          }
+            //     });
+            //     console.log(newChange);
+            // });
             
             if(user != "public"){
                //save the login info in the db
@@ -144,8 +161,7 @@ function getLocations(user, callback){
             }
             callback();
         }); 
-        }    
-        
+        }
      } else { 
         res.render('index', { title: 'Login to Database'});
     }       
@@ -159,7 +175,6 @@ function getEvents(user, callback){
         }else{
          var eventsColl = db.collection('events');   
         } 
-
             eventsColl.find({},{_id:0,'name': 1, code: 1, type: 1, 'location.district':1, 'location.governorate': 1, 'dates.beg': 1, 'location.coordinates':1}).sort({'name.en':1}).toArray(function(err, result){
                 if (err){
                         res.send(err);
@@ -195,9 +210,9 @@ function getSites(user, callback){
 };
 
 /*retrieve list of Missing*/
-function getMissing(user, callback){
+function getMissing(session, callback){
     if (db) {
-        if (user == "public"){
+        if (session.user == "public"){
             var missingColl = db.collection('missing_public');
             missingColl.find({public: 'Yes'},{_id:0, 'name': 1, code: 1, 'disappearance.place': 1, 'disappearance.date': 1, 'location':1}).sort({'name.ar.last':1}).toArray(function(err, result){
                 if (err){
@@ -215,7 +230,7 @@ function getMissing(user, callback){
                         res.send(err);
                 } else {
                         missingList = result;
-                        missingResult = result;
+                        session.missingResult = result;
                 }
                 callback();
             });
@@ -346,7 +361,6 @@ function calcLastRecord(list, type){
         
     }else {
         list.forEach(function(doc) {
-            //console.log("doc: "+JSON.stringify(doc))
             number = parseInt(doc.code.match(/[a-zA-Z]+|[0-9]+/g)[1])
             numbers.push(number); 
         })
@@ -384,8 +398,6 @@ function updateRelated(collection, codeUpdate, codePush, field){
             collection.update({code: codeUpdate}, {$push: {'interviews': codePush}}, function(err, result){
                 if (err) console.log ("error :"+err);
                 if (typeof codeUpdate == "String") console.log(codeUpdate +"is string");
-                console.log(codeUpdate);
-                console.log(codePush);
             });      
         } else if(field == "files"){
             collection.update({code: codeUpdate}, {$push: {'files': codePush}}, function(err, result){
@@ -469,7 +481,6 @@ function createFileRecord(req, contactCode, relEvents, relSites, relLocations, r
                     });
                 } else {
                     newFiles.push("FILE"+newcode);
-                    //console.log("newFiles"+newFiles);
                 }
              });                    
         });
@@ -480,9 +491,11 @@ function createFileRecord(req, contactCode, relEvents, relSites, relLocations, r
 
 /* GET list of missing */
 router.get('/missing', function(req, res){
+    console.log("session afer login: "+ req.sessionID);
+    console.log("user:" + req.session.user);
     if (req.session.user){
         async.parallel([
-            getMissing.bind(null, req.session.user),
+            getMissing.bind(null, req.session),
             getEvents.bind(null, req.session.user),
             getLocations.bind(null, req.session.user),
             getParties,
@@ -747,7 +760,7 @@ router.get('/profile', function(req, res){
             if (err){
                 res.send(err);
             } else if (result.length) {
-                profile = result;
+                req.session.profile = result;
                 res.render(req.query.type+'profile', {    
                     "profile" : result,
                     "user" : req.session.user,
@@ -762,8 +775,7 @@ router.get('/profile', function(req, res){
             } else {
                 res.send('No data found');
             }
-            }); 
-        
+            });  
     } else {
             res.render('index', { title: 'Login to Database'});
     }       
@@ -773,7 +785,7 @@ router.get('/profile', function(req, res){
 router.get('/newprofile', function(req, res){
     if (req.session.user){  
         async.parallel([
-            getMissing.bind(null, req.session.user),
+            getMissing.bind(null, req.session),
             getEvents.bind(null, req.session.user),
             getLocations.bind(null, req.session.user),
             getParties,
@@ -786,11 +798,10 @@ router.get('/newprofile', function(req, res){
                 return console.error(err);
             }
             var type = req.query.type;
-            //console.log(municipalities)
             if (req.query.nextrecord){
                 res.render('new'+type, { title: 'Add New '+type, nextrecord : req.query.nextrecord, parties : partiesList, mps: missingList, locations: locationsList, events: eventsList, sites: sitesList, contactslist: contactsList, interviewslist: interviewsList, fileslist: filesList, municipalities : municipalities});
             } else {
-                res.render('new'+type, { title: 'Edit '+type, editprofile : profile, parties : partiesList, mps: missingList, locations: locationsList, events: eventsList, sites: sitesList, contactslist: contactsList, interviewslist: interviewsList, fileslist: filesList, municipalities : municipalities});
+                res.render('new'+type, { title: 'Edit '+type, editprofile : req.session.profile, parties : partiesList, mps: missingList, locations: locationsList, events: eventsList, sites: sitesList, contactslist: contactsList, interviewslist: interviewsList, fileslist: filesList, municipalities : municipalities});
             }
         });
     } else {
@@ -803,9 +814,7 @@ function dateConverter(day, month, year) {
                 if (year != ""){ 
                     if (day == ""){day = "01"};
                     if (month == "") {month = "01"};
-                    //date = new Date('"'+year+'-'+month+'-'+day+'"').toISOString();
                     date = new Date(Date.UTC(year, month-1, day));
-                    //console.log("date :" +date);
                 };
                 return date;
 };
@@ -815,8 +824,8 @@ function dateConverter(day, month, year) {
 router.post('/addmissing', function(req, res){
         if (db) {
             var collection = db.collection('missing');
+            var profile = req.session.profile;
             
-
             function ageCalculator(age, birth, disapp){
                 if (age && age == "" && birth && birth!="" && disapp && disapp !=""){
                     var thisYear = 0;
@@ -1030,9 +1039,7 @@ router.post('/addmissing', function(req, res){
                 if (profile[0].fushatamal.auth_relationship!= req.body.fushatamal_auth_relationship) updateVal['fushatamal.auth_relationship'] =  req.body.fushatamal_auth_relationship
                 if (profile[0].contacts!=contacts) updateVal['contacts'] = contacts
                     
-                  
-
-                collection.update({_id: profile[0]._id}, {$set: updateVal}, function(err, result){
+                collection.update({code: profile[0].code}, {$set: updateVal}, function(err, result){
                 
                 if (err){
                     console.log ("error :"+err);
@@ -1105,14 +1112,11 @@ router.post('/addmissing', function(req, res){
                     }
                     profile = null;
                     res.redirect('/missing');
-                    
-                    
                 }
                });
                 
              /*if its an insert*/    
              } else{
-                
                 var missingnew = {
                                 "code" : req.body.code,
                                 "public": req.body.public,
@@ -1224,8 +1228,6 @@ router.post('/addmissing', function(req, res){
                     }
                     if (relLocations) {
                         relLocations.forEach( function (e){
-                            console.log(e);
-                            console.log(req.body.code);
                             updateRelated("locations", e, req.body.code, "mps");
                         });
                     }
@@ -1267,6 +1269,7 @@ router.post('/addmissing', function(req, res){
 router.post('/addevent', function(req, res){
         if (db) {
             var collection = db.collection('events');
+            var profile = req.session.profile;
             
             //Validate Fields
             req.check('code', 'Code cannot be empty').notEmpty();
@@ -1378,37 +1381,10 @@ router.post('/addevent', function(req, res){
                 if (profile[0].related.mps!= relMPs) updateVal['related.mps'] = relMPs
                 if (profile[0].notes!= req.body.notes) updateVal['notes'] =  req.body.notes
                 if (profile[0].interviews!= interviews) updateVal['interviews'] = interviews
-                // var sourcesBody = [{
-                //     "type": req.body.source_type_1,
-                //     "subtype" : req.body.source_subtype_1,
-                //     "name" : req.body.source_name_1,
-                //     "details" : req.body.source_details_1
-                // },{
-                //     "type": req.body.source_type_2,
-                //     "subtype" : req.body.source_subtype_2,
-                //     "name" : req.body.source_name_2,
-                //     "details" : req.body.source_details_2
-                // },{
-                //     "type": req.body.source_type_3,
-                //     "subtype" : req.body.source_subtype_3,
-                //     "name" : req.body.source_name_3,
-                //     "details" : req.body.source_details_3
-                // },{
-                //     "type": req.body.source_type_4,
-                //     "subtype" : req.body.source_subtype_4,
-                //     "name" : req.body.source_name_4,
-                //     "details" : req.body.source_details_4
-                // },{
-                //     "type": req.body.source_type_5,
-                //     "subtype" : req.body.source_subtype_5,
-                //     "name" : req.body.source_name_5,
-                //     "details" : req.body.source_details_5
-                // }]
-                // if (profile[0].sources!= sourcesBody) updateVal['sources'] =  sourcesBody
                 if (profile[0].contacts!=contacts) updateVal['contacts'] = contacts
                 if (profile[0].files!=files) updateVal['files'] = files
 
-                collection.update({_id: profile[0]._id}, {$set: updateVal}, function(err, result){
+                collection.update({code: profile[0].code}, {$set: updateVal}, function(err, result){
                 
                 if (err){
                     console.log ("error :"+err);
@@ -1481,8 +1457,6 @@ router.post('/addevent', function(req, res){
                     }
                     profile = null;
                     res.redirect('/events');
-                    
-                    
                 }
                });
                 
@@ -1526,32 +1500,6 @@ router.post('/addevent', function(req, res){
                                 },
                                 "notes" : req.body.notes,
                                 "interviews" : interviews,
-                                // "sources" : [{
-                                //     "type": req.body.source_type_1,
-                                //     "subtype" : req.body.source_subtype_1,
-                                //     "name" : req.body.source_name_1,
-                                //     "details" : req.body.source_details_1
-                                // },{
-                                //     "type": req.body.source_type_2,
-                                //     "subtype" : req.body.source_subtype_2,
-                                //     "name" : req.body.source_name_2,
-                                //     "details" : req.body.source_details_2
-                                // },{
-                                //     "type": req.body.source_type_3,
-                                //     "subtype" : req.body.source_subtype_3,
-                                //     "name" : req.body.source_name_3,
-                                //     "details" : req.body.source_details_3
-                                // },{
-                                //     "type": req.body.source_type_4,
-                                //     "subtype" : req.body.source_subtype_4,
-                                //     "name" : req.body.source_name_4,
-                                //     "details" : req.body.source_details_4
-                                // },{
-                                //     "type": req.body.source_type_5,
-                                //     "subtype" : req.body.source_subtype_5,
-                                //     "name" : req.body.source_name_5,
-                                //     "details" : req.body.source_details_5
-                                // }],
                                 "contacts" : contacts,    
                                 "files" : files
                              };
@@ -1599,7 +1547,6 @@ router.post('/addevent', function(req, res){
                     res.redirect('/events');
                 }
               });
-                
             }
           }
          });   
@@ -1613,12 +1560,11 @@ router.post('/addevent', function(req, res){
 router.post('/addlocation', function(req, res){
         if (db) {
             var collection = db.collection('locations');
+            var profile = req.session.profile;
             
             //Validate Fields
             req.check('code', 'Code cannot be empty').notEmpty();
             req.check('name_en', 'Name in English cannot be empty').notEmpty();
-            //req.check('location_latitude','Latitude should be xx.xxxxx').isDecimal;
-            //req.check('location_longitude','Longitude should be xx.xxxxx').isDecimal;
 
             var errors = req.getValidationResult();
             errors.then(function (result) {
@@ -1652,26 +1598,6 @@ router.post('/addlocation', function(req, res){
                     "related_mps" : req.body.related_mps,
                     "notes" : req.body.notes,
                     "interviews" : req.body.interviews,
-                    // "source_type_1" : req.body.source_type_1,
-                    // "source_subtype_1" : req.body.source_subtype_1,
-                    // "source_name_1" : req.body.source_name_1,
-                    // "source_details_1" : req.body.source_details_1,
-                    // "source_type_2" : req.body.source_type_2,
-                    // "source_subtype_2" : req.body.source_subtype_2,
-                    // "source_name_2" : req.body.source_name_2,
-                    // "source_details_2" : req.body.source_details_2,
-                    // "source_type_3" : req.body.source_type_3,
-                    // "source_subtype_3" : req.body.source_subtype_3,
-                    // "source_name_3" : req.body.source_name_3,
-                    // "source_details_3" : req.body.source_details_3,
-                    // "source_type_4" : req.body.source_type_4,
-                    // "source_subtype_4" : req.body.source_subtype_4,
-                    // "source_name_4" : req.body.source_name_4,
-                    // "source_details_4" : req.body.source_details_4,
-                    // "source_type_5" : req.body.source_type_5,
-                    // "source_subtype_5" : req.body.source_subtype_5,
-                    // "source_name_5" : req.body.source_name_5,
-                    // "source_details_5" : req.body.source_details_5,
                     "files" : req.body.files,
                     "contacts" : req.body.contacts,
                     
@@ -1743,37 +1669,10 @@ router.post('/addlocation', function(req, res){
                 if (profile[0].related.mps!= relMPs) updateVal['related.mps'] = relMPs
                 if (profile[0].notes!= req.body.notes) updateVal['notes'] =  req.body.notes
                 if (profile[0].interviews!= interviews) updateVal['interviews'] = interviews
-                // var sourcesBody = [{
-                //     "type": req.body.source_type_1,
-                //     "subtype" : req.body.source_subtype_1,
-                //     "name" : req.body.source_name_1,
-                //     "details" : req.body.source_details_1
-                // },{
-                //     "type": req.body.source_type_2,
-                //     "subtype" : req.body.source_subtype_2,
-                //     "name" : req.body.source_name_2,
-                //     "details" : req.body.source_details_2
-                // },{
-                //     "type": req.body.source_type_3,
-                //     "subtype" : req.body.source_subtype_3,
-                //     "name" : req.body.source_name_3,
-                //     "details" : req.body.source_details_3
-                // },{
-                //     "type": req.body.source_type_4,
-                //     "subtype" : req.body.source_subtype_4,
-                //     "name" : req.body.source_name_4,
-                //     "details" : req.body.source_details_4
-                // },{
-                //     "type": req.body.source_type_5,
-                //     "subtype" : req.body.source_subtype_5,
-                //     "name" : req.body.source_name_5,
-                //     "details" : req.body.source_details_5
-                // }]
-                // if (profile[0].sources!= sourcesBody) updateVal['sources'] =  sourcesBody
                 if (profile[0].files!= files) updateVal['files'] = files
                 if (profile[0].contacts!=contacts) updateVal['contacts'] = contacts
 
-                collection.update({_id: profile[0]._id}, {$set: updateVal}, function(err, result){
+                collection.update({code: profile[0].code}, {$set: updateVal}, function(err, result){
                 
                 if (err){
                     console.log ("error :"+err);
@@ -1858,8 +1757,6 @@ router.post('/addlocation', function(req, res){
                     }
                     profile = null;
                     res.redirect('/locations');
-                    
-                    
                 }
                });
                 
@@ -1903,32 +1800,6 @@ router.post('/addlocation', function(req, res){
                                 },
                                 "notes" : req.body.notes,
                                 "interviews" : req.body.interviews,
-                                // "sources" : [{
-                                //     "type": req.body.source_type_1,
-                                //     "subtype" : req.body.source_subtype_1,
-                                //     "name" : req.body.source_name_1,
-                                //     "details" : req.body.source_details_1
-                                // },{
-                                //     "type": req.body.source_type_2,
-                                //     "subtype" : req.body.source_subtype_2,
-                                //     "name" : req.body.source_name_2,
-                                //     "details" : req.body.source_details_2
-                                // },{
-                                //     "type": req.body.source_type_3,
-                                //     "subtype" : req.body.source_subtype_3,
-                                //     "name" : req.body.source_name_3,
-                                //     "details" : req.body.source_details_3
-                                // },{
-                                //     "type": req.body.source_type_4,
-                                //     "subtype" : req.body.source_subtype_4,
-                                //     "name" : req.body.source_name_4,
-                                //     "details" : req.body.source_details_4
-                                // },{
-                                //     "type": req.body.source_type_5,
-                                //     "subtype" : req.body.source_subtype_5,
-                                //     "name" : req.body.source_name_5,
-                                //     "details" : req.body.source_details_5
-                                // }],
                                 "contacts" : contacts,
                                 "files" : files
                              };
@@ -1990,6 +1861,7 @@ router.post('/addlocation', function(req, res){
 router.post('/addsite', function(req, res){
         if (db) {
             var collection = db.collection('sites');
+            var profile = req.session.profile;
             
             //Validate Fields
             req.check('code', 'Code cannot be empty').notEmpty();
@@ -2092,7 +1964,7 @@ router.post('/addsite', function(req, res){
               if (!interviews) interviews = [];
                  
               /*if its an edit*/
-              if (req.body._id){    
+              if (req.body._id){     
                 var updateVal = {};                                                     
                 if (profile[0].name.ar!= req.body.name_ar) updateVal['name.ar'] =  req.body.name_ar
                 if (profile[0].name.en!= req.body.name_en) updateVal['name.en'] =  req.body.name_en
@@ -2138,9 +2010,8 @@ router.post('/addsite', function(req, res){
                 if (profile[0].files!= files) updateVal['files'] = files
                 if (profile[0].contacts!=contacts) updateVal['contacts'] = contacts
                 if (profile[0].notes!= req.body.notes) updateVal['notes'] =  req.body.notes  
-                  
-                collection.update({_id: profile[0]._id}, {$set: updateVal}, function(err, result){
-                
+                //collection.update({_id: profile[0]._id}, {$set: updateVal}, function(err, result){
+                collection.update({code: profile[0].code}, {$set: updateVal}, function(err, result){
                 if (err){
                     console.log ("error :"+err);
                     res.render('newsite', {
@@ -2344,6 +2215,7 @@ router.post('/addsite', function(req, res){
 router.post('/addparty', function(req, res){
         if (db) {
             var collection = db.collection('parties');
+            var profile = req.session.profile;
             
             //Validate Fields
             req.check('code', 'Code cannot be empty').notEmpty();
@@ -2403,7 +2275,7 @@ router.post('/addparty', function(req, res){
                 if (profile[0].flag.file!= req.body.flag_file) updateVal['flag.file'] =  req.body.flag_file
                 if (profile[0].documents!= req.body.documents) updateVal['documents'] =  req.body.documents  
                   
-                collection.update({_id: profile[0]._id}, {$set: updateVal}, function(err, result){
+                collection.update({code: profile[0].code}, {$set: updateVal}, function(err, result){
                 
                 if (err){
                     console.log ("error :"+err);
@@ -2414,8 +2286,6 @@ router.post('/addparty', function(req, res){
                 }else {
                     profile = null;
                     res.redirect('/parties');
-                    
-                    
                 }
                });
                 
@@ -2450,7 +2320,6 @@ router.post('/addparty', function(req, res){
                     res.redirect('/parties');
                 }
               });
-                
             }
           }
          });  
@@ -2464,6 +2333,7 @@ router.post('/addparty', function(req, res){
 router.post('/addcontact', function(req, res){
         if (db) {
             var collection = db.collection('contacts');
+            var profile = req.session.profile;
             
             //Validate Fields
             req.check('code', 'Code cannot be empty').notEmpty();
@@ -2516,7 +2386,6 @@ router.post('/addcontact', function(req, res){
                 });
 
              } else {
-                 
                 var relEvents = req.body.related_events;
                 var relSites = req.body.related_sites;
                 var relLocations = req.body.related_locations;
@@ -2570,7 +2439,7 @@ router.post('/addcontact', function(req, res){
                     if (profile[0].contacted_act!= req.body.contacted_act) updateVal['contacted_act'] =  req.body.contacted_act
                     if (profile[0].notes!= req.body.notes) updateVal['notes'] =  req.body.notes
                     
-                    collection.update({_id: profile[0]._id}, {$set: updateVal}, function(err, result){
+                    collection.update({code: profile[0].code}, {$set: updateVal}, function(err, result){
                         if (err){
                             console.log ("error :"+err);
                             res.render('newcontact', {
@@ -2743,6 +2612,7 @@ router.post('/addinterview', function(req, res){
                             createFileRecord (req, contactCode, relEvents, relSites, relLocations, relMPs, function(){
                                 //then for the interviews record
                                 var collection = db.collection('interviews');
+                                var profile = req.session.profile;
                             
                                 //Validate Fields
                                 req.check('code', 'Code cannot be empty').notEmpty();
@@ -2809,7 +2679,7 @@ router.post('/addinterview', function(req, res){
                                         if (profile[0].related.locations!= relLocations) updateVal['related.locations'] = relLocations
                                         if (profile[0].related.mps!= relMPs) updateVal['related.mps'] = relMPs
     
-                                        collection.update({_id: profile[0]._id}, {$set: updateVal}, function(err, result){
+                                        collection.update({code: profile[0].code}, {$set: updateVal}, function(err, result){
                                             if (err){
                                                 console.log ("error :"+err);
                                                 res.render('newinterview', {
@@ -2936,8 +2806,11 @@ router.post('/addinterview', function(req, res){
 });
 
 /*INSERT or UPDATE File*/
-router.post('/addfile', function(req, res){            
-        upload(req,res,function(err) {
+router.post('/addfile', function(req, res){
+    upload(req,res,function(err) {
+        //console.log(req.files);
+        //console.log(req.files.path+req.files.originalname);
+        //cloudinary.uploader.upload(req.files.path+req.files.originalname, function(result) { console.log(result) })    
             if(err) {
                 console.log(err);
                 return res.end("Error uploading file.");
@@ -2947,6 +2820,7 @@ router.post('/addfile', function(req, res){
                     //then insert in database
                     if (db) {
                         var collection = db.collection('files');
+                        var profile = req.session.profile;
 
                         //Validate Fields
                         req.check('code', 'Code cannot be empty').notEmpty();
@@ -2981,7 +2855,6 @@ router.post('/addfile', function(req, res){
                             });
 
                          } else {
-
                             var relEvents = req.body.related_events;
                             var relSites = req.body.related_sites;
                             var relLocations = req.body.related_locations;
@@ -3026,7 +2899,7 @@ router.post('/addfile', function(req, res){
                                     updateVal['file'] =  oldFiles    
                                 } 
 
-                                collection.update({_id: profile[0]._id}, {$set: updateVal}, function(err, result){
+                                collection.update({code: profile[0].code}, {$set: updateVal}, function(err, result){
                                     if (err){
                                         console.log ("error :"+err);
                                         res.render('newfile', {
@@ -3249,7 +3122,7 @@ router.post('/searchmissing', function(req, res){
                 if (err){
                         res.send(err);
                 } else{
-                        missingResult = result;
+                        req.session.missingResult = result;
                         res.render('missinglist', {
                         "collList" : result,
                         parties : partiesList,
@@ -3347,6 +3220,7 @@ router.post('/export', function(req, res){
     var substringDate = "date";
     
     //loop the resultArray
+    var missingResult = req.session.missingResult;
     Object.keys(missingResult).forEach(function(record) {
         var recordObject = missingResult[record];
         column = 1;
@@ -3359,7 +3233,6 @@ router.post('/export', function(req, res){
             if (key== "_id"){ //ignore
             }else if (keyValue == "[object Object]"){
                 ws.cell(1,column).string(key).style(style);
-                //console.log(JSON.stringify(keyValue));
                 ws.cell(line,column).string(JSON.stringify(keyValue)).style(style);
                //if the value had nested / child values ([object Object]) we loop it
 //                Object.keys(keyValue).forEach(function(child) {
@@ -3470,7 +3343,6 @@ router.post('/uploadPicture',function(req,res){
     }
     })
     
-    
     var upload = multer({ storage : storage}).any();
 
     upload(req,res,function(err) {
@@ -3493,7 +3365,7 @@ router.post('/uploadPicture',function(req,res){
                             console.log ("error :"+err);
                         }else {
                                 res.render('missinglist', {
-                                "collList" : missingResult,
+                                "collList" : req.session.missingResult,
                                 parties : partiesList,
                                 title: "List of Missing People",
                                 nextrecord : nextrecord,
@@ -3560,10 +3432,6 @@ router.post('/deleteEntry', function (req,res){
                }
             res.redirect('/'+req.body.collection);   
         }
-        // var cursor = collection.aggregate([
-        //     { $changeStream: { fullDocument: 'updateLookup' } }
-        // ]);
-        // console.log(cursor);    
     }); 
 
 });
