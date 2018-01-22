@@ -44,15 +44,16 @@ app.use(session({
   cookie: {
     path: "/",
     httpOnly: true,
+    secure: true,
     maxAge:  7200000  //2 hours
   },
   name: "id"
 }));
 //set cookie to secure in production env
-if (app.get('env') === 'production') {
-  app.set('trust proxy', 1) // trust first proxy
-  session.cookie.secure = true // serve secure cookies
-}
+// if (app.get('env') === 'production') {
+//   app.set('trust proxy', 1) // trust first proxy
+//   session.cookie.secure = true // serve secure cookies
+// }
 app.use('/', index);
 app.use('/users', users);
 
