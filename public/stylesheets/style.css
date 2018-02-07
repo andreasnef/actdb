@@ -93,6 +93,9 @@ a:hover {
 
 .menu {background-color: #e7e7e7; color: black;} /* Gray */
 .menu:hover {background: #ddd;}
+.login {margin-left: 25px;}
+
+/* .user:hover {background-color: #cc0000;} */
 
 #wrapper {
     background-color: #f2f2f2;
@@ -149,7 +152,8 @@ span {
 }
 
 .columns {
-    column-count: 3;
+    display:inline-block;
+    width:23em;
 }
 
 #map {
@@ -160,26 +164,49 @@ span {
     display: none; 
 }
 
+#login {
+    position:fixed;
+    top: 20%;
+    left: 40%;
+}
 /*Logout Styles*/
 #logout {
     border:none;
 }
 
 /*Add*/
-/*
+
 #relatedEvents {
     display: none;
 }
-*/
 #relatedSites {
     display: none;
 }
-#relatedLocations {
+/* #relatedLocations {
     display: none;
-}
-#relatedMps {
+} */
+/* #relatedMps {
     display: none;
-}
+} */
+
+/* Add source */
+#name {display: none;}
+#title {display: none;}
+#focus {display: none;}
+#location {display: none;}
+#subtype {display: none;}
+#date {display: none;}
+#duration {display: none;}
+#field_visit_number {display: none;}
+#attendant {display: none;}
+#related {display: none;}
+#notes {display: none;}
+#author {display: none;}
+#publication {display: none;}
+#production {display: none;}
+#fileUpload {display: none;}
+#interviewee {display: none;}
+#interviewer {display: none;}
 
 #map { height: 600px; }
 
