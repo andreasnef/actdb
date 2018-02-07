@@ -7,16 +7,16 @@ var MongoStore = require('connect-mongo')(session);
 var bodyParser = require('body-parser');
 var validator = require('express-validator');
 var async = require('async');
-var xl = require('excel4node');
 var multer  = require('multer');
 var fs = require("fs");
-var municipalities = require("../public/javascripts/lebanonAdministrative.js");
 var cloudinary = require('cloudinary');
 cloudinary.config({ 
     cloud_name: 'hxxbdvyzc', 
     api_key: '971837284457376', 
     api_secret: 'q__oUqJiwGAcJhDoYl3zaQjEPx4'
 });
+var municipalities = require("../public/javascripts/lebanonAdministrative.js");
+//var functions = require("./functions.js")();
  
 var db;
 var collectionsList;
@@ -24,13 +24,9 @@ var partiesList;
 var locationsList;
 var eventsList;
 var sitesList;
-var sitesResult;
 var missingList;
 var contactsList;
-var interviewsList;
-var filesList;
-var filesArray = [];
-
+var sourcesList;
 
 var relPath = __dirname +"/../public/files/";
 var storage = multer.diskStorage({
@@ -59,6 +55,7 @@ router.post('/login', function(req, res){
     var ip = req.connection.remoteAddress;
     var date = new Date().toISOString();
     var MongoClient = mongodb.MongoClient;
+    //var url = 'mongodb://'+user+':'+pass+'@localhost:27017,localhost:27018,localhost:27019/Act?replicaSet=mongo-repl&authSource=admin';
     var url = 'mongodb://'+user+':'+pass+'@cluster0-shard-00-00-tey75.mongodb.net:27017,cluster0-shard-00-01-tey75.mongodb.net:27017,cluster0-shard-00-02-tey75.mongodb.net:27017/Act?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin';
 
     //Validate Fields
@@ -81,8 +78,6 @@ router.post('/login', function(req, res){
                 "errormessage" : err
             });
         } else {
-            console.log('User:'+user+' Connected to server');
-            console.log("session afer login: "+ req.sessionID);
             //Store the connection globally
             //db = client.db("Act");
             db = database;
@@ -90,7 +85,7 @@ router.post('/login', function(req, res){
             req.session.user = user;
             console.log("user:" + req.session.user);
             
-            //open change stream and record any changes
+            // //open change stream and record any changes
             // const missingCollection = db.collection('missing');
             // var changeStream = missingCollection.watch();
             // changeStream.on("change", function(change) {
@@ -257,30 +252,14 @@ function getContacts(callback){
     }         
 };
 
-function getInterviews(callback){ 
+function getSources(callback){ 
     if (db) {
-        var interviewsColl = db.collection('interviews');
-        interviewsColl.find({},{'interviewee': 1, code: 1, subject:1, date:1}).sort({'code':1}).toArray(function(err, result){
+        var filesColl = db.collection('sources');
+        filesColl.find({},{_id:1, code: 1, type:1, subtype:1, file: 1, date:1}).sort({'code':1}).toArray(function(err, result){
             if (err){
                     res.send(err);
             } else {
-                    interviewsList = result;
-            }
-            callback();
-        });
-     } else { 
-        res.render('index', { title: 'Login to Database'});
-    }         
-};
-
-function getFiles(callback){ 
-    if (db) {
-        var filesColl = db.collection('files');
-        filesColl.find({},{code: 1, description:1, type:1, file: 1, date:1}).sort({'code':1}).toArray(function(err, result){
-            if (err){
-                    res.send(err);
-            } else {
-                    filesList = result;
+                    sourcesList = result;
             }
             callback();
         });
@@ -291,23 +270,23 @@ function getFiles(callback){
 
 function renameFile(files, relPath, code, callback){
     var newName;
+    var filesArray = [];
     files.forEach( function(f) {
         newName = code+'-'+f.originalname
         filesArray.push(newName);
-        fs.rename(relPath +f.filename, relPath+newName, function(err) {
+        fs.rename(relPath +f.filename, relPath +newName, function(err) {
             if ( err ) {
                 console.log('ERROR: ' + err); 
             } 
         });    
     });
-    callback();
+    return callback(filesArray);
 };
 
 function calcLastRecord(list, type){
     var numbers = [];
     var number;
     var nextrecord;
-    
     if (type == "locations"){
         var barracks = [];
         var sbarracks = [];
@@ -318,6 +297,7 @@ function calcLastRecord(list, type){
         var centers = [];
         var scenters = [];
         var icenters = [];
+        
         list.forEach(function(doc) {
             if (doc.code.match(/[a-zA-Z]+|[0-9]+/g)[0] == "B"){
                 number = parseInt(doc.code.match(/[a-zA-Z]+|[0-9]+/g)[1])
@@ -394,16 +374,11 @@ function updateRelated(collection, codeUpdate, codePush, field){
             collection.update({code: codeUpdate}, {$push: {'contacts': codePush}}, function(err, result){
                 if (err) console.log ("error :"+err);
             });      
-        } else if(field == "interviews"){
-            collection.update({code: codeUpdate}, {$push: {'interviews': codePush}}, function(err, result){
-                if (err) console.log ("error :"+err);
-                if (typeof codeUpdate == "String") console.log(codeUpdate +"is string");
-            });      
-        } else if(field == "files"){
-            collection.update({code: codeUpdate}, {$push: {'files': codePush}}, function(err, result){
+        } else if(field == "sources"){
+            collection.update({code: codeUpdate}, {$push: {'sources': codePush}}, function(err, result){
                 if (err) console.log ("error :"+err);
             });      
-        }
+        } 
         
     } else { 
         res.render('index', { title: 'Login to Database'});
@@ -446,53 +421,34 @@ function removeRelated(collection, codeUpdate, codePush, field){
     
 };
 
-function createFileRecord(req, contactCode, relEvents, relSites, relLocations, relMPs, callback) {
-    if(filesArray.length>0){
-        var newFiles = [];
-        var lastcode = calcLastRecord(filesList, "files");
-        var i = -1;
-        filesArray.forEach(function (f){
-            i = i+1;
-            var newcode =  lastcode+i; 
-            var filenew = {
-                "code" : "FILE"+newcode,
-                "type": "Interview",
-                "description": "Interview "+req.body.code,
-                "file" : f,
-                "date" : dateConverter(req.body.date_day,req.body.date_month, req.body.date_year),
-                "format" : req.body.format,
-                "language" : req.body.language,
-                "notes": req.body.notes,
-                "contacts": [contactCode],
-                "interviews": [req.body.code],
-                "related" : {
-                    "events" : relEvents,
-                    "sites" : relSites,
-                    "locations" :relLocations,
-                    "mps" : relMPs
-                }
-             };
-            
-             var filesCollection = db.collection('files')
-             filesCollection.insert([filenew], function(err, result){
-                if (err){
-                    res.render('newfile', {
-                        "errormessage" : err
-                    });
-                } else {
-                    newFiles.push("FILE"+newcode);
-                }
-             });                    
-        });
-        
-    }  
-    callback();
-}
+function uploadFile(req, res, callback){
+    var filesList = [];
+    var uploadError;
+    upload(req,res,function(err) { 
+        if(err) {
+            console.log(err);
+        } else {
+            //rename file to add code
+            renameFile(req.files, relPath, req.body.code, function(filesArray){
+                filesList = filesArray;
+                filesList.forEach( function(file) {
+                    cloudinary.v2.uploader.upload(relPath+file, {public_id: file, type: "private"}, function(error,result) {
+                        if(error){
+                            uploadError = error;
+                            console.log("Cloudinary upload error: "+JSON.stringify(uploadError));
+                            //remove from list if there was an error
+                        }
+                        console.log(result);
+                    });  
+                });
+            });    
+            return callback(filesList, uploadError);    
+        }
+    });
+};
 
 /* GET list of missing */
 router.get('/missing', function(req, res){
-    console.log("session afer login: "+ req.sessionID);
-    console.log("user:" + req.session.user);
     if (req.session.user){
         async.parallel([
             getMissing.bind(null, req.session),
@@ -500,7 +456,7 @@ router.get('/missing', function(req, res){
             getLocations.bind(null, req.session.user),
             getParties,
             getSites.bind(null, req.session.user),
-            getFiles
+            getSources
         ], function(err){
             if (err) {
                 return console.error(err);
@@ -708,41 +664,25 @@ router.get('/contacts', function(req, res){
     }     
 });
 
-/* GET list of Interviews */
-router.get('/interviews', function(req, res){
-    if (req.session.user){
-        getInterviews(function(){
-                if (interviewsList.length) {
-                    nextrecord = calcLastRecord(interviewsList, "interviews");
-                    res.render('interviewslist', {
-                        "collList" : interviewsList,
-                        nextrecord : nextrecord,
-                        "user": req.session.user
-                    });   
-
-                } else {
-                        res.send('No Interviews found');
-                }
-            }); 
-    } else {
-        res.render('index', { title: 'Login to Database'});
-    }          
-});
-
 /* GET list of Files */
-router.get('/files', function(req, res){
+router.get('/sources', function(req, res){
     if (req.session.user){
-        getFiles(function(){
-                if (filesList.length) {
-                    nextrecord = calcLastRecord(filesList, "files");
-                    res.render('fileslist', {
-                        "collList" : filesList,
+        getSources(function(){
+                if (sourcesList.length) {
+                    nextrecord = calcLastRecord(sourcesList, "sources");
+                    res.render('sourceslist', {
+                        "collList" : sourcesList,
                         nextrecord : nextrecord,
                         "user": req.session.user
                     });   
 
                 } else {
-                        res.send('No Files found');
+                    nextrecord = 1;
+                    res.render('sourceslist', {
+                        "collList" : sourcesList,
+                        nextrecord : nextrecord,
+                        "user": req.session.user
+                    }); 
                 }
             }); 
     } else {
@@ -761,16 +701,29 @@ router.get('/profile', function(req, res){
                 res.send(err);
             } else if (result.length) {
                 req.session.profile = result;
+                var urls = [];
+                if(collName=="sources"){
+                    //get private url from cloudinary (expires in an hour)
+                    var files = result[0].files;
+                    if(files && files.length){
+                      files.forEach( function (file){
+                        var fileSplit = JSON.stringify(file).split(".");
+                        var extension = (fileSplit[fileSplit.length -1]).slice(0, -1);
+                        var url = cloudinary.utils.private_download_url(file,extension);
+                        urls.push(url);    
+                      });  
+                    } 
+                }
                 res.render(req.query.type+'profile', {    
                     "profile" : result,
+                    "file_urls" : urls, 
                     "user" : req.session.user,
                     "locationsList" : locationsList,
                     "missingList" : missingList,
                     "sitesList" : sitesList,
                     "eventsList" : eventsList,
-                    "interviewsList" : interviewsList,
                     "contactsList" : contactsList,
-                    "filesList" : filesList
+                    "sourcesList" : sourcesList
                     });    
             } else {
                 res.send('No data found');
@@ -791,17 +744,16 @@ router.get('/newprofile', function(req, res){
             getParties,
             getSites.bind(null, req.session.user),
             getContacts,
-            getInterviews,
-            getFiles
+            getSources
         ], function(err){
             if (err) {
                 return console.error(err);
             }
             var type = req.query.type;
             if (req.query.nextrecord){
-                res.render('new'+type, { title: 'Add New '+type, nextrecord : req.query.nextrecord, parties : partiesList, mps: missingList, locations: locationsList, events: eventsList, sites: sitesList, contactslist: contactsList, interviewslist: interviewsList, fileslist: filesList, municipalities : municipalities});
+                res.render('new'+type, { title: 'Add New '+type, user: req.session.user, nextrecord : req.query.nextrecord, parties : partiesList, mps: missingList, locations: locationsList, events: eventsList, sites: sitesList, contactslist: contactsList, sourceslist: sourcesList, municipalities : municipalities});
             } else {
-                res.render('new'+type, { title: 'Edit '+type, editprofile : req.session.profile, parties : partiesList, mps: missingList, locations: locationsList, events: eventsList, sites: sitesList, contactslist: contactsList, interviewslist: interviewsList, fileslist: filesList, municipalities : municipalities});
+                res.render('new'+type, { title: 'Edit '+type, user: req.session.user, editprofile : req.session.profile, parties : partiesList, mps: missingList, locations: locationsList, events: eventsList, sites: sitesList, contactslist: contactsList, sourceslist: sourcesList, municipalities : municipalities});
             }
         });
     } else {
@@ -911,8 +863,7 @@ router.post('/addmissing', function(req, res){
                     "related_mps" : req.body.related_mps,
                     "fate" : req.body.fate,
                     "notes" : req.body.notes,
-                    "interviews" : req.body.interviews,
-                    "files": req.body.files,
+                    "sources": req.body.sources,
                     "picture" : req.body.picture,
                     "lists_syria_2000" : req.body.lists_syria_2000,
                     "lists_syria_2002" : req.body.lists_syria_2002,
@@ -940,8 +891,7 @@ router.post('/addmissing', function(req, res){
               var relLocations = req.body.related_locations;
               var relMPs = req.body.related_mps;
               var contacts = req.body.contacts;
-              var files = req.body.files;
-              var interviews = req.body.interviews;
+              var sources = req.body.sources;
               var long;
               var lat; 
             
@@ -957,15 +907,13 @@ router.post('/addmissing', function(req, res){
               if (typeof relLocations == "string") relLocations = [relLocations]
               if (typeof relMPs == "string") relMPs = [relMPs]
               if (typeof contacts == "string") contacts = [contacts]
-              if (typeof files == "string") files = [files]
-              if (typeof interviews == "string") interviews = [interviews]
+              if (typeof sources == "string") sources = [sources]
               if (!relEvents) relEvents = [];
               if (!relSites) relSites = [];
               if (!relLocations) relLocations = [];
               if (!relMPs) relMPs = [];
               if (!contacts) contacts = [];
-              if (!files) files = [];
-              if (!interviews) interviews = [];
+              if (!sources) sources = [];
               
               /*if its an edit*/   
               if (req.body._id){  
@@ -1022,8 +970,7 @@ router.post('/addmissing', function(req, res){
                 if (profile[0].related.mps!= relMPs) updateVal['related.mps'] = relMPs
                 if (profile[0].fate!= req.body.fate) updateVal['fate'] =  req.body.fate
                 if (profile[0].notes!= req.body.notes) updateVal['notes'] =  req.body.notes
-                if (profile[0].interviews!= interviews) updateVal['interviews'] = interviews
-                if (profile[0].files!= files) updateVal['files'] =  files
+                if (profile[0].sources!= sources) updateVal['sources'] =  sources
                 if (profile[0].picture!= req.body.picture) updateVal['picture'] =  req.body.picture
                 if (profile[0].lists.syria_2000!= req.body.lists_syria_2000) updateVal['lists.syria_2000'] =  req.body.lists_syria_2000
                 if (profile[0].lists.syria_2002!= req.body.lists_syria_2002) updateVal['lists.syria_2002'] =  req.body.lists_syria_2002
@@ -1080,23 +1027,13 @@ router.post('/addmissing', function(req, res){
                             if((relMPs).indexOf(e)== -1)removeRelated("missing", e, req.body.code, "mps");
                         });
                     }
-                    if (profile[0].interviews != interviews) {
-                        interviews.forEach( function (e){
-                            if((profile[0].interviews).indexOf(e)== -1)updateRelated("interviews", e, req.body.code, "mps");
+                    if (profile[0].sources != sources) {
+                        sources.forEach( function (e){
+                            if((profile[0].sources).indexOf(e)== -1)updateRelated("sources", e, req.body.code, "mps");
                         });
-                        if(profile[0].interviews){
-                            (profile[0].interviews).forEach( function (e){
-                                if((interviews).indexOf(e)== -1)removeRelated("interviews", e, req.body.code, "mps");
-                            });     
-                        }
-                    }
-                    if (profile[0].files != files) {
-                        files.forEach( function (e){
-                            if((profile[0].files).indexOf(e)== -1)updateRelated("files", e, req.body.code, "mps");
-                        });
-                        if(profile[0].files){
-                            (profile[0].files).forEach( function (e){
-                                if((files).indexOf(e)== -1)removeRelated("files", e, req.body.code, "mps");
+                        if(profile[0].sources){
+                            (profile[0].sources).forEach( function (e){
+                                if((sources).indexOf(e)== -1)removeRelated("sources", e, req.body.code, "mps");
                             });
                         }
                     }
@@ -1185,9 +1122,8 @@ router.post('/addmissing', function(req, res){
                                 },
                                 "fate" : req.body.fate,
                                 "notes" : req.body.notes,
-                                "interviews" : interviews,
                                 "picture" : req.body.picture,
-                                "files" : files,
+                                "sources" : sources,
                                 "lists" : {
                                     "syria_2000" : req.body.lists_syria_2000,
                                     "syria_2002" : req.body.lists_syria_2002,
@@ -1236,14 +1172,9 @@ router.post('/addmissing', function(req, res){
                             updateRelated("missing", e, req.body.code, "mps");
                         });
                     }
-                    if (interviews) {
-                        interviews.forEach( function (e){
-                            updateRelated("interviews", e, req.body.code, "mps");
-                        });
-                    }
-                    if (files) {
-                        files.forEach( function (e){
-                            updateRelated("files", e, req.body.code, "mps");
+                    if (sources) {
+                        sources.forEach( function (e){
+                            updateRelated("sources", e, req.body.code, "mps");
                         });
                     }
                     if (contacts) {
@@ -1308,11 +1239,10 @@ router.post('/addevent', function(req, res){
                     "related_locations" : req.body.related_locations,
                     "related_mps" : req.body.related_mps,
                     "notes" : req.body.notes,
-                    "interviews" : req.body.interviews,
-                    "files" : req.body.files,
+                    "sources" : req.body.sources,
                     "contacts" : req.body.contacts,
                     
-                    parties : partiesList, mps: missingList, locations: locationsList, events: eventsList, sites: sitesList, contactslist: contactsList, interviewslist: interviewsList, fileslist: filesList,
+                    parties : partiesList, mps: missingList, locations: locationsList, events: eventsList, sites: sitesList, contactslist: contactsList, sourceslist: sourcesList,
 
                     "validationErrors" : result.mapped()
                 });
@@ -1324,8 +1254,7 @@ router.post('/addevent', function(req, res){
               var relLocations = req.body.related_locations;
               var relMPs = req.body.related_mps;
               var contacts = req.body.contacts;
-              var interviews = req.body.interviews;
-              var files = req.body.files;
+              var sources = req.body.sources;
               var groups =  req.body.groups_responsible;      
               var long;
               var lat; 
@@ -1343,15 +1272,13 @@ router.post('/addevent', function(req, res){
               if (typeof relMPs == "string") relMPs = [relMPs]
               if (typeof groups == "string") groups = [groups]
               if (typeof contacts == "string") contacts = [contacts]
-              if (typeof interviews == "string") interviews = [interviews]
-              if (typeof files == "string") files = [files]
+              if (typeof sources == "string") sources = [sources]
               if (!relEvents) relEvents = [];
               if (!relSites) relSites = [];
               if (!relLocations) relLocations = [];
               if (!relMPs) relMPs = [];
               if (!contacts) contacts = []; 
-              if (!interviews) interviews = [];   
-              if (!files) files = []; 
+              if (!sources) sources = []; 
                  
               /*if its an edit*/   
               if (req.body._id){    
@@ -1380,9 +1307,8 @@ router.post('/addevent', function(req, res){
                 if (profile[0].related.locations!= relLocations) updateVal['related.locations'] = relLocations
                 if (profile[0].related.mps!= relMPs) updateVal['related.mps'] = relMPs
                 if (profile[0].notes!= req.body.notes) updateVal['notes'] =  req.body.notes
-                if (profile[0].interviews!= interviews) updateVal['interviews'] = interviews
                 if (profile[0].contacts!=contacts) updateVal['contacts'] = contacts
-                if (profile[0].files!=files) updateVal['files'] = files
+                if (profile[0].sources!=sources) updateVal['sources'] = sources
 
                 collection.update({code: profile[0].code}, {$set: updateVal}, function(err, result){
                 
@@ -1425,23 +1351,13 @@ router.post('/addevent', function(req, res){
                             if((relMPs).indexOf(e)== -1)removeRelated("missing", e, req.body.code, "events");
                         });
                     }
-                    if (profile[0].interviews != interviews) {
-                        interviews.forEach( function (e){
-                            if((profile[0].interviews).indexOf(e)== -1)updateRelated("interviews", e, req.body.code, "events");
+                    if (profile[0].sources != sources) {
+                        sources.forEach( function (e){
+                            if((profile[0].sources).indexOf(e)== -1)updateRelated("sources", e, req.body.code, "events");
                         });
-                        if(profile[0].interviews){
-                            (profile[0].interviews).forEach( function (e){
-                                if((interviews).indexOf(e)== -1)removeRelated("interviews", e, req.body.code, "events");
-                            });
-                        }
-                    }
-                    if (profile[0].files != files) {
-                        files.forEach( function (e){
-                            if((profile[0].files).indexOf(e)== -1)updateRelated("files", e, req.body.code, "events");
-                        });
-                        if(profile[0].files){
-                            (profile[0].files).forEach( function (e){
-                                if((files).indexOf(e)== -1)removeRelated("files", e, req.body.code, "events");
+                        if(profile[0].sources){
+                            (profile[0].sources).forEach( function (e){
+                                if((sources).indexOf(e)== -1)removeRelated("sources", e, req.body.code, "events");
                             });
                         }
                     }
@@ -1499,9 +1415,8 @@ router.post('/addevent', function(req, res){
                                     "mps" : relMPs
                                 },
                                 "notes" : req.body.notes,
-                                "interviews" : interviews,
                                 "contacts" : contacts,    
-                                "files" : files
+                                "sources" : sources
                              };
                 collection.insert([eventnew], function(err, result){
                 if (err){
@@ -1529,14 +1444,9 @@ router.post('/addevent', function(req, res){
                             updateRelated("missing", e, req.body.code, "events");
                         });
                     }
-                    if (interviews) {
-                        interviews.forEach( function (e){
-                            updateRelated("interviews", e, req.body.code, "events");
-                        });
-                    }
-                    if (files) {
-                        files.forEach( function (e){
-                            updateRelated("files", e, req.body.code, "events");
+                    if (sources) {
+                        sources.forEach( function (e){
+                            updateRelated("sources", e, req.body.code, "events");
                         });
                     }
                     if (contacts) {
@@ -1597,8 +1507,7 @@ router.post('/addlocation', function(req, res){
                     "related_locations" : req.body.related_locations,
                     "related_mps" : req.body.related_mps,
                     "notes" : req.body.notes,
-                    "interviews" : req.body.interviews,
-                    "files" : req.body.files,
+                    "sources" : req.body.sources,
                     "contacts" : req.body.contacts,
                     
                     parties : partiesList, mps: missingList, locations: locationsList, events: eventsList, sites: sitesList,
@@ -1613,9 +1522,8 @@ router.post('/addlocation', function(req, res){
               var relLocations = req.body.related_locations;
               var relMPs = req.body.related_mps;
               var contacts = req.body.contacts;
-              var interviews = req.body.interviews;
               var groups =  req.body.groups_responsible;  
-              var files = req.body.files;  
+              var sources = req.body.sources;  
               var long;
               var lat; 
             
@@ -1632,15 +1540,13 @@ router.post('/addlocation', function(req, res){
               if (typeof relMPs == "string") relMPs = [relMPs]
               if (typeof groups == "string") groups = [groups]     
               if (typeof contacts == "string") contacts = [contacts]
-              if (typeof interviews == "string") interviews = [interviews]
-              if (typeof files == "string") files = [files]
+              if (typeof sources == "string") sources = [sources]
               if (!relEvents) relEvents = [];
               if (!relSites) relSites = [];
               if (!relLocations) relLocations = [];
               if (!relMPs) relMPs = [];
-              if (!files) files = [];
-              if (!contacts) contacts = [];  
-              if (!interviews) interviews = [];   
+              if (!sources) sources = [];
+              if (!contacts) contacts = [];
                  
               /*if its an edit*/     
               if (req.body._id){    
@@ -1668,8 +1574,7 @@ router.post('/addlocation', function(req, res){
                 if (profile[0].related.locations!= relLocations) updateVal['related.locations'] = relLocations
                 if (profile[0].related.mps!= relMPs) updateVal['related.mps'] = relMPs
                 if (profile[0].notes!= req.body.notes) updateVal['notes'] =  req.body.notes
-                if (profile[0].interviews!= interviews) updateVal['interviews'] = interviews
-                if (profile[0].files!= files) updateVal['files'] = files
+                if (profile[0].sources!= sources) updateVal['sources'] = sources
                 if (profile[0].contacts!=contacts) updateVal['contacts'] = contacts
 
                 collection.update({code: profile[0].code}, {$set: updateVal}, function(err, result){
@@ -1725,13 +1630,13 @@ router.post('/addlocation', function(req, res){
                         }
                         
                     }
-                    if (profile[0].files != files) {
-                        files.forEach( function (e){
-                            if(profile[0].files && (profile[0].files).indexOf(e)== -1)updateRelated("files", e, req.body.code, "locations");
+                    if (profile[0].sources != sources) {
+                        sources.forEach( function (e){
+                            if(profile[0].sources && (profile[0].sources).indexOf(e)== -1)updateRelated("sources", e, req.body.code, "locations");
                         });
-                        if(profile[0].files){
-                            (profile[0].files).forEach( function (e){
-                                if((files).indexOf(e)== -1)removeRelated("files", e, req.body.code, "locations");
+                        if(profile[0].sources){
+                            (profile[0].sources).forEach( function (e){
+                                if((sources).indexOf(e)== -1)removeRelated("sources", e, req.body.code, "locations");
                             });     
                         } 
                     }
@@ -1742,16 +1647,6 @@ router.post('/addlocation', function(req, res){
                         if(profile[0].contacts){
                             (profile[0].contacts).forEach( function (e){
                                 if((contacts).indexOf(e)== -1)removeRelated("contacts", e, req.body.code, "locations");
-                            });     
-                        } 
-                    }
-                    if (profile[0].interviews != interviews) {
-                        interviews.forEach( function (e){
-                            if(profile[0].interviews && (profile[0].interviews).indexOf(e)== -1)updateRelated("interviews", e, req.body.code, "locations");
-                        });
-                        if(profile[0].interviews){
-                            (profile[0].interviews).forEach( function (e){
-                                if((interviews).indexOf(e)== -1)removeRelated("interviews", e, req.body.code, "locations");
                             });     
                         } 
                     }
@@ -1799,9 +1694,8 @@ router.post('/addlocation', function(req, res){
                                     "mps" : relMPs
                                 },
                                 "notes" : req.body.notes,
-                                "interviews" : req.body.interviews,
                                 "contacts" : contacts,
-                                "files" : files
+                                "sources" : sources
                              };
                 collection.insert([locationnew], function(err, result){
                 if (err){
@@ -1829,14 +1723,9 @@ router.post('/addlocation', function(req, res){
                             updateRelated("missing", e, req.body.code, "locations");
                         });
                     }
-                    if (interviews) {
-                        interviews.forEach( function (e){
-                            updateRelated("interviews", e, req.body.code, "locations");
-                        });
-                    }
-                    if (files) {
-                        files.forEach( function (e){
-                            updateRelated("files", e, req.body.code, "locations");
+                    if (sources) {
+                        sources.forEach( function (e){
+                            updateRelated("sources", e, req.body.code, "locations");
                         });
                     }
                     if (contacts) {
@@ -1920,11 +1809,10 @@ router.post('/addsite', function(req, res){
                     "identification_notes" : req.body.identification_notes,
                     "identification_dna" : req.body.identification_dna,
                     "notes" : req.body.notes,
-                    "interviews" : req.body.interviews,
-                    "files" : req.body.files,
+                    "sources" : req.body.sources,
                     "contacts" : req.body.contacts,
                     
-                    parties : partiesList, mps: missingList, locations: locationsList, events: eventsList, sites: sitesList, contactslist: contactsList, interviewslist: interviewsList, fileslist: filesList,
+                    parties : partiesList, mps: missingList, locations: locationsList, events: eventsList, sites: sitesList, contactslist: contactsList, sourceslist: sourcesList,
 
                     "validationErrors" : result.mapped()
                 });
@@ -1935,8 +1823,7 @@ router.post('/addsite', function(req, res){
               var relSites = req.body.related_sites;
               var relLocations = req.body.related_locations;
               var relMPs = req.body.related_mps;
-              var files = req.body.files;
-              var interviews = req.body.interviews;
+              var sources = req.body.sources;
               var contacts = req.body.contacts; 
               var long;
               var lat; 
@@ -1953,15 +1840,13 @@ router.post('/addsite', function(req, res){
               if (typeof relLocations == "string") relLocations = [relLocations]
               if (typeof relMPs == "string") relMPs = [relMPs]
               if (typeof contacts == "string") contacts = [contacts]
-              if (typeof files == "string") files = [files]
-              if (typeof interviews == "string") interviews = [interviews]
+              if (typeof sources == "string") sources = [sources]
               if (!relEvents) relEvents = [];
               if (!relSites) relSites = [];
               if (!relLocations) relLocations = [];
               if (!relMPs) relMPs = [];
-              if (!files) files = [];
+              if (!sources) sources = [];
               if (!contacts) contacts = [];
-              if (!interviews) interviews = [];
                  
               /*if its an edit*/
               if (req.body._id){     
@@ -2006,8 +1891,7 @@ router.post('/addsite', function(req, res){
                 if (!profile[0].identification || profile[0].identification.number!=req.body.identification_number)updateVal['identification.number'] =  req.body.identification_number
                 if (!profile[0].identification || profile[0].identification.notes!=req.body.identification_notes)updateVal['identification.notes'] =  req.body.identification_notes
                 if (!profile[0].identification || profile[0].identification.dna!=req.body.identification_dna)updateVal['identification.dna'] =  req.body.identification_dna
-                if (profile[0].interviews!= interviews) updateVal['interviews'] = interviews
-                if (profile[0].files!= files) updateVal['files'] = files
+                if (profile[0].sources!= sources) updateVal['sources'] = sources
                 if (profile[0].contacts!=contacts) updateVal['contacts'] = contacts
                 if (profile[0].notes!= req.body.notes) updateVal['notes'] =  req.body.notes  
                 //collection.update({_id: profile[0]._id}, {$set: updateVal}, function(err, result){
@@ -2051,23 +1935,13 @@ router.post('/addsite', function(req, res){
                             if((relMPs).indexOf(e)== -1)removeRelated("missing", e, req.body.code, "sites");
                         });
                     }
-                    if (profile[0].interviews != interviews) {
-                        interviews.forEach( function (e){
-                            if(profile[0].interviews && (profile[0].interviews).indexOf(e)== -1)updateRelated("interviews", e, req.body.code, "sites");
+                    if (profile[0].sources != sources) {
+                        sources.forEach( function (e){
+                            if(profile[0].sources && (profile[0].sources).indexOf(e)== -1)updateRelated("sources", e, req.body.code, "sites");
                         });
-                        if(profile[0].interviews){
-                            (profile[0].interviews).forEach( function (e){
-                                if((interviews).indexOf(e)== -1)removeRelated("interviews", e, req.body.code, "sites");
-                            });     
-                        } 
-                    }
-                    if (profile[0].files != files) {
-                        files.forEach( function (e){
-                            if(profile[0].files && (profile[0].files).indexOf(e)== -1)updateRelated("files", e, req.body.code, "sites");
-                        });
-                        if(profile[0].files){
-                            (profile[0].files).forEach( function (e){
-                                if((files).indexOf(e)== -1)removeRelated("files", e, req.body.code, "sites");
+                        if(profile[0].sources){
+                            (profile[0].sources).forEach( function (e){
+                                if((sources).indexOf(e)== -1)removeRelated("sources", e, req.body.code, "sites");
                             });     
                         } 
                     }
@@ -2152,9 +2026,8 @@ router.post('/addsite', function(req, res){
                                     "notes" : req.body.identification_notes,
                                     "dna" : req.body.identification_dna
                                 },
-                                "interviews" : interviews,
                                 "contacts" : contacts,
-                                "files" : files,
+                                "sources" : sources,
                                 "notes" : req.body.notes,
                              };
                 collection.insert([sitenew], function(err, result){
@@ -2183,14 +2056,9 @@ router.post('/addsite', function(req, res){
                             updateRelated("missing", e, req.body.code, "sites");
                         });
                     }
-                    if (interviews) {
-                        interviews.forEach( function (e){
-                            updateRelated("interviews", e, req.body.code, "sites");
-                        });
-                    }
-                    if (files) {
-                        files.forEach( function (e){
-                            updateRelated("files", e, req.body.code, "sites");
+                    if (sources) {
+                        sources.forEach( function (e){
+                            updateRelated("sources", e, req.body.code, "sites");
                         });
                     }
                     if (contacts) {
@@ -2238,8 +2106,7 @@ router.post('/addparty', function(req, res){
                     "hq_longitude" : req.body.hq_longitude,
                     "control_areas" : control_areas,
                     "color" : req.body.color,
-                    "flag" : req.body.flag_file,
-                    "files" : req.body.files,
+                    "sources" : req.body.sources,
                     
                     parties : partiesList, mps: missingList, locations: locationsList, events: eventsList, sites: sitesList,
 
@@ -2370,7 +2237,7 @@ router.post('/addcontact', function(req, res){
                     "related_sites" : req.body.related_sites,
                     "related_locations" : req.body.related_locations,
                     "related_mps" : req.body.related_mps,
-                    "interviews": req.body.interviews,
+                    "sources" : req.body.sources,
                     "phone_1": req.body.phone_1,
                     "phone_2": req.body.phone_2,
                     "email": req.body.email,
@@ -2390,14 +2257,14 @@ router.post('/addcontact', function(req, res){
                 var relSites = req.body.related_sites;
                 var relLocations = req.body.related_locations;
                 var relMPs = req.body.related_mps; 
-                var ints = req.body.interviews;  
+                var sources = req.body.sources;  
                  
                 if (typeof relEvents == "string") relEvents = [relEvents]
                 if (typeof relSites == "string") relSites = [relSites]
                 if (typeof relLocations == "string") relLocations = [relLocations]
                 if (typeof relMPs == "string") relMPs = [relMPs] 
-                if (typeof ints == "string") ints = [ints]  
-                if (!ints) ints = []
+                if (typeof sources == "string") sources = [sources]  
+                if (!sources) sources = []
                 if (!relEvents)relEvents = []
                 if (!relSites)relSites = []
                 if (!relLocations)relLocations = []
@@ -2429,7 +2296,7 @@ router.post('/addcontact', function(req, res){
                     if (profile[0].related.sites!= relSites)updateVal['related.sites'] = relSites  
                     if (profile[0].related.locations!= relLocations) updateVal['related.locations'] = relLocations
                     if (profile[0].related.mps!= relMPs) updateVal['related.mps'] = relMPs
-                    if (profile[0].interviews!= req.body.interviews) updateVal['interviews'] =  ints
+                    if (profile[0].sources!= req.body.sources) updateVal['sources'] =  sources
                     if (profile[0].phone_1!= req.body.phone_1) updateVal['phone_1'] =  req.body.phone_1
                     if (profile[0].phone_2!= req.body.phone_2) updateVal['phone_2'] =  req.body.phone_2
                     if (profile[0].email!= req.body.email) updateVal['email'] =  req.body.email
@@ -2522,8 +2389,7 @@ router.post('/addcontact', function(req, res){
                                     "locations" :relLocations,
                                     "mps" : relMPs
                                 },
-                                "interviews" : ints,
-                                "files" : [],
+                                "sources" : sources,
                                 "phone_1" : req.body.phone_1,
                                 "phone_2" : req.body.phone_2,
                                 "email" : req.body.email,
@@ -2572,470 +2438,279 @@ router.post('/addcontact', function(req, res){
             
 });
 
-/*INSERT or UPDATE Interview*/
-router.post('/addinterview', function(req, res){
-        
-            //if there are files, first perform upload            
-            upload(req,res,function(err) {
-                if(err) {
-                    console.log(err);
-                    return res.end("Error uploading file.");
-                } else {
-                    //rename file to add code
-                    renameFile(req.files, relPath, req.body.code, function(err){
-                       if(err){
-                        console.log(err);
-                        return res.end("Error renaming file.");
-                       }else {
-                        //then insert in database
-                        if (db) {
-                            var relEvents = req.body.related_events;
-                            var relSites = req.body.related_sites;
-                            var relLocations = req.body.related_locations;
-                            var relMPs = req.body.related_mps;
-                            var contactCode = req.body.interviewee;
-                             
+/*INSERT or UPDATE Source*/
+router.post('/addsource', function(req, res){
 
-                            if (typeof relEvents == "string") relEvents = [relEvents]
-                            if (typeof relSites == "string") relSites = [relSites]
-                            if (typeof relLocations == "string") relLocations = [relLocations]
-                            if (typeof relMPs == "string") relMPs = [relMPs]
-                            if (!relEvents) relEvents = [];
-                            if (!relSites) relSites = [];
-                            if (!relLocations) relLocations = [];
-                            if (!relMPs) relMPs = [];
-                            if (contactCode) contactCode = (contactCode.split("-")[0]).trim();
+    //validation
+    if (db) {
+        var collection = db.collection('sources');
+        var profile = req.session.profile;
 
-                            //if there are files, create a record in the files collection
-                            
-                            
-                            createFileRecord (req, contactCode, relEvents, relSites, relLocations, relMPs, function(){
-                                //then for the interviews record
-                                var collection = db.collection('interviews');
-                                var profile = req.session.profile;
-                            
-                                //Validate Fields
-                                req.check('code', 'Code cannot be empty').notEmpty();
-                                req.check('date_day', 'Day cannot be empty').notEmpty();
-                                req.check('date_month', 'Month cannot be empty').notEmpty();
-                                req.check('date_year', 'Year cannot be empty').notEmpty();
-    
-                                var errors = req.getValidationResult();
-                                errors.then(function (result) {
-                                 if (!result.isEmpty()) {
-                                    res.render('newinterview', {
-                                        "_id":req.body._id,
-                                        "code":req.body.code,
-                                        "type": req.body.type,
-                                        "subject": req.body.subject,
-                                        "interviewee" : req.body.interviewee,
-                                        "interviewer" : req.body.interviewer,
-                                        "organization" : req.body.organization,
-                                        "date_day" : req.body.date_day,
-                                        "date_month": req.body.date_month, 
-                                        "date_year": req.body.date_year,
-                                        "place" : req.body.place,
-                                        "language" : req.body.language,
-                                        "duration" : req.body.duration,
-                                        "files": req.body.files,
-                                        "transcript" : req.body.transcript,
-                                        "notes": req.body.notes,
-                                        "related_events" : req.body.related_events,
-                                        "related_sites" : req.body.related_sites,
-                                        "related_locations" : req.body.related_locations,
-                                        "related_mps" : req.body.related_mps,
-    
-                                        parties : partiesList, mps: missingList, locations: locationsList, events: eventsList, sites: sitesList, contactslist: contactsList, interviewslist: interviewsList,
-    
-                                        "validationErrors" : result.mapped()
-                                    });
-    
-                                    } else {
-    
-                                    /*if its an edit*/   
-                                    if (req.body._id){ 
-                                        var updateVal = {};                                                     
-                                        if (profile[0].type!= req.body.type) updateVal['type'] =  req.body.type
-                                        if (profile[0].subject!= req.body.subject) updateVal['subject'] =  req.body.subject
-                                        if (profile[0].interviewee!= req.body.interviewee) updateVal['interviewee'] =  req.body.interviewee
-                                        if (profile[0].interviewer!= req.body.interviewer) updateVal['interviewer'] =  req.body.interviewer
-                                        if (profile[0].organization!= req.body.organization) updateVal['organization'] =  req.body.organization
-                                        if (profile[0].date!= dateConverter(req.body.date_day,req.body.date_month, req.body.date_year)) updateVal['date'] =  dateConverter(req.body.date_day,req.body.date_month, req.body.date_year)
-                                        if (profile[0].place!= req.body.place) updateVal['place'] =  req.body.place
-                                        if (profile[0].language!= req.body.language) updateVal['language'] =  req.body.language
-                                        if (profile[0].duration!= req.body.duration) updateVal['duration'] =  req.body.duration
-                                        if (filesArray.length>0) {
-                                            var oldFiles = profile[0].files;
-                                            if (!oldFiles) oldFiles = [];
-                                            filesArray.forEach(function(f) {
-                                                oldFiles.push(f)
-                                            });
-                                            updateVal['files'] =  oldFiles    
-                                        } 
-                                        if (profile[0].transcript!= req.body.transcript) updateVal['transcript'] =  req.body.transcript
-                                        if (profile[0].notes!= req.body.notes) updateVal['notes'] =  req.body.notes
-                                        if (profile[0].related.events!= relEvents)updateVal['related.events'] = relEvents
-                                        if (profile[0].related.sites!= relSites)updateVal['related.sites'] = relSites  
-                                        if (profile[0].related.locations!= relLocations) updateVal['related.locations'] = relLocations
-                                        if (profile[0].related.mps!= relMPs) updateVal['related.mps'] = relMPs
-    
-                                        collection.update({code: profile[0].code}, {$set: updateVal}, function(err, result){
-                                            if (err){
-                                                console.log ("error :"+err);
-                                                res.render('newinterview', {
-                                                    "errormessage" : err, 
-                                                    parties : partiesList, mps: missingList, locations: locationsList, events: eventsList, sites: sitesList, contacts: contactsList
-                                                });
-                                            }else {
-                                                if (profile[0].related.events!= relEvents) {
-                                                    relEvents.forEach( function (e){
-                                                        if((profile[0].related.events).indexOf(e)== -1)updateRelated("events", e, req.body.code, "interviews");
-                                                    });
-                                                    (profile[0].related.events).forEach( function (e){
-                                                        if((relEvents).indexOf(e)== -1)removeRelated("events", e, req.body.code, "interviews");
-                                                    });
-                                                }
-                                                if (profile[0].related.sites!= relSites) {
-                                                    relSites.forEach( function (e){
-                                                        if((profile[0].related.sites).indexOf(e)== -1)updateRelated("sites", e, req.body.code, "interviews");
-                                                    });
-                                                    (profile[0].related.sites).forEach( function (e){
-                                                        if((relSites).indexOf(e)== -1)removeRelated("sites", e, req.body.code, "interviews");
-                                                    });
-                                                }
-                                                if (profile[0].related.locations != relLocations) {
-                                                    relLocations.forEach( function (e){
-                                                        if((profile[0].related.locations).indexOf(e)== -1)updateRelated("locations", e, req.body.code, "interviews");
-                                                    });
-                                                    (profile[0].related.locations).forEach( function (e){
-                                                        if((relLocations).indexOf(e)== -1)removeRelated("locations", e, req.body.code, "interviews");
-                                                    });
-                                                }
-                                                if (profile[0].related.mps != relMPs) {
-                                                    relMPs.forEach( function (e){
-                                                        if((profile[0].related.mps).indexOf(e)== -1)updateRelated("missing", e, req.body.code, "interviews");
-                                                    });
-                                                    (profile[0].related.mps).forEach( function (e){
-                                                        if((relMPs).indexOf(e)== -1)removeRelated("missing", e, req.body.code, "interviews");
-                                                    });
-                                                }
-                                                if (profile[0].interviewee!= req.body.interviewee){
-                                                    if (req.body.interviewee){
-                                                    //var newContactCode = ((req.body.interviewee).split("-"))[0];
-                                                    updateRelated("contacts", contactCode,req.body.code, "interviews");    
-                                                    }  
-                                                    if (profile[0].interviewee){
-                                                    var oldContactCode = ((profile[0].interviewee).split("-"))[0];
-                                                    removeRelated("contacts", oldContactCode,req.body.code, "interviews");
-                                                    }  
-                                                }
-                                                profile = null;
-                                                filesArray = [];
-                                                res.redirect('/interviews');
-                                            }
-                                        });
-    
-                                    }else {  
-                                        /*if its an insert*/
-                                        var interviewnew = {
-                                                    "code" : req.body.code,
-                                                    "type": req.body.type,
-                                                    "subject": req.body.subject,
-                                                    "interviewee" : req.body.interviewee,
-                                                    "interviewer" : req.body.interviewer,
-                                                    "organization" : req.body.organization,
-                                                    "date" : dateConverter(req.body.date_day,req.body.date_month, req.body.date_year),
-                                                    "place" : req.body.place,
-                                                    "language" : req.body.language,
-                                                    "duration" : req.body.duration,
-                                                    "consent_form" : req.body.consent_form,
-                                                    "files": filesArray,
-                                                    "transcript" : req.body.transcript,
-                                                    "notes": req.body.notes,
-                                                    "related" : {
-                                                        "events" : relEvents,
-                                                        "sites" : relSites,
-                                                        "locations" :relLocations,
-                                                        "mps" : relMPs
-                                                    }
-                                                    };
-                                        collection.insert([interviewnew], function(err, result){
-                                            if (err){
-                                                res.render('newinterview', {
-                                                    "errormessage" : err
-                                                });
-                                            }else {
-                                                if (relEvents) {
-                                                    relEvents.forEach( function (e){
-                                                        updateRelated("events", e, req.body.code, "interviews");
-                                                    });
-                                                }
-                                                if (relSites) {
-                                                    relSites.forEach( function (e){
-                                                        updateRelated("sites", e, req.body.code, "interviews");
-                                                    });
-                                                }
-                                                if (relLocations) {
-                                                    relLocations.forEach( function (e){
-                                                        updateRelated("locations", e, req.body.code, "interviews");
-                                                    });
-                                                }
-                                                if (relMPs) {
-                                                    relMPs.forEach( function (e){
-                                                        updateRelated("missing", e, req.body.code, "interviews");
-                                                    });
-                                                }
-                                                if (req.body.interviewee){
-                                                    updateRelated("contacts", contactCode,req.body.code, "interviews");
-                                                }
-                                                filesArray = [];
-                                                res.redirect('/interviews');
-                                            }
-                                        });      
-                                    }
-                                } 
-                             });                    
-                            });        
-                        } else { 
-                        res.render('index', { title: 'Login to Database'});
-                        }    
-                       }
-                    });    
-                }
-            });   
-});
+        //Validate Fields
+        //req.check('code', 'Code cannot be empty').notEmpty();
+        //req.check('type', 'Type cannot be empty').notEmpty();
 
-/*INSERT or UPDATE File*/
-router.post('/addfile', function(req, res){
-    upload(req,res,function(err) {
-        //console.log(req.files);
-        //console.log(req.files.path+req.files.originalname);
-        //cloudinary.uploader.upload(req.files.path+req.files.originalname, function(result) { console.log(result) })    
-            if(err) {
-                console.log(err);
-                return res.end("Error uploading file.");
-            } else {
-                //rename file to add code
-                renameFile(req.files, relPath, req.body.code, function(){
-                    //then insert in database
-                    if (db) {
-                        var collection = db.collection('files');
-                        var profile = req.session.profile;
+        var errors = req.getValidationResult();
+        errors.then(function (result) {
+        if (!result.isEmpty()) {
+            res.render('newsource', {
+                "_id":req.body._id,
+                "code":req.body.code,
+                "type": req.body.type,
+                "subtype": req.body.subtype,
+                "name": req.body.name,
+                "location" : req.body.location,
+                "date_day" : req.body.date_day,
+                "date_month": req.body.date_month, 
+                "date_year": req.body.date_year,
+                "title" : req.body.Title,
+                "focus" : req.body.focus,
+                "related_events" : req.body.related_events,
+                "related_sites" : req.body.related_sites,
+                "related_locations" : req.body.related_locations,
+                "related_mps" : req.body.related_mps,
+                "related_sources" : req.body.related_sources,
+                "attendant_name": req.body.attendant_name,
+                "attendant_contacts": req.body.attendant_contacts,
+                "interviewee_name": req.body.interviewee_name,
+                "interviewee_contacts": req.body.interviewee_contacts,
+                "interviewer" : req.body.interviewer,
+                "number" : req.body.number,
+                "author" : req.body.author,
+                "publication" : req.body.publication,
+                "duration" : req.body.duration,
+                "production" : req.body.production,
+                "notes": req.body.notes,
+                "files": req.file,
+                
+                parties : partiesList, mps: missingList, locations: locationsList, events: eventsList, sites: sitesList,
+    
+                "validationErrors" : result.mapped()
+            });
+    
+        } else {
 
-                        //Validate Fields
-                        req.check('code', 'Code cannot be empty').notEmpty();
-                        //req.check('file', 'File must be selected').notEmpty();
-                        // req.checkBody('files', 'File must be selected').notEmpty();
-
-                        var errors = req.getValidationResult();
-                        errors.then(function (result) {
-                         if (!result.isEmpty()) {
-                            res.render('newfile', {
-                                "_id":req.body._id,
-                                "code":req.body.code,
-                                "type": req.body.type,
-                                "description": req.body.description,
-                                "file": req.file,
-                                "date_day" : req.body.date_day,
-                                "date_month": req.body.date_month, 
-                                "date_year": req.body.date_year,
-                                "format" : req.body.format,
-                                "language" : req.body.language,
-                                "notes": req.body.notes,
-                                "contacts": req.body.contacts,
-                                "interviews": req.body.interviews,
-                                "related_events" : req.body.related_events,
-                                "related_sites" : req.body.related_sites,
-                                "related_locations" : req.body.related_locations,
-                                "related_mps" : req.body.related_mps,
-
-                                parties : partiesList, mps: missingList, locations: locationsList, events: eventsList, sites: sitesList,
-
-                                "validationErrors" : result.mapped()
+            uploadFile(req, res, function(filesList, uploadError){
+                var relEvents = req.body.related_events;
+                var relSites = req.body.related_sites;
+                var relLocations = req.body.related_locations;
+                var relMPs = req.body.related_mps;
+                var relSources = req.body.related_sources;
+                var attendantContacts = req.body.attendant_contacts;
+                var intervieweeContacts = req.body.interviewee_contacts;
+            
+                if (typeof relEvents == "string") relEvents = [relEvents]
+                if (typeof relSites == "string") relSites = [relSites]
+                if (typeof relLocations == "string") relLocations = [relLocations]
+                if (typeof relMPs == "string") relMPs = [relMPs]
+                if (typeof attendantContacts == "string") attendantContacts = [attendantContacts]
+                if (typeof intervieweeContacts == "string") intervieweeContacts = [intervieweeContacts]
+                if (typeof relSources == "string") relSources = [relSources]
+                if (!relEvents) relEvents = [];
+                if (!relSites) relSites = [];
+                if (!relLocations) relLocations = [];
+                if (!relMPs) relMPs = [];
+                if (!attendantContacts) attendantContacts = [];
+                if (!intervieweeContacts) intervieweeContacts = [];
+                if (!relSources) relSources = [];
+            
+                /*if its an edit*/   
+                if (req.body._id){
+                        var updateVal = {};                                                     
+                        if (profile[0].type!= req.body.type) updateVal['type'] =  req.body.type
+                        if (profile[0].subtype!= req.body.subtype) updateVal['subtype'] =  req.body.subtype
+                        if (profile[0].name!= req.body.name) updateVal['name'] =  req.body.name
+                        if (profile[0].location!= req.body.location) updateVal['location'] =  req.body.location
+                        if (profile[0].date!= dateConverter(req.body.date_day,req.body.date_month, req.body.date_year)) updateVal['date'] =  dateConverter(req.body.date_day,req.body.date_month, req.body.date_year)
+                        if (profile[0].title!= req.body.Title) updateVal['title'] =  req.body.Title
+                        if (profile[0].focus!= req.body.focus) updateVal['focus'] =  req.body.focus
+                        if (profile[0].related.events!= relEvents)updateVal['related.events'] = relEvents
+                        if (profile[0].related.sites!= relSites)updateVal['related.sites'] = relSites  
+                        if (profile[0].related.locations!= relLocations) updateVal['related.locations'] = relLocations
+                        if (profile[0].related.mps!= relMPs) updateVal['related.mps'] = relMPs
+                        if (profile[0].related.sources!= relSources) updateVal['related.sources'] = relSources
+                        if (profile[0].attendant && (profile[0].attendant.name!= req.body.attendant_name)) updateVal['attendant.name'] =  req.body.attendant_name
+                        if (profile[0].attendant && (profile[0].attendant.contacts!= attendantContacts)) updateVal['attendant.contacts'] =  attendantContacts
+                        if (profile[0].interviewee && (profile[0].interviewee.name!= req.body.interviewee_name)) updateVal['interviewee.name'] =  req.body.interviewee_name
+                        if (profile[0].interviewer!= req.body.interviewer) updateVal['interviewer'] =  req.body.interviewer
+                        if (profile[0].interviewee && (profile[0].interviewee.contacts!= intervieweeContacts)) updateVal['interviewee.contacts'] =  intervieweeContacts
+                        if (profile[0].number!= req.body.number) updateVal['number'] =  req.body.number
+                        if (profile[0].author!= req.body.author) updateVal['author'] =  req.body.author
+                        if (profile[0].publication!= req.body.publication) updateVal['publication'] =  req.body.publication
+                        if (profile[0].duration!= req.body.duration) updateVal['duration'] =  req.body.duration
+                        if (profile[0].production!= req.body.production) updateVal['production'] =  req.body.production
+                        if (profile[0].notes!= req.body.notes) updateVal['notes'] =  req.body.notes
+                        if (filesList.length>0 && !uploadError) {
+                            var oldFiles = profile[0].files;
+                            if (!oldFiles) oldFiles = [];
+                            filesList.forEach(function(f) {
+                                oldFiles.push(f)
                             });
-
-                         } else {
-                            var relEvents = req.body.related_events;
-                            var relSites = req.body.related_sites;
-                            var relLocations = req.body.related_locations;
-                            var relMPs = req.body.related_mps;
-                            var contacts = req.body.contacts;
-                            var interviews = req.body.interviews; 
-
-                            if (typeof relEvents == "string") relEvents = [relEvents]
-                            if (typeof relSites == "string") relSites = [relSites]
-                            if (typeof relLocations == "string") relLocations = [relLocations]
-                            if (typeof relMPs == "string") relMPs = [relMPs]
-                            if (typeof contacts == "string") contacts = [contacts]
-                            if (typeof interviews == "string") interviews = [interviews]
-                            if (!relEvents) relEvents = [];
-                            if (!relSites) relSites = [];
-                            if (!relLocations) relLocations = [];
-                            if (!relMPs) relMPs = [];
-                            if (!contacts) contacts = [];
-                            if (!interviews) interviews = [];
-
-                            /*if its an edit*/   
-                            if (req.body._id){ 
-                                var updateVal = {};                                                     
-                                if (profile[0].type!= req.body.type) updateVal['type'] =  req.body.type
-                                if (profile[0].description!= req.body.description) updateVal['description'] =  req.body.description
-                                if (profile[0].date!= dateConverter(req.body.date_day,req.body.date_month, req.body.date_year)) updateVal['date'] =  dateConverter(req.body.date_day,req.body.date_month, req.body.date_year)
-                                if (profile[0].format!= req.body.format) updateVal['format'] =  req.body.format
-                                if (profile[0].language!= req.body.language) updateVal['language'] =  req.body.language
-                                if (profile[0].notes!= req.body.notes) updateVal['notes'] =  req.body.notes
-                                if (profile[0].contacts!= contacts)updateVal['contacts'] = contacts
-                                if (profile[0].interviews!= interviews)updateVal['interviews'] = interviews
-                                if (profile[0].related.events!= relEvents)updateVal['related.events'] = relEvents
-                                if (profile[0].related.sites!= relSites)updateVal['related.sites'] = relSites  
-                                if (profile[0].related.locations!= relLocations) updateVal['related.locations'] = relLocations
-                                if (profile[0].related.mps!= relMPs) updateVal['related.mps'] = relMPs
-                                if (filesArray.length>0) {
-                                    var oldFiles = profile[0].file;
-                                    if (!oldFiles) oldFiles = [];
-                                    filesArray.forEach(function(f) {
-                                        oldFiles.push(f)
-                                    });
-                                    updateVal['file'] =  oldFiles    
-                                } 
-
-                                collection.update({code: profile[0].code}, {$set: updateVal}, function(err, result){
-                                    if (err){
-                                        console.log ("error :"+err);
-                                        res.render('newfile', {
-                                            "errormessage" : err, 
-                                            parties : partiesList, mps: missingList, locations: locationsList, events: eventsList, sites: sitesList, contacts: contactsList
-                                        });
-                                    }else {
-                                        if (profile[0].related.events!= relEvents) {
-                                            relEvents.forEach( function (e){
-                                                if((profile[0].related.events).indexOf(e)== -1)updateRelated("events", e, req.body.code, "files");
-                                            });
-                                            (profile[0].related.events).forEach( function (e){
-                                                if((relEvents).indexOf(e)== -1)removeRelated("events", e, req.body.code, "files");
-                                            });
-                                        }
-                                        if (profile[0].related.sites!= relSites) {
-                                            relSites.forEach( function (e){
-                                                if((profile[0].related.sites).indexOf(e)== -1)updateRelated("sites", e, req.body.code, "files");
-                                            });
-                                            (profile[0].related.sites).forEach( function (e){
-                                                if((relSites).indexOf(e)== -1)removeRelated("sites", e, req.body.code, "files");
-                                            });
-                                        }
-                                        if (profile[0].related.locations != relLocations) {
-                                            relLocations.forEach( function (e){
-                                                if((profile[0].related.locations).indexOf(e)== -1)updateRelated("locations", e, req.body.code, "files");
-                                            });
-                                            (profile[0].related.locations).forEach( function (e){
-                                                if((relLocations).indexOf(e)== -1)removeRelated("locations", e, req.body.code, "files");
-                                            });
-                                        }
-                                        if (profile[0].related.mps != relMPs) {
-                                            relMPs.forEach( function (e){
-                                                if((profile[0].related.mps).indexOf(e)== -1)updateRelated("missing", e, req.body.code, "files");
-                                            });
-                                            (profile[0].related.mps).forEach( function (e){
-                                                if((relMPs).indexOf(e)== -1)removeRelated("missing", e, req.body.code, "files");
-                                            });
-                                        }
-                                        if (profile[0].contacts != contacts) {
-                                            contacts.forEach( function (e){
-                                                if((profile[0].contacts).indexOf(e)== -1)updateRelated("contacts", e, req.body.code, "files");
-                                            });
-                                            (profile[0].contacts).forEach( function (e){
-                                                if((contacts).indexOf(e)== -1)removeRelated("contacts", e, req.body.code, "files");
-                                            });
-                                        }
-                                        if (profile[0].interviews != interviews) {
-                                            interviews.forEach( function (e){
-                                                if((profile[0].interviews).indexOf(e)== -1)updateRelated("interviews", e, req.body.code, "files");
-                                            });
-                                            (profile[0].interviews).forEach( function (e){
-                                                if((interviews).indexOf(e)== -1)removeRelated("interviews", e, req.body.code, "files");
-                                            });
-                                        }
-                                        profile = null;
-                                        filesArray = [];
-                                        res.redirect('/files');
-                                    }
+                            updateVal['files'] =  oldFiles    
+                        } 
+                        //collection.update({_id: profile[0]._id}, {$set: updateVal}, function(err, result){    
+                        collection.update({code: profile[0].code}, {$set: updateVal}, function(err, result){
+                            if (err){
+                                console.log ("error :"+err);
+                                res.render('newfile', {
+                                    "errormessage" : err, 
+                                    parties : partiesList, mps: missingList, locations: locationsList, events: eventsList, sites: sitesList, contacts: contactsList
                                 });
-
                             }else {
-                                /*if its an insert*/
-                                var filenew = {
-                                            "code" : req.body.code,
-                                            "type": req.body.type,
-                                            "description": req.body.description,
-                                            "file" : filesArray[0],
-                                            "date" : dateConverter(req.body.date_day,req.body.date_month, req.body.date_year),
-                                            "format" : req.body.format,
-                                            "language" : req.body.language,
-                                            "notes": req.body.notes,
-                                            "contacts": contacts,
-                                            "interviews": interviews,
-                                            "related" : {
-                                                "events" : relEvents,
-                                                "sites" : relSites,
-                                                "locations" :relLocations,
-                                                "mps" : relMPs
-                                            }
-                                         };
-                                collection.insert([filenew], function(err, result){
-                                    if (err){
-                                        res.render('newfile', {
-                                            "errormessage" : err
-                                        });
-                                    }else {
-                                        if (relEvents) {
-                                            relEvents.forEach( function (e){
-                                                updateRelated("events", e, req.body.code, "files");
-                                            });
-                                        }
-                                        if (relSites) {
-                                            relSites.forEach( function (e){
-                                                updateRelated("sites", e, req.body.code, "files");
-                                            });
-                                        }
-                                        if (relLocations) {
-                                            relLocations.forEach( function (e){
-                                                updateRelated("locations", e, req.body.code, "files");
-                                            });
-                                        }
-                                        if (relMPs) {
-                                            relMPs.forEach( function (e){
-                                                updateRelated("missing", e, req.body.code, "files");
-                                            });
-                                        }
-                                        if (contacts){
-                                            contacts.forEach(function (e){
-                                                updateRelated("contacts", e, req.body.code, "files");
-                                            });
-                                            
-                                        }
-
-                                        if (interviews){
-                                            interviews.forEach(function (e){
-                                                updateRelated("interviews", e, req.body.code, "files");
-                                            });
-                                            
-                                        }
-                                        filesArray = [];
-                                        res.redirect('/files');
+                                if (profile[0].related.events!= relEvents) {
+                                    relEvents.forEach( function (e){
+                                        if((profile[0].related.events).indexOf(e)== -1)updateRelated("events", e, req.body.code, "sources");
+                                    });
+                                    (profile[0].related.events).forEach( function (e){
+                                        if((relEvents).indexOf(e)== -1)removeRelated("events", e, req.body.code, "sources");
+                                    });
+                                }
+                                if (profile[0].related.sites!= relSites) {
+                                    relSites.forEach( function (e){
+                                        if((profile[0].related.sites).indexOf(e)== -1)updateRelated("sites", e, req.body.code, "sources");
+                                    });
+                                    (profile[0].related.sites).forEach( function (e){
+                                        if((relSites).indexOf(e)== -1)removeRelated("sites", e, req.body.code, "sources");
+                                    });
+                                }
+                                if (profile[0].related.locations != relLocations) {
+                                    relLocations.forEach( function (e){
+                                        if((profile[0].related.locations).indexOf(e)== -1)updateRelated("locations", e, req.body.code, "sources");
+                                    });
+                                    (profile[0].related.locations).forEach( function (e){
+                                        if((relLocations).indexOf(e)== -1)removeRelated("locations", e, req.body.code, "sources");
+                                    });
+                                }
+                                if (profile[0].related.mps != relMPs) {
+                                    relMPs.forEach( function (e){
+                                        if((profile[0].related.mps).indexOf(e)== -1)updateRelated("missing", e, req.body.code, "sources");
+                                    });
+                                    (profile[0].related.mps).forEach( function (e){
+                                        if((relMPs).indexOf(e)== -1)removeRelated("missing", e, req.body.code, "sources");
+                                    });
+                                }
+                                if (profile[0].attendant && (profile[0].attendant.contacts != attendantContacts)) {
+                                    attendantContacts.forEach( function (e){
+                                        if((profile[0].attendant.contacts).indexOf(e)== -1)updateRelated("contacts", e, req.body.code, "sources");
+                                    });
+                                    if(profile[0].attendant && profile[0].attendant.contacts){
+                                        (profile[0].attendant.contacts).forEach( function (e){
+                                            if((attendantContacts).indexOf(e)== -1)removeRelated("contacts", e, req.body.code, "sources");
+                                        });     
                                     }
-                                });      
+                                }
+                                if (profile[0].interviewee && (profile[0].interviewee.contacts != intervieweeContacts)) {
+                                    intervieweeContacts.forEach( function (e){
+                                        if((profile[0].interviewee.contacts).indexOf(e)== -1)updateRelated("contacts", e, req.body.code, "sources");
+                                    });
+                                    if(profile[0].interviewee && profile[0].interviewee.contacts){
+                                        (profile[0].interviewee.contacts).forEach( function (e){
+                                            if((intervieweeContacts).indexOf(e)== -1)removeRelated("contacts", e, req.body.code, "sources");
+                                        });     
+                                    }
+                                }
+                                if (profile[0].related.sources != relSources) {
+                                    relSources.forEach( function (e){
+                                        if((profile[0].related.sources).indexOf(e)== -1)updateRelated("sources", e, req.body.code, "sources");
+                                    });
+                                    (profile[0].related.sources).forEach( function (e){
+                                        if((relSources).indexOf(e)== -1)removeRelated("sources", e, req.body.code, "sources");
+                                    });
+                                }
+                                profile = null;
+                                res.redirect('/sources');
                             }
-                        }
-                     });       
-
-                    } else { 
-                    res.render('index', { title: 'Login to Database'});
-                    }
-
-                });    
-                 
-            }
-        });   
+                        });
+            
+                }else {
+                        /*if its an insert*/
+                        var sourcenew = {
+                            "code" : req.body.code,
+                            "type": req.body.type,
+                            "subtype": req.body.subtype,
+                            "name": req.body.name,
+                            "location" : req.body.location,
+                            "date" : dateConverter(req.body.date_day,req.body.date_month, req.body.date_year),
+                            "title" : req.body.Title,
+                            "focus" : req.body.focus,
+                            "related" : {
+                                "events" : relEvents,
+                                "sites" : relSites,
+                                "locations" :relLocations,
+                                "mps" : relMPs,
+                                "sources" : relSources
+                            },
+                            "attendant": {
+                                "name": req.body.attendant_name,
+                                "contacts": attendantContacts,
+                            },
+                            "interviewee": {
+                                "name": req.body.interviewee_name,
+                                "contacts": intervieweeContacts,
+                            },
+                            "interviewer" : req.body.interviewer,
+                            "number" : req.body.number,
+                            "author" : req.body.author,
+                            "publication" : req.body.publication,
+                            "duration" : req.body.duration,
+                            "production" : req.body.production,
+                            "notes": req.body.notes,
+                            "files" : filesList
+                        };
+                        collection.insert([sourcenew], function(err, result){
+                            if (err){
+                                res.render('newsource', {
+                                    "errormessage" : err
+                                });
+                            }else {
+                                if (relEvents) {
+                                    relEvents.forEach( function (e){
+                                        updateRelated("events", e, req.body.code, "sources");
+                                    });
+                                }
+                                if (relSites) {
+                                    relSites.forEach( function (e){
+                                        updateRelated("sites", e, req.body.code, "sources");
+                                    });
+                                }
+                                if (relLocations) {
+                                    relLocations.forEach( function (e){
+                                        updateRelated("locations", e, req.body.code, "sources");
+                                    });
+                                }
+                                if (relMPs) {
+                                    relMPs.forEach( function (e){
+                                        updateRelated("missing", e, req.body.code, "sources");
+                                    });
+                                }
+                                if (relSources) {
+                                    relSources.forEach( function (e){
+                                        updateRelated("sources", e, req.body.code, "sources");
+                                    });
+                                }
+                                if (attendantContacts){
+                                    attendantContacts.forEach(function (e){
+                                        updateRelated("contacts", e, req.body.code, "sources");
+                                    });
+                                }
+                                if (intervieweeContacts){
+                                    intervieweeContacts.forEach(function (e){
+                                        updateRelated("contacts", e, req.body.code, "sources");
+                                    });
+                                }
+                                res.redirect('/sources');
+                            }
+                        });
+                }
+            });        
+              // });
+        }
+    //   });
+    //  }
+        });
+    } else { 
+        res.render('index', { title: 'Login to Database'});
+    }   
 });
 
 /*Search*/
@@ -3143,7 +2818,7 @@ router.post('/searchmissing', function(req, res){
 
 /*Site - Advanced Search*/
 router.post('/searchsites', function(req, res){
-    
+    var sitesResult;
     if (db) {
         var collection = db.collection('sites');
         var query = {};
@@ -3198,135 +2873,6 @@ router.post('/searchsites', function(req, res){
         res.render('index', { title: 'Login to Database'});
     }    
 });
-
-/*Export to excel*/
-router.post('/export', function(req, res){
-
-    var wb = new xl.Workbook();
-    // Add Worksheets to the workbook 
-    var ws = wb.addWorksheet('DB Export');
-    // Create a reusable style 
-    var style = wb.createStyle({
-        font: {
-            size: 10
-        },
-        alignment: {
-            wrapText: true
-	    },
-        numberFormat: '$#,##0.00; ($#,##0.00); -'
-    });
-
-    var column;
-    var substringDate = "date";
-    
-    //loop the resultArray
-    var missingResult = req.session.missingResult;
-    Object.keys(missingResult).forEach(function(record) {
-        var recordObject = missingResult[record];
-        column = 1;
-        line = parseInt(record) +2;
-        ws.cell(line,1).string(recordObject.code).style(style);
-        //we loop the keys of each record
-        Object.keys(recordObject).forEach(function(key) {
-            var keyValue = recordObject[key];
-            column = column + 1;
-            if (key== "_id"){ //ignore
-            }else if (keyValue == "[object Object]"){
-                ws.cell(1,column).string(key).style(style);
-                ws.cell(line,column).string(JSON.stringify(keyValue)).style(style);
-               //if the value had nested / child values ([object Object]) we loop it
-//                Object.keys(keyValue).forEach(function(child) {
-//                    var childValue = keyValue[child];
-//                    //if it doesn't have nested values we print it
-//                    if (childValue != "[object Object]" && child!="place"){
-//                        if (child == "id" || child == "_bsontype") { //ignore
-//                        }else{
-//                            //if its a date we format it
-//                           if (child.lastIndexOf(substringDate)!= -1){  
-//                            childValue = moment(childValue).format('MMMM Do YYYY');
-//                            childValue.toDateString;
-//                            }
-//                            //if its null we convert it to empty string
-//                            if (childValue==null)childValue = ""
-////                            console.log("record: "+record+" column: "+column)
-//                            ws.cell(line,column).string(childValue); 
-////                            console.log("childValue: "+childValue)
-//                        }
-//                        
-//                    }else {
-//                        //if it has nested values we loop it
-//                        Object.keys(childValue).forEach(function(subchild) {
-//                        var subchildValue = childValue[subchild];
-//                        //if it doesnt have nested values we print it    
-//                        if (subchildValue != "[object Object]"){  
-//                            console.log("subchildValue: "+subchildValue)
-//                            console.log("record2: "+record+" column2: "+column)
-//                            //ws.cell(record,column).string(subchildValue); 
-//                        } else{
-//                            console.log("todavia aca: "+subchild)
-//                            //ws.cell(record,column).string(subchildValue); 
-//                        }
-//                        })   
-//                    }     
-//                })  
-                
-                
-                
-            }else {
-                //print the key name on the first row
-                ws.cell(1,column).string(key).style(style);
-                //print the value of the key for each record
-                ws.cell(line,column).string(keyValue).style(style);
-                
-            }
-        })    
-    
-    });
-
-    //var date = moment().format('DD-MM-YYYY-hhmmss');
-    var dateXls = new Date().toISOString();
-
-    wb.write(dateXls+'.xlsx', function (err, stats) {
-        if (err) {
-            console.error(err);
-            /*res.render('missinglist', {
-                            "collList" : missingList,
-                            parties : partiesList,
-                            title: "List of Missing People",
-                            nextrecord : nextrecord,
-                            "user": user,
-                            parties : partiesList,
-                            locations: locationsList, 
-                            events: eventsList, 
-                            sites: sitesList,
-                            export: "Export could not be completed"
-                            }); */
-            //popupS.alert({
-              //  content: 'Error'
-            //});
-        } else {
-            //console.log("stats: "+JSON.stringify(stats))
-            res.render('missinglist', {
-                            "collList" : missingResult,
-                            parties : partiesList,
-                            title: "List of Missing People",
-                            nextrecord : nextrecord,
-                            "user": req.session.user,
-                            parties : partiesList,
-                            locations: locationsList, 
-                            events: eventsList, 
-                            sites: sitesList,
-                            export: "Export completed succesfully"
-                            }); 
-            //popupS.alert({
-              //  content: 'Yes'
-            //});
-        } 
-
-    
-    });
-});
-
 
 router.post('/uploadPicture',function(req,res){
     
@@ -3384,6 +2930,18 @@ router.post('/deleteEntry', function (req,res){
     var collection = db.collection(req.body.collection);
     var code = req.body.code;
 
+    if (req.body.files && req.body.files.length){
+        var files = JSON.parse(req.body.files);
+        files.forEach(function (file){
+            //delete temporary file
+            fs.unlink(relPath+file, function(err) {
+                if (err) { console.log('ERROR: ' + err); }
+            });
+            //delete file from cloudinry
+            cloudinary.v2.uploader.destroy(file, function(error, result){console.log(result)});  
+        }) 
+    }
+
     collection.deleteOne({code: req.body.code}, function(err, result){
         if (err){
            console.log ("error :"+err);
@@ -3412,89 +2970,23 @@ router.post('/deleteEntry', function (req,res){
               removeRelated("missing", e.slice(1,-1), req.body.code, req.body.collection);
              })     
             }
-            if((req.body.interviews).length){
-             var relInts = (req.body.interviews).slice(1,-1);
-             relInts.split(",").forEach(function (e){
-              removeRelated("interviews", e.slice(1,-1), req.body.file, req.body.collection);
-             })     
-            }
-            if((req.body.contacts).length){
+            if(req.body.contacts && (req.body.contacts).length){
              var relContacts = (req.body.contacts).slice(1,-1);
              relContacts.split(",").forEach(function (e){
               removeRelated("contacts", e.slice(1,-1), req.body.code, req.body.collection);
              })     
             }  
-            if(req.body.files && (req.body.files).length){
-                var files = (req.body.files).slice(1,-1);
-                files.split(",").forEach(function (e){
-                 removeRelated("files", e.slice(1,-1), req.body.code, req.body.collection);
+            if(req.body.sources && (req.body.sources).length){
+                var sources = (req.body.sources).slice(1,-1);
+                sources.split(",").forEach(function (e){
+                 removeRelated("sources", e.slice(1,-1), req.body.code, req.body.collection);
                 })     
                }
+            req.session.profile = null;   
             res.redirect('/'+req.body.collection);   
         }
     }); 
 
-});
-
-router.post('/removeFile', function(req,res){
-    var file = req.body.file;
-    var type = req.body.type;
-    var path = __dirname +"/../public/files/"+file;
-    
-    //delete file from file system
-    fs.unlink(path, function(err) {
-        if ( err ) {
-           console.log('ERROR: ' + err); 
-        }
-        //update database either way
-           var collection = db.collection(type);
-
-           collection.deleteOne({code: req.body.code}, function(err, result){
-               if (err){
-                  console.log ("error :"+err);
-               }else {
-                   if((req.body.related_events).length){
-                       var relEvents = (req.body.related_events).slice(1,-1);
-                       relEvents.split(",").forEach(function (e){
-                           removeRelated("events", e.slice(1,-1), req.body.code, "files");
-                       })     
-                   }
-                   if((req.body.related_sites).length){
-                       var relSites = (req.body.related_sites).slice(1,-1);
-                       relSites.split(",").forEach(function (e){
-                        removeRelated("sites", e.slice(1,-1), req.body.code, "files");
-                       })     
-                   }
-                   if((req.body.related_locations).length){
-                    var relLocations = (req.body.related_locations).slice(1,-1);
-                    relLocations.split(",").forEach(function (e){
-                     removeRelated("locations", e.slice(1,-1), req.body.code, "files");
-                    })     
-                   }
-                   if((req.body.related_mps).length){
-                    var relMps = (req.body.related_mps).slice(1,-1);
-                    relMps.split(",").forEach(function (e){
-                     removeRelated("missing", e.slice(1,-1), req.body.code, "files");
-                    })     
-                   }
-                   if((req.body.related_interviews).length){
-                    var relInts = (req.body.related_interviews).slice(1,-1);
-                    relInts.split(",").forEach(function (e){
-                     removeRelated("interviews", e.slice(1,-1), req.body.file, "files");
-                    })     
-                   }
-                   if((req.body.related_contacts).length){
-                    var relContacts = (req.body.related_contacts).slice(1,-1);
-                    relContacts.split(",").forEach(function (e){
-                     removeRelated("contacts", e.slice(1,-1), req.body.code, "files");
-                    })     
-                   }  
-                   res.redirect('/'+type);   
-               }
-           });
-    });
-
-    
 });
 
 router.post('/logout', function(req, res){
@@ -3506,6 +2998,5 @@ router.post('/logout', function(req, res){
     
     
 });
-
 
 module.exports = router;

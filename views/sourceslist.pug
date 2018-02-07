@@ -1,0 +1,37 @@
+extends layout
+
+block content
+  include menu
+  br
+  div   
+   div#table
+    div(class='btn menu')
+     a(href="/newprofile/?type=source&nextrecord="+nextrecord) Add a New Source
+  
+    h3. 
+      Sources
+     
+    table(id="sourcesList")
+      thead    
+        tr#headtag
+            th Code
+            th Type
+            th Subtype
+            th File
+            
+            
+      tbody        
+            each source, i in collList
+                tr
+                    td
+                        a(href="#" onclick="loadProfile('sources','"+source.code+"');") #{source.code}
+                    td=source.type
+                    td=source.subtype
+                    td=source.file
+                    
+   div#sideProfile
+  
+   script.
+    $('#sourcesList').DataTable( {
+        paging: true
+        } );

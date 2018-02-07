@@ -1,6 +1,7 @@
 extends layout
 
 block content
+ div#login 
   h3. 
      Login to Database
   form#form_login(name="login", method="post", action="/login")
@@ -9,7 +10,7 @@ block content
     input#input_pass(type="password", placeholder="Password", name="pass")
     br
     br
-    div(class='btn menu')
+    div(class='btn menu login')
      button#submit_login(type="submit" class="buttons") submit
     
     if errormessage

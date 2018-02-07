@@ -128,19 +128,20 @@ block content
 
         //- functions
         function style(feature) {
-          var color;
-          //var color = [];
+          //var color;
+          var color = [];
           for(var i = 0; i < partiesArray.length; i++){
             if((partiesArray[i].control_areas) && (partiesArray[i].control_areas).length)
               if ((partiesArray[i].control_areas).indexOf(feature.id) != -1)
-                color = partiesArray[i].color;
-                //color.push(partiesArray[i].color);
+                //color = partiesArray[i].color;
+                color.push(partiesArray[i].color);
+                //console.log(color+" color");
           }
 
           return {
             //fillColor: getColor(feature.id),
             fillColor: color,
-            //- background: #466368,
+            //background: 'red',
             //- background: -webkit-linear-gradient(red, blue),
             //- background:    -moz-linear-gradient(red, blue),
             //- background:         linear-gradient(red, blue),

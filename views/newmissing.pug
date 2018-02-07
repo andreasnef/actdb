@@ -673,7 +673,7 @@ block content
      br
      
      span Groups Responsible
-     span &nbsp;
+     br
      if (parties)
         each party, i in parties
             div(class="columns")
@@ -685,7 +685,8 @@ block content
               label #{party.name.en}
           
      br
-     textarea#input_perpetrators_name(type="text", placeholder="Names of Reponsible Persons or Fractions within the group", cols="120" rows="10", name="perpetrators_name", value=perpetrators_name)
+     br
+     textarea#input_perpetrators_name(type="text", placeholder="Fractions within the group", cols="120" rows="10", name="perpetrators_name", value=perpetrators_name)
         | #{perpetrators_name}
      br
      br      

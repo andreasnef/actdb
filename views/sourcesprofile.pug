@@ -1,0 +1,157 @@
+extends layout
+
+block content
+ if profile
+     each value, i in profile
+      div#profileTitle
+       h3.
+         #{value.code} #{value.type} 
+
+      div#wrapper
+
+          br
+          - if (value.type)
+            p
+              span.title Type of Source: 
+              span #{value.type}
+          - if (value.subtype)
+            p
+              span.title Subtype: 
+              span #{value.subtype}      
+          
+          - if(value.name)
+            p
+              span.title Name of the media:  
+              span #{value.name}
+          
+          - if(value.title)
+            p
+              span.title Title:  
+              span #{value.title} 
+
+          -if (value.focus)
+           p 
+            span.title Focus: 
+            span #{value.focus} 
+
+          -if (value.location)
+           p 
+            span.title Location: 
+            span #{value.location}             
+    
+          - if (value.date) 
+           p
+             - var date = moment(value.date).utc().format('MMMM Do, YYYY');
+             span.title Date of the Interview: 
+             span #{date}
+          
+          -if (value.duration)
+           p 
+            span.title Duration: 
+            span #{value.duration}  
+
+          -if (value.number)
+           p 
+            span.title Number of #{type}: 
+            span #{value.number}  
+
+          - if (value.attendant && value.attendant.name) 
+           p
+            span.title Attendant Name: 
+            span #{value.attendant.name}
+
+          - if ((value.attendant.contacts).length) 
+           p
+            span.title Attendants Contacts: 
+            span #{value.attendant.contacts} 
+
+          - if (value.interviewee && value.interviewee.name) 
+           p
+            span.title Interviewee Name: 
+            span #{value.interviewee.name}  
+
+          - if (value.interviewee && (value.interviewee.contacts).length) 
+           p
+            span.title Interviewee Contacts: 
+            span #{value.interviewee.contacts}   
+
+          - if (value.interviewer) 
+           p
+            span.title Interviewer: 
+            span #{value.interviewer} 
+
+          - if (value.author) 
+           p
+            span.title Author: 
+            span #{value.author} 
+
+          - if (value.publication) 
+           p
+            span.title Publication Information: 
+            span #{value.publication} 
+
+          - if (value.production) 
+           p
+            span.title Production: 
+            span #{value.production}          
+                      
+             
+          - if (value.notes)
+           p
+            span.title Notes: 
+            span #{value.notes}
+            
+      div#wrapper  
+          - if ((value.related.events).length)
+           p
+            span.title Related Events: 
+            each event, i in value.related.events
+             a(href="#" onclick="loadProfile('events','"+event+"');") #{event} 
+          - if ((value.related.sites).length)
+           p
+            span.title Related Sites: 
+            each site, i in value.related.sites
+             a(href="#" onclick="loadProfile('sites','"+site+"');") #{site} 
+          - if ((value.related.locations).length)
+           p
+            span.title Related Locations: 
+            each location, i in value.related.locations
+             a(href="#" onclick="loadProfile('locations','"+location+"');") #{location} 
+          - if ((value.related.mps).length)
+           p
+            span.title Related Missing Persons: 
+            each mp, i in value.related.mps
+             a(href="#" onclick="loadProfile('missing','"+mp+"');") #{mp} 
+          - if (value.related.sources && (value.related.sources).length)
+           p
+            span.title Related Sources: 
+            each source, i in value.related.sources
+             a(href="#" onclick="loadProfile('sources','"+source+"');") #{source}  
+
+      div#wrapper
+          - if (file_urls && file_urls.length)
+           p
+            span.title Files: 
+            span #{value.files}
+            br
+            each url in file_urls
+              a(href=url target="_blank") Open file
+              br
+
+          div(class='btn menu')
+            a(href="/newprofile/?type=source&code="+value.code) Edit
+
+          div(class='btn menu')
+           form#removeFile(name="removeFile", method="post", action="/deleteEntry" onclick="return confirm('This will delete the source and files permanently. Are you sure?')")
+                    input(type="hidden" name="code" value=value.code)
+                    input(type="hidden" name="files" value=value.files)
+                    input(type="hidden" name="collection" value="sources")
+                    input(type="hidden" name="related_events" value=value.related.events)
+                    input(type="hidden" name="related_sites" value=value.related.sites)
+                    input(type="hidden" name="related_locations" value=value.related.locations)
+                    input(type="hidden" name="related_mps" value=value.related.mps)
+                    input(type="hidden" name="related_sources" value=value.related.sources)
+                    input(type="hidden" name="related_interviews" value=value.interviews)
+                    input(type="hidden" name="related_contacts" value=value.contacts)
+                    
+                    button#submit_event(class="buttons", type="submit") Delete  

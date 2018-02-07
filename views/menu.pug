@@ -16,20 +16,18 @@ block content
     a(href='/events') Events
   if(user!= "public")
    div(class='btn menu')
-    a(href='/interviews') Interviews
+    a(href='/parties') Armed Groups   
   if(user!= "public")
    div(class='btn menu')
-    a(href='/contacts') Contacts
+    a(href='/contacts') Contacts     
   if(user!= "public")
    div(class='btn menu')
-    a(href='/parties') Parties      
-  if(user!= "public")
-   div(class='btn menu')
-    a(href='/files') Files 
+    a(href='/sources') Sources 
   div(class='btn menu')
     a(href='/map') Map         
   if(user!= "public")
-   div(class='btn menu')
+   div(class='btn menu user')
+    #{userIcon}
     a(href="#" onclick="toggle_visibility('userOptions');") #{user} 
 
  
@@ -42,3 +40,5 @@ block content
     form#logout(name="logout", method="post", action="/logout")
         button#logout(type="submit") Logout
   
+  script.
+   var userIcon = L.AwesomeMarkers.icon({icon: 'user'});
