@@ -70,8 +70,8 @@ router.post('/login', function(req, res){
 
      } else {
         /*Connect to the BD*/
-        //MongoClient.connect(url, function(err,client){
-        MongoClient.connect(url, function(err,database){
+        MongoClient.connect(url, function(err,client){
+        //MongoClient.connect(url, function(err,database){
             if (err){
             console.log("User:"+user+" Unable to connect to server", err);
             res.render('index', {
@@ -79,8 +79,8 @@ router.post('/login', function(req, res){
             });
         } else {
             //Store the connection globally
-            //db = client.db("Act");
-            db = database;
+            db = client.db("Act");
+            //db = database;
             //save user in session
             req.session.user = user;
             console.log("user:" + req.session.user);
