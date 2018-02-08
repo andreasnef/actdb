@@ -2,7 +2,7 @@
   "name": "actdbsite",
   "version": "0.0.0",
   "engines": {
-    "node": "6.11.x"
+    "node": "6.11.0"
   },
   "private": true,
   "scripts": {
