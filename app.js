@@ -78,6 +78,6 @@ app.listen(port, "0.0.0.0", function() {
   console.log("Listening on Port 3000");
 });
 
-var WORKERS = process.env.WEB_CONCURRENCY || 1;
+// var WORKERS = process.env.WEB_CONCURRENCY || 1;
 
 module.exports = app;

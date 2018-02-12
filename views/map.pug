@@ -8,7 +8,7 @@ block content
     h3. 
       Mapping
      
-    div   
+    div
      div#table
        div#map
 
@@ -22,7 +22,6 @@ block content
         var sitesArray = !{JSON.stringify(sites)};
         var eventsArray = !{JSON.stringify(events)};
         var partiesArray = !{JSON.stringify(parties)};
-        //console.log("array: "+partiesArray);
         
         var markerArrayMissing = new Array(missingArray.length)
         var markerArrayCheckpoints = new Array(checkpointsArray.length)
@@ -110,7 +109,7 @@ block content
         var map = L.map('map', {
           center: [33.8699, 35.8274],
           zoom: 9,
-          layers: [basemap, missingLayer]
+          layers: [basemap]
         });
         var baseMaps = {
           "Streets": basemap
@@ -237,14 +236,14 @@ block content
         //- });
 
         // second option
-        //- var markersLayer = new L.LayerGroup();	//layer contain searched elements
+        //- var markersLayer = new L.LayerGroup();  //layer contain searched elements
         //- map.addLayer(markersLayer);
 
         //- for(var i = 0; i < missingArray.length; i++){
-        //-   var code = missingArray[i].code,	//value searched
+        //-   var code = missingArray[i].code,  //value searched
         //-   nameFull = missingArray[i].name.ar.first+" "+missingArray[i].name.ar.middle+" "+missingArray[i].name.ar.last,
         //-   name = missingArray[i].name.ar.first,
-        //-   loc = [missingArray[i].location.coordinates[1],missingArray[i].location.coordinates[0]],		//position found
+        //-   loc = [missingArray[i].location.coordinates[1],missingArray[i].location.coordinates[0]],    //position found
         //-   marker = new L.Marker(new L.latLng(loc), {code: code, name: name, nameFull: nameFull});//se property searched
         //-   marker.bindPopup(nameFull);
         //-   markersLayer.addLayer(marker);
@@ -283,14 +282,14 @@ block content
         //- map.addControl( controlSearch );
         
         //fourth option
-        //var markersLayer = new L.LayerGroup();	//layer contain searched elements
+        //var markersLayer = new L.LayerGroup();  //layer contain searched elements
         //map.addLayer(markersLayer);
 
         //for(var i = 0; i < missingArray.length; i++){
-        //  var title = missingArray[i].code,	//value searched
+        //  var title = missingArray[i].code, //value searched
         //    nameFull = missingArray[i].name.ar.last+" "+missingArray[i].name.ar.middle+" "+missingArray[i].name.ar.first,
         //    name = missingArray[i].name.ar.first,
-        //    loc = [missingArray[i].location.coordinates[1],missingArray[i].location.coordinates[0]],		//position found
+        //    loc = [missingArray[i].location.coordinates[1],missingArray[i].location.coordinates[0]],    //position found
         //    marker = new L.Marker(new L.latLng(loc), {title: title, name:name});//se property searched
         //marker.bindPopup(nameFull);
         //markersLayer.addLayer(marker);
@@ -303,11 +302,11 @@ block content
         
         ////////////populate map with markers from sample data
         //- for(i in data) {
-        //- 	var title = data[i].title,	//value searched
-        //- 		loc = data[i].loc,		//position found
-        //- 		marker = new L.Marker(new L.latLng(loc), {title: title} );//se property searched
-        //- 	marker.bindPopup('title: '+ title );
-        //- 	markersLayer.addLayer(marker);
+        //-   var title = data[i].title,  //value searched
+        //-     loc = data[i].loc,    //position found
+        //-     marker = new L.Marker(new L.latLng(loc), {title: title} );//se property searched
+        //-   marker.bindPopup('title: '+ title );
+        //-   markersLayer.addLayer(marker);
         //- }
         
         var poiLayers = L.layerGroup([
@@ -332,10 +331,5 @@ block content
             //- var type = val.layer.feature.properties.amenity;
             return '<a href="#" class="'+val+'">'+val+'<b>'+text+'</b></a>';
           }
-      	})
+        })
         .addTo(map);
-
-
-
-
-

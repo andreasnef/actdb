@@ -19,6 +19,7 @@ var municipalities = require("../public/javascripts/lebanonAdministrative.js");
 //var functions = require("./functions.js")();
  
 var db;
+var dbclient;
 var collectionsList;
 var partiesList;
 var locationsList;
@@ -71,7 +72,6 @@ router.post('/login', function(req, res){
      } else {
         /*Connect to the BD*/
         MongoClient.connect(url, function(err,client){
-        //MongoClient.connect(url, function(err,database){
             if (err){
             console.log("User:"+user+" Unable to connect to server", err);
             res.render('index', {
@@ -80,7 +80,7 @@ router.post('/login', function(req, res){
         } else {
             //Store the connection globally
             db = client.db("Act");
-            //db = database;
+            dbclient = client;
             //save user in session
             req.session.user = user;
             console.log("user:" + req.session.user);
@@ -120,7 +120,7 @@ router.post('/login', function(req, res){
 function getParties(callback){ 
     if (db) {
         var partiesColl = db.collection('parties');
-        partiesColl.find({},{_id:0, 'name': 1, code: 1, control_areas:1, color:1}).sort({'name.en':1}).toArray(function(err, result){
+        partiesColl.find({}).project({_id:0, 'name': 1, code: 1, control_areas:1, color:1}).sort({'name.en':1}).toArray(function(err, result){
             if (err){
                     res.send(err);
             } else {
@@ -138,7 +138,7 @@ function getLocations(user, callback){
     if (db) {
         if (user == "public"){
          var locationsColl = db.collection('locations_public');
-         locationsColl.find({public: 'Yes'},{_id:0, code: 1, category: 1, 'name': 1, groups_responsible:1, 'location.district':1, 'location.governorate': 1, 'location.coordinates':1}).sort({'name.en': 1}).toArray(function(err, result){
+         locationsColl.find({public: 'Yes'}).project({_id:0, code: 1, category: 1, 'name': 1, groups_responsible:1, 'location.district':1, 'location.governorate': 1, 'location.coordinates':1}).sort({'name.en': 1}).toArray(function(err, result){
             if (err){
                     res.send(err);
             } else {
@@ -148,7 +148,7 @@ function getLocations(user, callback){
         });
         }else{
          var locationsColl = db.collection('locations');  
-         locationsColl.find({},{_id:0, code: 1, category: 1, 'name': 1, groups_responsible:1, 'location.district':1, 'location.governorate': 1, 'location.coordinates':1}).sort({'name.en': 1}).toArray(function(err, result){
+         locationsColl.find({}).project({_id:0, code: 1, category: 1, 'name': 1, groups_responsible:1, 'location.district':1, 'location.governorate': 1, 'location.coordinates':1}).sort({'name.en': 1}).toArray(function(err, result){
             if (err){
                     res.send(err);
             } else {
@@ -170,7 +170,7 @@ function getEvents(user, callback){
         }else{
          var eventsColl = db.collection('events');   
         } 
-            eventsColl.find({},{_id:0,'name': 1, code: 1, type: 1, 'location.district':1, 'location.governorate': 1, 'dates.beg': 1, 'location.coordinates':1}).sort({'name.en':1}).toArray(function(err, result){
+            eventsColl.find({}).project({_id:0,'name': 1, code: 1, type: 1, 'location.district':1, 'location.governorate': 1, 'dates.beg': 1, 'location.coordinates':1}).sort({'name.en':1}).toArray(function(err, result){
                 if (err){
                         res.send(err);
                 } else {
@@ -191,7 +191,7 @@ function getSites(user, callback){
         }else{
          var sitesColl = db.collection('sites');   
         } 
-        sitesColl.find({},{_id:0,'name': 1, code: 1, 'location.district':1,'location.governorate':1, 'exhumed.status': 1, 'location.coordinates':1}).sort({'location.governorate':1, 'location.district':1, 'name.en': 1}).toArray(function(err, result){
+        sitesColl.find({}).project({_id:0,'name': 1, code: 1, 'location.district':1,'location.governorate':1, 'exhumed.status': 1, 'location.coordinates':1}).sort({'location.governorate':1, 'location.district':1, 'name.en': 1}).toArray(function(err, result){
                 if (err){
                         res.send(err);
                 } else {
@@ -209,7 +209,7 @@ function getMissing(session, callback){
     if (db) {
         if (session.user == "public"){
             var missingColl = db.collection('missing_public');
-            missingColl.find({public: 'Yes'},{_id:0, 'name': 1, code: 1, 'disappearance.place': 1, 'disappearance.date': 1, 'location':1}).sort({'name.ar.last':1}).toArray(function(err, result){
+            missingColl.find({public: 'Yes'}).project({_id:0, 'name': 1, code: 1, 'disappearance.place': 1, 'disappearance.date': 1, 'location':1}).sort({'name.ar.last':1}).toArray(function(err, result){
                 if (err){
                         res.send(err);
                 } else {
@@ -220,7 +220,7 @@ function getMissing(session, callback){
         } else {
             var missingColl = db.collection('missing');
 
-            missingColl.find({},{_id:0, 'name': 1, code: 1, 'disappearance.place': 1, 'disappearance.date': 1, 'location':1}).sort({'name.ar.last':1}).toArray(function(err, result){
+            missingColl.find({}).project({_id: 0, name: 1, code: 1, "disappearance.place": 1, "disappearance.date": 1, location:1}).sort({"name.ar.last":1}).toArray(function(err, result){
                 if (err){
                         res.send(err);
                 } else {
@@ -239,7 +239,7 @@ function getMissing(session, callback){
 function getContacts(callback){ 
     if (db) {
         var contactsColl = db.collection('contacts');
-        contactsColl.find({},{'name': 1, code: 1, confidential:1, category: 1}).sort({'name.en':1}).toArray(function(err, result){
+        contactsColl.find({}).project({'name': 1, code: 1, confidential:1, category: 1}).sort({'name.en':1}).toArray(function(err, result){
             if (err){
                     res.send(err);
             } else {
@@ -255,7 +255,7 @@ function getContacts(callback){
 function getSources(callback){ 
     if (db) {
         var filesColl = db.collection('sources');
-        filesColl.find({},{_id:1, code: 1, type:1, subtype:1, file: 1, date:1}).sort({'code':1}).toArray(function(err, result){
+        filesColl.find({}).project({_id:1, code: 1, type:1, subtype:1, file: 1, date:1}).sort({'code':1}).toArray(function(err, result){
             if (err){
                     res.send(err);
             } else {
@@ -2990,11 +2990,10 @@ router.post('/deleteEntry', function (req,res){
 });
 
 router.post('/logout', function(req, res){
-    db.close(function(){
-        //res.redirect('/');
-        req.session.destroy;
-        res.render('index', { title: 'Login to Database'});
-    });
+    //dbclient.close();
+    req.session.destroy;
+    res.render('index', { title: 'Login to Database'});
+    //res.redirect("/");
     
     
 });

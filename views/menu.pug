@@ -27,7 +27,7 @@ block content
     a(href='/map') Map         
   if(user!= "public")
    div(class='btn menu user')
-    #{userIcon}
+    //- #{userIcon}
     a(href="#" onclick="toggle_visibility('userOptions');") #{user} 
 
  
@@ -41,4 +41,4 @@ block content
         button#logout(type="submit") Logout
   
   script.
-   var userIcon = L.AwesomeMarkers.icon({icon: 'user'});
+   //var userIcon = L.AwesomeMarkers.icon({icon: 'user'});
