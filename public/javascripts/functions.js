@@ -28,7 +28,7 @@ function showFields(type) {
                 document.getElementById("attendant").style.display = "none";
                 document.getElementById("subtype").style.display = "none";
                 document.getElementById("name").style.display = "none";
-                document.getElementById("title").style.display = "none";
+                document.getElementById("title").style.display = "block";
                 document.getElementById("author").style.display = "none";
                 document.getElementById("publication").style.display = "none";
                 document.getElementById("production").style.display = "none";
@@ -43,7 +43,7 @@ function showFields(type) {
                 document.getElementById("notes").style.display = "block";
                 document.getElementById("subtype").style.display = "none";
                 document.getElementById("name").style.display = "none";
-                document.getElementById("title").style.display = "none";
+                document.getElementById("title").style.display = "block";
                 document.getElementById("focus").style.display = "none";
                 document.getElementById("author").style.display = "none";
                 document.getElementById("publication").style.display = "none";

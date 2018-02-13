@@ -17,7 +17,8 @@ block content
             th Code
             th Type
             th Subtype
-            th File
+            th Title
+            th Files
             
             
       tbody        
@@ -27,7 +28,8 @@ block content
                         a(href="#" onclick="loadProfile('sources','"+source.code+"');") #{source.code}
                     td=source.type
                     td=source.subtype
-                    td=source.file
+                    td=source.source_title
+                    td=source.files
                     
    div#sideProfile
   

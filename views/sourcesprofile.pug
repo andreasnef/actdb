@@ -5,11 +5,15 @@ block content
      each value, i in profile
       div#profileTitle
        h3.
-         #{value.code} #{value.type} 
+          #{value.type} - #{value.source_title}
 
       div#wrapper
 
           br
+          p
+           span.title Code: 
+           span #{value.code}
+          
           - if (value.type)
             p
               span.title Type of Source: 
@@ -24,10 +28,10 @@ block content
               span.title Name of the media:  
               span #{value.name}
           
-          - if(value.title)
+          - if(value.source_title)
             p
               span.title Title:  
-              span #{value.title} 
+              span #{value.source_title} 
 
           -if (value.focus)
            p 

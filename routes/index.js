@@ -255,7 +255,7 @@ function getContacts(callback){
 function getSources(callback){ 
     if (db) {
         var filesColl = db.collection('sources');
-        filesColl.find({}).project({_id:1, code: 1, type:1, subtype:1, file: 1, date:1}).sort({'code':1}).toArray(function(err, result){
+        filesColl.find({}).project({code: 1, type:1, subtype:1, source_title:1, file: 1}).sort({'code':1}).toArray(function(err, result){
             if (err){
                     res.send(err);
             } else {
@@ -2463,7 +2463,7 @@ router.post('/addsource', function(req, res){
                 "date_day" : req.body.date_day,
                 "date_month": req.body.date_month, 
                 "date_year": req.body.date_year,
-                "title" : req.body.Title,
+                "source_title" : req.body.source_title,
                 "focus" : req.body.focus,
                 "related_events" : req.body.related_events,
                 "related_sites" : req.body.related_sites,
@@ -2522,7 +2522,7 @@ router.post('/addsource', function(req, res){
                         if (profile[0].name!= req.body.name) updateVal['name'] =  req.body.name
                         if (profile[0].location!= req.body.location) updateVal['location'] =  req.body.location
                         if (profile[0].date!= dateConverter(req.body.date_day,req.body.date_month, req.body.date_year)) updateVal['date'] =  dateConverter(req.body.date_day,req.body.date_month, req.body.date_year)
-                        if (profile[0].title!= req.body.Title) updateVal['title'] =  req.body.Title
+                        if (profile[0].source_title!= req.body.source_title) updateVal['source_title'] =  req.body.source_title
                         if (profile[0].focus!= req.body.focus) updateVal['focus'] =  req.body.focus
                         if (profile[0].related.events!= relEvents)updateVal['related.events'] = relEvents
                         if (profile[0].related.sites!= relSites)updateVal['related.sites'] = relSites  
@@ -2631,7 +2631,7 @@ router.post('/addsource', function(req, res){
                             "name": req.body.name,
                             "location" : req.body.location,
                             "date" : dateConverter(req.body.date_day,req.body.date_month, req.body.date_year),
-                            "title" : req.body.Title,
+                            "source_title" : req.body.source_title,
                             "focus" : req.body.focus,
                             "related" : {
                                 "events" : relEvents,
@@ -2883,7 +2883,7 @@ router.post('/uploadPicture',function(req,res){
     },
     filename: function (req, file, cb) {
      req.files.forEach( function(f) {
-        console.log(f);
+        //console.log(f);
      });  
     cb(null, file.fieldname + '.jpeg')
     }
