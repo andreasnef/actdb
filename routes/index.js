@@ -95,7 +95,6 @@ router.post('/login', function(req, res){
             //             console.log(err)
             //          }
             //     });
-            //     console.log(newChange);
             // });
             
             if(user != "public"){
@@ -702,7 +701,7 @@ router.get('/profile', function(req, res){
             } else if (result.length) {
                 req.session.profile = result;
                 var urls = [];
-                if(collName=="sources"){
+                if(collName=="sources" || collName=="missing"){
                     //get private url from cloudinary (expires in an hour)
                     var files = result[0].files;
                     if(files && files.length){
@@ -710,7 +709,8 @@ router.get('/profile', function(req, res){
                         var fileSplit = JSON.stringify(file).split(".");
                         var extension = (fileSplit[fileSplit.length -1]).slice(0, -1);
                         var url = cloudinary.utils.private_download_url(file,extension);
-                        urls.push(url);    
+                        urls.push(url);
+                        console.log(url);    
                       });  
                     } 
                 }
@@ -2447,9 +2447,7 @@ router.post('/addsource', function(req, res){
     
                 "validationErrors" : result.mapped()
             });
-    
         } else {
-
             uploadFile(req, res, function(filesList, uploadError){
                 var relEvents = req.body.related_events;
                 var relSites = req.body.related_sites;
@@ -2662,50 +2660,12 @@ router.post('/addsource', function(req, res){
                             }
                         });
                 }
-            });        
-              // });
+            });    
         }
-    //   });
-    //  }
         });
     } else { 
         res.render('index', { title: 'Login to Database'});
     }   
-});
-
-/*Search*/
-router.post('/search', function(req, res){
-    var collectionName = req.body.collection;
-    var criteria = req.body.criteria;
-    var searchText = req.body.search_text;
-    
-    if (db) {
-        var collection = db.collection(collectionName);
-        var query = {};
-        if (criteria == "keyword"){
-            query = { $text: { $search: searchText }}
-        } else {
-            query[criteria] = searchText;
-        }
-        
-        collection.find(query).toArray(function(err, result){
-                if (err){
-                        res.send(err);
-                } else if (result.length){
-                        res.render('searchresult', {
-                        "searchResult" : result,
-                        "collection" : collectionName    
-                        }); 
-                }else{
-                        res.render('home', {
-                        "collections" : collectionsList,
-                        "empty" : 'yes',
-                        }); 
-                }
-            }); 
-    } else { 
-        res.render('index', { title: 'Login to Database'});
-    }    
 });
 
 /*Missing - Advanced Search*/
@@ -2835,55 +2795,58 @@ router.post('/searchsites', function(req, res){
 });
 
 router.post('/uploadPicture',function(req,res){
-    
-    // define the route and file name
-    var storage = multer.diskStorage({
-        destination: function (req, file, cb) {
-        cb(null, __dirname + '/../public/images')      //you tell where to upload the files,
-    },
-    filename: function (req, file, cb) {
-     req.files.forEach( function(f) {
-        //console.log(f);
-     });  
-    cb(null, file.fieldname + '.jpeg')
-    }
-    })
-    
-    var upload = multer({ storage : storage}).any();
+    uploadFile(req, res, function(filesList, uploadError){
+        var collection = db.collection('missing');
 
-    upload(req,res,function(err) {
-        if(err) {
-            console.log(err);
-            return res.end("Error uploading file.");
-        } else {
-            req.files.forEach( function(f) {
-             //rename file to add code
-             fs.rename(__dirname + '/../public/images/profilePic.jpeg', __dirname + '/../public/images/profilePic-'+req.body.code+'.jpeg', function(err) {
-                 if ( err ) {
-                    console.log('ERROR: ' + err); 
-                 }
-                 else {
-                    //update database
-                    var collection = db.collection('missing');
+        collection.update({code: req.body.code}, {$set: {files: filesList}}, function(err, result){    
+            if (err){
+                console.log ("error :"+err);
+            }else {
+                    res.render('missinglist', {
+                    "collList" : req.session.missingResult,
+                    parties : partiesList,
+                    title: "List of Missing People",
+                    nextrecord : nextrecord,
+                    "user": req.session.user   
+                    });
+            }
+        }); 
 
-                    collection.update({code: req.body.code}, {$set: {picture: 'profilePic-'+req.body.code+'.jpeg'}}, function(err, result){    
-                        if (err){
-                            console.log ("error :"+err);
-                        }else {
-                                res.render('missinglist', {
-                                "collList" : req.session.missingResult,
-                                parties : partiesList,
-                                title: "List of Missing People",
-                                nextrecord : nextrecord,
-                                "user": req.session.user   
-                                });
-                        }
-                    }); 
-                 }
-             });     
-            }); 
-        }
     });
+
+    // upload(req,res,function(err) {
+    //     if(err) {
+    //         console.log(err);
+    //         return res.end("Error uploading file.");
+    //     } else {
+    //         req.files.forEach( function(f) {
+    //          //rename file to add code
+    //          fs.rename(__dirname + '/../public/images/profilePic.jpeg', __dirname + '/../public/images/profilePic-'+req.body.code+'.jpeg', function(err) {
+    //              if ( err ) {
+    //                 console.log('ERROR: ' + err); 
+    //              }
+    //              else {
+    //                 //update database
+    //                 var collection = db.collection('missing');
+
+    //                 collection.update({code: req.body.code}, {$set: {picture: 'profilePic-'+req.body.code+'.jpeg'}}, function(err, result){    
+    //                     if (err){
+    //                         console.log ("error :"+err);
+    //                     }else {
+    //                             res.render('missinglist', {
+    //                             "collList" : req.session.missingResult,
+    //                             parties : partiesList,
+    //                             title: "List of Missing People",
+    //                             nextrecord : nextrecord,
+    //                             "user": req.session.user   
+    //                             });
+    //                     }
+    //                 }); 
+    //              }
+    //          });     
+    //         }); 
+    //     }
+    // });
 });
 
 router.post('/deleteEntry', function (req,res){

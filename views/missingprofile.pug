@@ -15,9 +15,10 @@ block content
             span.title Code: 
             span #{value.code}
 
-          - if (value.picture && value.picture!= "YES")
+          - if (value.files)
              div#pic
-                 img.className#IdName(src="/images/"+value.picture height="182")
+               each url in file_urls
+                 img.className#IdName(src=url height="182")
           - else if (value.picture == "YES") 
             p 
              span Picture exists but hasn't been uploaded
