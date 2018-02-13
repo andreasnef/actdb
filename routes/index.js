@@ -85,7 +85,7 @@ router.post('/login', function(req, res){
             req.session.user = user;
             console.log("user:" + req.session.user);
             
-            // //open change stream and record any changes
+            //open change stream and record any changes
             // const missingCollection = db.collection('missing');
             // var changeStream = missingCollection.watch();
             // changeStream.on("change", function(change) {
@@ -865,18 +865,6 @@ router.post('/addmissing', function(req, res){
                     "notes" : req.body.notes,
                     "sources": req.body.sources,
                     "picture" : req.body.picture,
-                    "lists_syria_2000" : req.body.lists_syria_2000,
-                    "lists_syria_2002" : req.body.lists_syria_2002,
-                    "lists_syria_2005" : req.body.lists_syria_2005,
-                    "lists_israel_2005" : req.body.lists_israel_2005,
-                    "fushatamal_published" : req.body.fushatamal_published,
-                    "fushatamal_auth_type" : req.body.fushatamal_auth_type,
-                    "fushatamal_auth_notes" : req.body.fushatamal_auth_notes,
-                    "fushatamal_auth_name" : req.body.fushatamal_auth_name,
-                    "fushatamal_auth_last" : req.body.fushatamal_auth_last,
-                    "fushatamal_auth_email" : req.body.fushatamal_auth_email,
-                    "fushatamal_auth_phone" : req.body.fushatamal_auth_phone,
-                    "fushatamal_auth_relationship" : req.body.fushatamal_auth_relationship,
                     "contacts" : req.body.contacts,
                     
                     parties : partiesList, mps: missingList, locations: locationsList, events: eventsList, sites: sitesList,
@@ -972,18 +960,6 @@ router.post('/addmissing', function(req, res){
                 if (profile[0].notes!= req.body.notes) updateVal['notes'] =  req.body.notes
                 if (profile[0].sources!= sources) updateVal['sources'] =  sources
                 if (profile[0].picture!= req.body.picture) updateVal['picture'] =  req.body.picture
-                if (profile[0].lists.syria_2000!= req.body.lists_syria_2000) updateVal['lists.syria_2000'] =  req.body.lists_syria_2000
-                if (profile[0].lists.syria_2002!= req.body.lists_syria_2002) updateVal['lists.syria_2002'] =  req.body.lists_syria_2002
-                if (profile[0].lists.syria_2005!= req.body.lists_syria_2005) updateVal['lists.syria_2005'] =  req.body.lists_syria_2005 
-                if (profile[0].lists.israel_2005!= req.body.lists_israel_2005) updateVal['lists.israel_2005'] =  req.body.lists_israel_2005
-                if (profile[0].fushatamal.published!= req.body.fushatamal_published) updateVal['fushatamal.published'] =  req.body.fushatamal_published
-                if (profile[0].fushatamal.auth_type!= req.body.fushatamal_auth_type) updateVal['fushatamal.auth_type'] =  req.body.fushatamal_auth_type
-                if (profile[0].fushatamal.auth_notes!= req.body.fushatamal_auth_notes) updateVal['fushatamal.auth_notes'] =  req.body.fushatamal_auth_notes
-                if (profile[0].fushatamal.auth_name!= req.body.fushatamal_auth_name) updateVal['fushatamal.auth_name'] =  req.body.fushatamal_auth_name
-                if (profile[0].fushatamal.auth_last!= req.body.fushatamal_auth_last) updateVal['fushatamal.auth_last'] =  req.body.fushatamal_auth_last
-                if (profile[0].fushatamal.auth_email!= req.body.fushatamal_auth_email) updateVal['fushatamal.auth_email'] =  req.body.fushatamal_auth_email
-                if (profile[0].fushatamal.auth_phone!= req.body.fushatamal_auth_phone) updateVal['fushatamal.auth_phone'] =  req.body.fushatamal_auth_phone
-                if (profile[0].fushatamal.auth_relationship!= req.body.fushatamal_auth_relationship) updateVal['fushatamal.auth_relationship'] =  req.body.fushatamal_auth_relationship
                 if (profile[0].contacts!=contacts) updateVal['contacts'] = contacts
                     
                 collection.update({code: profile[0].code}, {$set: updateVal}, function(err, result){
@@ -1124,22 +1100,6 @@ router.post('/addmissing', function(req, res){
                                 "notes" : req.body.notes,
                                 "picture" : req.body.picture,
                                 "sources" : sources,
-                                "lists" : {
-                                    "syria_2000" : req.body.lists_syria_2000,
-                                    "syria_2002" : req.body.lists_syria_2002,
-                                    "syria_2005" : req.body.lists_syria_2005,
-                                    "israel_2005" : req.body.lists_israel_2005
-                                },
-                                "fushatamal" : {
-                                    "published" : req.body.fushatamal_published,
-                                    "auth_type" : req.body.fushatamal_auth_type,
-                                    "auth_notes" : req.body.fushatamal_auth_notes,
-                                    "auth_name" : req.body.fushatamal_auth_name,
-                                    "auth_last" : req.body.fushatamal_auth_last,
-                                    "auth_email" : req.body.fushatamal_auth_email,
-                                    "auth_phone" : req.body.fushatamal_auth_phone,
-                                    "auth_relationship" : req.body.fushatamal_auth_relationship
-                                },
                                 "contacts" : contacts,
                                 "location" : {
                                     "coordinates" : [ long, lat ],

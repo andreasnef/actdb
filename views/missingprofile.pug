@@ -250,52 +250,6 @@ block content
 
           br
           
-      //- div
-      //-  if(value.lists)
-      //-     h4 Lists:
-      //-     - if (value.lists.syria_2000 == "Yes")
-      //-       p - المعتقلون اللبنانيون في سوريا حسب اللائحة التي نشرتها السلطات اللبنانية في 16 كانون الأول 2000
-      //-     - if (value.lists.syria_2002 == "Yes") 
-      //-       p - List of Lebanese detainees and victims of enforced disappearances delivered to the Syrian Minister of Interior 22 July 2002
-      //-     - if (value.lists.syria_2005 == "Yes")
-      //-       p - لائحة باسماء المفقودين الذين ترى "الهيئة" فائدة من الاستفسار عنهم لدى السلطات السورية نشرت بتاريخ 29 نيسان 2005 العدد 1905 - والسفير بتاريخ 29 نيسان 2005 
-      //-     - if (value.lists.israel_2005 == "Yes")
-      //-       p - لائحة باسماء المفقودين في السجون الاسرائيلية نشرت في المستقبل بتاريخ 29 نيسان 2005 العدد 1905- لائحة لجنة تلقي شكاوى المفقودين نشرت في السفير بتاريخ 29 نيسان 2005 
-      //-     br
-            
-      //- div
-      //-  if(value.fushatamal)
-      //-     h4 Fushat Amal: 
-      //-     - if (value.fushatamal.published)
-      //-      p
-      //-       span.title Published: 
-      //-       span #{value.fushatamal.published}
-      //-     - if (value.fushatamal.auth_type)
-      //-      p
-      //-       span.title Type of Author: 
-      //-       span #{value.fushatamal.auth_type}
-      //-     - if (value.fushatamal.auth_notes)
-      //-      p
-      //-       span.title Notes: 
-      //-       span #{value.fushatamal.auth_notes}
-      //-     - if (value.fushatamal.auth_name || value.fushatamal.auth_last)
-      //-      p 
-      //-       span.title Name: 
-      //-       span #{value.fushatamal.auth_name} #{value.fushatamal.auth_last}
-      //-     - if (value.fushatamal.auth_email)
-      //-      p 
-      //-       span.title Email: 
-      //-       span #{value.fushatamal.auth_email}
-      //-     - if (value.fushatamal.auth_phone)
-      //-      p 
-      //-       span.title Phone: 
-      //-       span #{value.fushatamal.auth_phone}
-      //-     - if (value.fushatamal.auth_relationship)
-      //-      p 
-      //-       span.title Relationship: 
-      //-       span #{value.fushatamal.auth_relationship}
-      //-     br
-          
       div
           //if((value.contacts && (value.contacts).length>0) || value.contact || value.contact.phone_1)
           h4 Contact:
