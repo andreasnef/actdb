@@ -39,6 +39,7 @@ app.use(session({
   secret: "ewjdasnkqwiluyrfgbcnxaiureyfhbca",
   saveUninitialized: false, 
   resave: false,
+  proxy : true,
   store: new MongoStore({ url: process.env.MONGODB_URI, ttl: 12 * 60 * 60 }),
   cookie: {
     path: "/",
