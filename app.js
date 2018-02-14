@@ -1,3 +1,4 @@
+"use strict";
 var express = require('express')
 var path = require('path');
 var logger = require('morgan');
@@ -22,8 +23,6 @@ app.locals.moment = require('moment');
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
-// uncomment after placing your favicon in /public
-//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 if (app.get('env') === 'production') {
   app.use(logger('combined'));
 } else {
@@ -47,11 +46,6 @@ app.use(session({
   },
   name: "id"
 }));
-//set cookie to secure in production env
-// if (app.get('env') === 'production') {
-//   app.set('trust proxy', 1) // trust first proxy
-//   session.cookie.secure = true // serve secure cookies
-// }
 app.use('/', index);
 app.use('/users', users);
 
@@ -72,12 +66,5 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
-
-var port = process.env.PORT || 3000;
-app.listen(port, "0.0.0.0", function() {
-  console.log("Listening on Port 3000");
-});
-
-// var WORKERS = process.env.WEB_CONCURRENCY || 1;
 
 module.exports = app;

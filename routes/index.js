@@ -1,3 +1,4 @@
+"use strict";
 var express = require('express');
 var app = express();
 var router = express.Router();
@@ -56,7 +57,6 @@ router.post('/login', function(req, res){
     var ip = req.connection.remoteAddress;
     var date = new Date().toISOString();
     var MongoClient = mongodb.MongoClient;
-    //var url = 'mongodb://'+user+':'+pass+'@localhost:27017,localhost:27018,localhost:27019/Act?replicaSet=mongo-repl&authSource=admin';
     var url = 'mongodb://'+user+':'+pass+'@cluster0-shard-00-00-tey75.mongodb.net:27017,cluster0-shard-00-01-tey75.mongodb.net:27017,cluster0-shard-00-02-tey75.mongodb.net:27017/Act?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin';
 
     //Validate Fields
@@ -85,7 +85,7 @@ router.post('/login', function(req, res){
             req.session.user = user;
             console.log("user:" + req.session.user);
             
-            //open change stream and record any changes
+            // //open change stream and record any changes
             // const missingCollection = db.collection('missing');
             // var changeStream = missingCollection.watch();
             // changeStream.on("change", function(change) {
@@ -95,7 +95,7 @@ router.post('/login', function(req, res){
             //             console.log(err)
             //          }
             //     });
-            // });
+            });
             
             if(user != "public"){
                //save the login info in the db
@@ -460,7 +460,7 @@ router.get('/missing', function(req, res){
             if (err) {
                 return console.error(err);
             } else if (missingList.length) {
-                    nextrecord = calcLastRecord(missingList, "missing");
+                    var nextrecord = calcLastRecord(missingList, "missing");
                     res.render('missinglist', {
                         "collList" : missingList,
                         title: "List of Missing People",
@@ -487,7 +487,7 @@ router.get('/events', function(req, res){
     if (req.session.user){      
         getEvents(req.session.user,function(){
             if (eventsList.length) {
-                nextrecord = calcLastRecord(eventsList, "events");
+                var nextrecord = calcLastRecord(eventsList, "events");
                 res.render('eventslist', {
                     "collList" : eventsList,
                     nextrecord : nextrecord,
@@ -508,7 +508,7 @@ router.get('/locations', function(req, res){
     if (req.session.user){
         getLocations(req.session.user, function(){
                 if (locationsList.length) {
-                    nextrecord = calcLastRecord(locationsList, "locations");
+                    var nextrecord = calcLastRecord(locationsList, "locations");
                     res.render('locationslist', {
                         "user": req.session.user,
                         "collList" : locationsList,
@@ -537,7 +537,7 @@ router.get('/sites', function(req, res){
     if (req.session.user){
         getSites(req.session.user,function(){
                 if (sitesList.length) {
-                    nextrecord = calcLastRecord(sitesList, "sites");
+                    var nextrecord = calcLastRecord(sitesList, "sites");
                     res.render('siteslist', {
                         "collList" : sitesList,
                         nextrecord : nextrecord,
@@ -626,7 +626,7 @@ router.get('/parties', function(req, res){
     if (req.session.user){
         getParties(function(){
                 if (partiesList.length) {
-                    nextrecord = calcLastRecord(partiesList, "parties");
+                    var nextrecord = calcLastRecord(partiesList, "parties");
                     res.render('partieslist', {
                         "collList" : partiesList,
                         nextrecord : nextrecord,
@@ -647,7 +647,7 @@ router.get('/contacts', function(req, res){
     if (req.session.user){
         getContacts(function(){
                 if (contactsList.length) {
-                    nextrecord = calcLastRecord(contactsList, "contacts");
+                    var nextrecord = calcLastRecord(contactsList, "contacts");
                     res.render('contactslist', {
                         "collList" : contactsList,
                         nextrecord : nextrecord,
@@ -668,7 +668,7 @@ router.get('/sources', function(req, res){
     if (req.session.user){
         getSources(function(){
                 if (sourcesList.length) {
-                    nextrecord = calcLastRecord(sourcesList, "sources");
+                    var nextrecord = calcLastRecord(sourcesList, "sources");
                     res.render('sourceslist', {
                         "collList" : sourcesList,
                         nextrecord : nextrecord,
@@ -676,7 +676,7 @@ router.get('/sources', function(req, res){
                     });   
 
                 } else {
-                    nextrecord = 1;
+                    var nextrecord = 1;
                     res.render('sourceslist', {
                         "collList" : sourcesList,
                         nextrecord : nextrecord,
@@ -864,7 +864,6 @@ router.post('/addmissing', function(req, res){
                     "fate" : req.body.fate,
                     "notes" : req.body.notes,
                     "sources": req.body.sources,
-                    "picture" : req.body.picture,
                     "contacts" : req.body.contacts,
                     
                     parties : partiesList, mps: missingList, locations: locationsList, events: eventsList, sites: sitesList,
@@ -959,7 +958,6 @@ router.post('/addmissing', function(req, res){
                 if (profile[0].fate!= req.body.fate) updateVal['fate'] =  req.body.fate
                 if (profile[0].notes!= req.body.notes) updateVal['notes'] =  req.body.notes
                 if (profile[0].sources!= sources) updateVal['sources'] =  sources
-                if (profile[0].picture!= req.body.picture) updateVal['picture'] =  req.body.picture
                 if (profile[0].contacts!=contacts) updateVal['contacts'] = contacts
                     
                 collection.update({code: profile[0].code}, {$set: updateVal}, function(err, result){
@@ -1098,7 +1096,6 @@ router.post('/addmissing', function(req, res){
                                 },
                                 "fate" : req.body.fate,
                                 "notes" : req.body.notes,
-                                "picture" : req.body.picture,
                                 "sources" : sources,
                                 "contacts" : contacts,
                                 "location" : {
@@ -2813,40 +2810,6 @@ router.post('/uploadPicture',function(req,res){
         }); 
 
     });
-
-    // upload(req,res,function(err) {
-    //     if(err) {
-    //         console.log(err);
-    //         return res.end("Error uploading file.");
-    //     } else {
-    //         req.files.forEach( function(f) {
-    //          //rename file to add code
-    //          fs.rename(__dirname + '/../public/images/profilePic.jpeg', __dirname + '/../public/images/profilePic-'+req.body.code+'.jpeg', function(err) {
-    //              if ( err ) {
-    //                 console.log('ERROR: ' + err); 
-    //              }
-    //              else {
-    //                 //update database
-    //                 var collection = db.collection('missing');
-
-    //                 collection.update({code: req.body.code}, {$set: {picture: 'profilePic-'+req.body.code+'.jpeg'}}, function(err, result){    
-    //                     if (err){
-    //                         console.log ("error :"+err);
-    //                     }else {
-    //                             res.render('missinglist', {
-    //                             "collList" : req.session.missingResult,
-    //                             parties : partiesList,
-    //                             title: "List of Missing People",
-    //                             nextrecord : nextrecord,
-    //                             "user": req.session.user   
-    //                             });
-    //                     }
-    //                 }); 
-    //              }
-    //          });     
-    //         }); 
-    //     }
-    // });
 });
 
 router.post('/deleteEntry', function (req,res){
@@ -2917,8 +2880,6 @@ router.post('/logout', function(req, res){
     req.session.destroy;
     res.render('index', { title: 'Login to Database'});
     //res.redirect("/");
-    
-    
 });
 
 module.exports = router;
