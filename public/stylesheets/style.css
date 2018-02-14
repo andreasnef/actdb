@@ -133,8 +133,10 @@ div#container {
 #profileTitle {
     background:#e7e7e7;
     text-align: center;
-    height: 40px;
-    padding-top: 1px;
+    /* height: 40px; */
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-top: 10px;
 }
 
 #sideProfile{
