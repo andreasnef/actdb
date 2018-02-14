@@ -95,7 +95,7 @@ router.post('/login', function(req, res){
             //             console.log(err)
             //          }
             //     });
-            });
+            //});
             
             if(user != "public"){
                //save the login info in the db
