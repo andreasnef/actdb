@@ -10,6 +10,7 @@ var expressValidator = require('express-validator');
 var jsdom = require('jsdom');
 var async = require('async');
 var moment = require('moment');
+var helmet = require('helmet'); //Helmet helps you secure your Express apps by setting various HTTP headers
 
 var mongo = require('mongodb');
 
@@ -42,6 +43,7 @@ app.use(session({
   cookie: {
     path: "/",
     httpOnly: true,
+    secure: true,
     maxAge:  7200000  //2 hours
   },
   name: "id"
@@ -67,6 +69,9 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
+app.use(helmet());
+
+//use in PRO
 var port = process.env.PORT || 3000;
 app.listen(port, "0.0.0.0", function() {
   console.log("Listening on Port 3000");
