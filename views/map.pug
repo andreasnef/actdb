@@ -1,4 +1,4 @@
-extends layoutMap
+extends layout
 
 block content
   include menu
@@ -22,81 +22,15 @@ block content
         var sitesArray = !{JSON.stringify(sites)};
         var eventsArray = !{JSON.stringify(events)};
         var partiesArray = !{JSON.stringify(parties)};
-        
-        var markerArrayMissing = new Array(missingArray.length)
-        var markerArrayCheckpoints = new Array(checkpointsArray.length)
-        var markerArrayBarracks = new Array(barracksArray.length)
-        var markerArrayCentres = new Array(detentionCentresArray.length)
-        var markerArraySites = new Array(sitesArray.length)
-        var markerArrayEvents = new Array(eventsArray.length)
 
-        var redMarker = L.AwesomeMarkers.icon({
-          icon: 'ban-circle',
-          markerColor: 'red'
-        });
+        var redMarker = L.AwesomeMarkers.icon({icon: 'ban-circle', markerColor: 'red'});
+        var orangeMarker = L.AwesomeMarkers.icon({icon: 'glyphicon-fire', markerColor: 'orange'});
+        var blueMarker = L.AwesomeMarkers.icon({icon: 'home', markerColor: 'blue'});
+        var greenMarker = L.AwesomeMarkers.icon({icon: 'link', markerColor: 'green'});
+        var purpleMarker = L.AwesomeMarkers.icon({icon: 'user', markerColor: 'purple'});
+        var darkgreenMarker = L.AwesomeMarkers.icon({icon: 'glyphicon-record', markerColor: 'darkgreen'});
 
-        var orangeMarker = L.AwesomeMarkers.icon({
-          icon: 'glyphicon-fire',
-          markerColor: 'orange'
-        });
-
-        var blueMarker = L.AwesomeMarkers.icon({
-          icon: 'home',
-          markerColor: 'blue'
-        });
-        
-        var greenMarker = L.AwesomeMarkers.icon({
-          icon: 'link',
-          markerColor: 'green'
-        });
-
-        var purpleMarker = L.AwesomeMarkers.icon({
-          icon: 'user',
-          markerColor: 'purple'
-        });
-
-        var darkgreenMarker = L.AwesomeMarkers.icon({
-          icon: 'glyphicon-record',
-          markerColor: 'darkgreen'
-        });
-
-        for(var i = 0; i < eventsArray.length; i++){
-          e = eventsArray[i];
-          markerArrayEvents[i] = L.marker([e.location.coordinates[1], e.location.coordinates[0]], {icon: orangeMarker, code: e.code, name: e.name.en}).bindPopup("<a href='#' onclick=loadProfile('events','"+e.code+"');>"+e.name.en+"</a>");
-        }
-        
-        for(var i = 0; i < sitesArray.length; i++){
-          e = sitesArray[i];
-          markerArraySites[i] = L.marker([e.location.coordinates[1], e.location.coordinates[0]], {icon: darkgreenMarker, code: e.code, name: e.name.en}).bindPopup("<a href='#' onclick=loadProfile('sites','"+e.code+"');>"+e.name.ar+"</a>");
-        }
-
-        for(var i = 0; i < detentionCentresArray.length; i++){
-          e = detentionCentresArray[i];
-          markerArrayCentres[i] = L.marker([e.location.coordinates[1], e.location.coordinates[0]], {icon: greenMarker, code: e.code, name: e.name.en}).bindPopup("<a href='#' onclick=loadProfile('locations','"+e.code+"');>"+e.name.ar+"</a>");
-        }
-        
-        for(var i = 0; i < barracksArray.length; i++){
-          e = barracksArray[i];
-          markerArrayBarracks[i] = L.marker([e.location.coordinates[1], e.location.coordinates[0]], {icon: blueMarker, code: e.code, name: e.name.en}).bindPopup("<a href='#' onclick=loadProfile('locations','"+e.code+"');>"+e.name.ar+"</a>");
-        }
-
-        for(var i = 0; i < checkpointsArray.length; i++){
-          e = checkpointsArray[i];
-          markerArrayCheckpoints[i] = L.marker([e.location.coordinates[1], e.location.coordinates[0]], {icon: redMarker, code: e.code, name: e.name.en}).bindPopup("<a href='#' onclick=loadProfile('locations','"+e.code+"');>"+e.name.ar+"</a>");
-        }
-
-        for(var i = 0; i < missingArray.length; i++){
-          e = missingArray[i];
-          markerArrayMissing[i] = L.marker([e.location.coordinates[1], e.location.coordinates[0]],{icon: purpleMarker, code: e.code, name: e.name.ar.first}).bindPopup("<a href='#' onclick=loadProfile('missing','"+e.code+"');>"+e.name.ar.first+" "+e.name.ar.middle+" "+e.name.ar.last+"</a>");
-          //markerArrayMissing[i] = L.marker([e.location.coordinates[1], e.location.coordinates[0]],{name: e.name.ar.first+" "+e.name.ar.middle+" "+e.name.ar.last},{icon: missingIcon}).bindPopup("<a href='#' onclick=loadProfile('missing','"+e.code+"');>"+e.name.ar.first+" "+e.name.ar.middle+" "+e.name.ar.last+"</a>");
-        }
-
-        var missingLayer = L.layerGroup(markerArrayMissing);
-        var checkpointsLayer = L.layerGroup(markerArrayCheckpoints);
-        var barracksLayer = L.layerGroup(markerArrayBarracks);
-        var centresLayer = L.layerGroup(markerArrayCentres);
-        var sitesLayer = L.layerGroup(markerArraySites);
-        var eventsLayer = L.layerGroup(markerArrayEvents);
+        //var municipalities = #{municipalities};
 
         var municipalitiesLayer = L.geoJson(municipalities, {style: style, onEachFeature: onEachFeature});
         
@@ -114,16 +48,6 @@ block content
         });
         var baseMaps = {
           "Streets": basemap
-        };
-
-        var overlayMaps = {
-          "Missing": missingLayer,
-          "Checkpoints" : checkpointsLayer,
-          "Barracks" : barracksLayer,
-          "Detention Centres" : centresLayer,
-          "Sites": sitesLayer,
-          "Events": eventsLayer,
-          "Municipalities": municipalitiesLayer
         };
 
         //- functions
@@ -209,7 +133,6 @@ block content
         
          legend.addTo(map);
 
-
         function onEachFeature(feature, layer) {  
           layer.on({
             mouseover: highlightFeature,
@@ -218,98 +141,73 @@ block content
           });
         }
 
-        L.control.layers(baseMaps, overlayMaps).addTo(map);
+        var missingLayer = new L.LayerGroup();  //layer contain searched elements
 
-        //- var searchLayer = L.layerGroup().addTo(map);
-        //- //... adding data in searchLayer ...
-        //- map.addControl( new L.Control.Search({layer: missingLayer}) );
-        //- //searchLayer is a L.LayerGroup contains searched markers
+        for(var i = 0; i < missingArray.length; i++){
+          var code = missingArray[i].code,  //value searched
+          nameFull = missingArray[i].name.ar.first+" "+missingArray[i].name.ar.middle+" "+missingArray[i].name.ar.last,
+          name = missingArray[i].name.ar.first,
+          loc = [missingArray[i].location.coordinates[1],missingArray[i].location.coordinates[0]],    //position found
+          marker = new L.Marker(new L.latLng(loc), {icon: purpleMarker, code: code, name: name, nameFull: nameFull});//se property searched
+          marker.bindPopup("<a href='#' onclick=loadProfile('missing','"+code+"');>"+nameFull+"</a>");
+          missingLayer.addLayer(marker);
+        }
 
-        //- var controlSearch = new L.Control.Search({
-        //-   position:'topleft',
-        //-   layer: missingLayer,
-        //-   initial: false,
-        //-   propertyName: 'name',
-        //-   buildTip: function(text, val) {
-        //-     var type = val.name;
-        //-     return '<a href="#" class="">'+text+'<b>'+type+'</b></a>';
-        //-     }
-        //- });
+        var checkpointsLayer = new L.LayerGroup();  //layer contain searched elements
 
-        // second option
-        //- var markersLayer = new L.LayerGroup();  //layer contain searched elements
-        //- map.addLayer(markersLayer);
+        for(var i = 0; i < checkpointsArray.length; i++){
+          var code = checkpointsArray[i].code,  //value searched
+          name = checkpointsArray[i].name.en,
+          loc = [checkpointsArray[i].location.coordinates[1],checkpointsArray[i].location.coordinates[0]],    //position found
+          marker = new L.Marker(new L.latLng(loc), {icon: redMarker, code: code, name: name});//se property searched
+          marker.bindPopup("<a href='#' onclick=loadProfile('locations','"+code+"');>"+name+"</a>");
+          checkpointsLayer.addLayer(marker);
+        }
 
-        //- for(var i = 0; i < missingArray.length; i++){
-        //-   var code = missingArray[i].code,  //value searched
-        //-   nameFull = missingArray[i].name.ar.first+" "+missingArray[i].name.ar.middle+" "+missingArray[i].name.ar.last,
-        //-   name = missingArray[i].name.ar.first,
-        //-   loc = [missingArray[i].location.coordinates[1],missingArray[i].location.coordinates[0]],    //position found
-        //-   marker = new L.Marker(new L.latLng(loc), {code: code, name: name, nameFull: nameFull});//se property searched
-        //-   marker.bindPopup(nameFull);
-        //-   markersLayer.addLayer(marker);
-        //- }
-        
-        //- map.addControl( new L.Control.Search({
-        //-   position:'topleft',
-        //-   propertyName: 'name',
-        //-   layer: markersLayer,
-        //-   initial: false,
-        //-   zoom: 16,
-        //-   marker: false,
-        //-   buildTip: function(text, val) {
-        //-     var type = val.name;
-        //-     return '<a href="#" class="">'+type+'<b>'+type+'</b></a>';
-        //-   }
-        //- }) );
+        var barracksLayer = new L.LayerGroup();  //layer contain searched elements
 
+        for(var i = 0; i < barracksArray.length; i++){
+          var code = barracksArray[i].code,  //value searched
+          name = barracksArray[i].name.en,
+          loc = [barracksArray[i].location.coordinates[1],barracksArray[i].location.coordinates[0]],    //position found
+          marker = new L.Marker(new L.latLng(loc), {icon: blueMarker, code: code, name: name});//se property searched
+          marker.bindPopup("<a href='#' onclick=loadProfile('locations','"+code+"');>"+name+"</a>");
+          barracksLayer.addLayer(marker);
+        }
 
-        //third option
-        //- var poiLayers = L.layerGroup([missingLayer, checkpointsLayer])
-        //- .addTo(map);
-        
-        //- L.control.search({
-        //-   layer: poiLayers,
-        //-   initial: false,
-        //-   propertyName: 'name',
-        //-   buildTip: function(text, val) {
-        //-     var type = val.layer.feature.properties.amenity;
-        //-     return '<a href="#" class="'+type+'">'+text+'<b>'+type+'</b></a>';
-        //-   }
-        //- })
-        
-        //- .addTo(map);
-        
-        //- map.addControl( controlSearch );
-        
-        //fourth option
-        //var markersLayer = new L.LayerGroup();  //layer contain searched elements
-        //map.addLayer(markersLayer);
+        var centresLayer = new L.LayerGroup();  //layer contain searched elements
 
-        //for(var i = 0; i < missingArray.length; i++){
-        //  var title = missingArray[i].code, //value searched
-        //    nameFull = missingArray[i].name.ar.last+" "+missingArray[i].name.ar.middle+" "+missingArray[i].name.ar.first,
-        //    name = missingArray[i].name.ar.first,
-        //    loc = [missingArray[i].location.coordinates[1],missingArray[i].location.coordinates[0]],    //position found
-        //    marker = new L.Marker(new L.latLng(loc), {title: title, name:name});//se property searched
-        //marker.bindPopup(nameFull);
-        //markersLayer.addLayer(marker);
-        //}
-        
-        //var controlSearch = new L.Control.Search({layer: markersLayer, initial: false, propertyName: name, position:'topleft', zoom: 11, marker: false, textPlaceholder: 'search...' });
-        //map.addControl( controlSearch );
+        for(var i = 0; i < detentionCentresArray.length; i++){
+          var code = detentionCentresArray[i].code,  //value searched
+          name = detentionCentresArray[i].name.en,
+          loc = [detentionCentresArray[i].location.coordinates[1],detentionCentresArray[i].location.coordinates[0]],    //position found
+          marker = new L.Marker(new L.latLng(loc), {icon: greenMarker, code: code, name: name});//se property searched
+          marker.bindPopup("<a href='#' onclick=loadProfile('locations','"+code+"');>"+name+"</a>");
+          centresLayer.addLayer(marker);
+        }
 
-        
-        
-        ////////////populate map with markers from sample data
-        //- for(i in data) {
-        //-   var title = data[i].title,  //value searched
-        //-     loc = data[i].loc,    //position found
-        //-     marker = new L.Marker(new L.latLng(loc), {title: title} );//se property searched
-        //-   marker.bindPopup('title: '+ title );
-        //-   markersLayer.addLayer(marker);
-        //- }
-        
+        var sitesLayer = new L.LayerGroup();  //layer contain searched elements
+
+        for(var i = 0; i < sitesArray.length; i++){
+          var code = sitesArray[i].code,  //value searched
+          name = sitesArray[i].name.en,
+          loc = [sitesArray[i].location.coordinates[1],sitesArray[i].location.coordinates[0]],    //position found
+          marker = new L.Marker(new L.latLng(loc), {icon: darkgreenMarker, code: code, name: name});//se property searched
+          marker.bindPopup("<a href='#' onclick=loadProfile('sites','"+code+"');>"+name+"</a>");
+          sitesLayer.addLayer(marker);
+        }
+
+        var eventsLayer = new L.LayerGroup();  //layer contain searched elements
+
+        for(var i = 0; i < eventsArray.length; i++){
+          var code = eventsArray[i].code,  //value searched
+          name = eventsArray[i].name.en,
+          loc = [eventsArray[i].location.coordinates[1],eventsArray[i].location.coordinates[0]],    //position found
+          marker = new L.Marker(new L.latLng(loc), {icon: orangeMarker, code: code, name: name});//se property searched
+          marker.bindPopup("<a href='#' onclick=loadProfile('events','"+code+"');>"+name+"</a>");
+          eventsLayer.addLayer(marker);
+        }
+
         var poiLayers = L.layerGroup([
           missingLayer,
           checkpointsLayer,
@@ -318,19 +216,29 @@ block content
           sitesLayer,
           eventsLayer
         ])
-        //.addTo(map);
+        .addTo(map);
         
-        L.control.search({
+        map.addControl( new L.Control.Search({
+          position:'topleft',
+          propertyName: 'code',
           layer: poiLayers,
           initial: false,
-          propertyName: 'name',
-          position:'topleft',
           zoom: 16,
           marker: false,
           buildTip: function(text, val) {
-            console.log("val "+val);
-            //- var type = val.layer.feature.properties.amenity;
-            return '<a href="#" class="'+val+'">'+val+'<b>'+text+'</b></a>';
+            var type = val.name;
+            return '<a href="#" class="">'+type+'<b>'+type+'</b></a>';
           }
-        })
-        .addTo(map);
+        }) );
+
+        var overlayMaps = {
+          "Missing": missingLayer,
+          "Checkpoints" : checkpointsLayer,
+          "Barracks" : barracksLayer,
+          "Detention Centres" : centresLayer,
+          "Sites": sitesLayer,
+          "Events": eventsLayer,
+          "Municipalities": municipalitiesLayer
+        };
+
+        L.control.layers(baseMaps, overlayMaps).addTo(map);
