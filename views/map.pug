@@ -29,6 +29,7 @@ block content
         var greenMarker = L.AwesomeMarkers.icon({icon: 'link', markerColor: 'green'});
         var purpleMarker = L.AwesomeMarkers.icon({icon: 'user', markerColor: 'purple'});
         var darkgreenMarker = L.AwesomeMarkers.icon({icon: 'glyphicon-record', markerColor: 'darkgreen'});
+        var coordinatesMarker = L.AwesomeMarkers.icon({icon: 'flag', markerColor: 'black'});
 
         //var municipalities = #{municipalities};
 
@@ -234,7 +235,7 @@ block content
           useDMS:false, //optional default false 
           useLatLngOrder: true, //ordering of labels, default false-> lng-lat 
           markerType: L.marker, //optional default L.marker 
-          markerProps: {}, //optional default {}, 
+          markerProps: {icon: coordinatesMarker}, //optional default {}, 
           textPlaceholder: 'Search by coordinate',
           //labelFormatterLng : funtion(lng){return lng+" lng"}, 
           //labelFormatterLat : funtion(lat){return lat+" lat"},
