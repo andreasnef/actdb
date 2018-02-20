@@ -115,24 +115,6 @@ block content
         
         info.addTo(map);
 
-        var legend = L.control({position: 'bottomright'});
-
-        legend.onAdd = function (map) {
-           var div = L.DomUtil.create('div', 'info legend')
-        //-     grades = [0, 10, 20, 50, 100, 200, 500, 1000],
-        //-     labels = [];
-
-          // loop through our density intervals and generate a label with a colored square for each interval
-          //- for (var i = 0; i < grades.length; i++) {
-          //-   div.innerHTML +=
-          //-     '<i style="background:'');
-          //- }
-
-           return div;
-         };
-        
-         legend.addTo(map);
-
         function onEachFeature(feature, layer) {  
           layer.on({
             mouseover: highlightFeature,
@@ -223,13 +205,51 @@ block content
           propertyName: 'code',
           layer: poiLayers,
           initial: false,
-          zoom: 16,
-          marker: false,
-          buildTip: function(text, val) {
-            var type = val.name;
-            return '<a href="#" class="">'+type+'<b>'+type+'</b></a>';
+          zoom: 12,
+          textPlaceholder: 'Search by code',
+          marker: {
+            icon: false,
+            circle: {
+              radius: 20,
+              color: '#0a0',
+              opacity: 1
+            }
           }
+          //- buildTip: function(text, val) {
+          //-   var type = val.name;
+          //-   //- console.log("val"+val);
+          //-   //- console.log(text);
+          //-   return '<a href="#" class="">'+type+'</a>';
+          //- }
         }) );
+
+        // seach by coordinates
+        L.control.coordinates({
+          position:"bottomleft", //optional default "bootomright" 
+          decimals:4, //optional default 4 
+          decimalSeperator:".", //optional default "." 
+          labelTemplateLat:"Latitude: {y}", //optional default "Lat: {y}" 
+          labelTemplateLng:"Longitude: {x}", //optional default "Lng: {x}" 
+          enableUserInput:true, //optional default true 
+          useDMS:false, //optional default false 
+          useLatLngOrder: true, //ordering of labels, default false-> lng-lat 
+          markerType: L.marker, //optional default L.marker 
+          markerProps: {}, //optional default {}, 
+          textPlaceholder: 'Search by coordinate',
+          //labelFormatterLng : funtion(lng){return lng+" lng"}, 
+          //labelFormatterLat : funtion(lat){return lat+" lat"},
+          customLabelFcn: function(latLonObj, opts) {"Search"} //optional default none 
+        }).addTo(map);
+
+        //box that shows coordinates as you move
+        L.control.coordinates({
+          position:"bottomleft",
+          decimals:4,
+          decimalSeperator:".",
+          labelTemplateLat:"Latitude: {y}",
+          labelTemplateLng:"Longitude: {x}"
+        }).addTo(map);
+
 
         var overlayMaps = {
           "Missing": missingLayer,
