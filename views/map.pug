@@ -35,20 +35,28 @@ block content
 
         var municipalitiesLayer = L.geoJson(municipalities, {style: style, onEachFeature: onEachFeature});
         
-        var basemap = L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+        var basemapStreet = L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
              attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
              maxZoom: 18,
              id: 'mapbox.streets',
+             accessToken: 'pk.eyJ1IjoibWFsZW5hZ2UiLCJhIjoiY2o5c2FyczJwMG5xNzMzanp1Mm9nNWlvYyJ9.zyD3dgUl-JqNoSU3TeuL9g'
+        });
+        var basemapSatellite = L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+             attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
+             maxZoom: 18,
+             //id: 'mapbox.streets',
+             id: 'mapbox.streets-satellite',
              accessToken: 'pk.eyJ1IjoibWFsZW5hZ2UiLCJhIjoiY2o5c2FyczJwMG5xNzMzanp1Mm9nNWlvYyJ9.zyD3dgUl-JqNoSU3TeuL9g'
         });
         var map = L.map('map', {
           center: [33.8699, 35.8274],
           zoom: 9,
           preferCanvas : true,
-          layers: [basemap]
+          layers: [basemapStreet]
         });
         var baseMaps = {
-          "Streets": basemap
+          "Streets": basemapStreet,
+          "Satellite":basemapSatellite
         };
 
         //- functions
@@ -58,8 +66,8 @@ block content
           for(var i = 0; i < partiesArray.length; i++){
             if((partiesArray[i].control_areas) && (partiesArray[i].control_areas).length)
               if ((partiesArray[i].control_areas).indexOf(feature.id) != -1)
-                //color = partiesArray[i].color;
-                color.push(partiesArray[i].color);
+                color = partiesArray[i].color;
+                //color.push(partiesArray[i].color);
                 //console.log(color+" color");
           }
 

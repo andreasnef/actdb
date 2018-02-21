@@ -148,8 +148,9 @@ block content
           - if (file_urls && file_urls.length)
            p
             span.title Files: 
-            span #{value.files}
-            br
+            each file in value.files
+              span #{file}
+              br
             each url in file_urls
               a(href=url target="_blank") Open file
               br
