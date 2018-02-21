@@ -110,22 +110,34 @@ block content
            p
             span.title Related Events: 
             each event, i in value.related.events
-             a(href="#" onclick="loadProfile('events','"+event+"');") #{event} 
+             if(eventsList)
+              each eventProfile, i in eventsList
+               -if(event==eventProfile.code)name=eventProfile.name.en
+             a(href="#" onclick="loadProfile('events','"+event+"');") #{event} #{name}
           - if ((value.related.sites).length)
            p
             span.title Related Sites: 
             each site, i in value.related.sites
-             a(href="#" onclick="loadProfile('sites','"+site+"');") #{site} 
+             if(sitesList)
+              each siteProfile, i in sitesList
+               -if(site==siteProfile.code) name = siteProfile.name.en
+             a(href="#" onclick="loadProfile('sites','"+site+"');") #{site} #{name}
           - if ((value.related.locations).length)
            p
             span.title Related Locations: 
             each location, i in value.related.locations
-             a(href="#" onclick="loadProfile('locations','"+location+"');") #{location} 
+             if(locationsList)
+              each locationProfile, i in locationsList
+               -if(location==locationProfile.code) name = locationProfile.name.en
+             a(href="#" onclick="loadProfile('locations','"+location+"');") #{location} #{name}
           - if ((value.related.mps).length)
            p
             span.title Related Missing Persons: 
             each mp, i in value.related.mps
-             a(href="#" onclick="loadProfile('missing','"+mp+"');") #{mp} 
+             if(missingList)
+              each missingProfile, i in missingList
+               -if(mp==missingProfile.code) name = missingProfile.name.ar.last
+             a(href="#" onclick="loadProfile('missing','"+mp+"');") #{mp} #{name}
           - if (value.related.sources && (value.related.sources).length)
            p
             span.title Related Sources: 

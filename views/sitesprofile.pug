@@ -227,7 +227,7 @@ block content
             each source, i in value.sources
              if(sourcesList)
               each sourceProfile, i in sourcesList
-               -if (source == sourcesList.code) sourceTitle = sourcesList.title
+               -if (source == sourceProfile.code) sourceTitle = sourceProfile.title
              a(href="#" onclick="loadProfile('sources','"+source+"');") #{source} #{sourceTitle}
              br
             
