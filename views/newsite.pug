@@ -67,8 +67,7 @@ block content
          - identification_notes = value.identification.notes
          - identification_dna = value.identification.dna
         - notes = value.notes
-        - interviews = value.interviews
-        - files = value.files
+        - sources = value.sources
         - contacts = value.contacts 
         
      
@@ -700,59 +699,61 @@ block content
      
     div#wrapper 
      legend Sources
-     a(href="#" onclick="return toggle_visibility('interviews');") Interviews #{interviews} (click to modify)
+     a(href="#" onclick="return toggle_visibility('sources');") Sources #{sources} (click to modify)
     
-     div#interviews(class='dropMenu')
-        if(interviewslist)
-                table(id="interviewsList")
+     div#sources(class='dropMenu')
+        if(sourceslist)
+                table(id="sourcesList")
                  thead    
                     tr#headtag
                         th Select
                         th Code
-                        th Interviewee
-                        th Date
+                        th Type
+                        th Subtype
+                        th Title
 
                  tbody    
-                    each interview, i in interviewslist
+                    each source, i in sourceslist
                       tr
                        td
-                        if (interviews && interviews.includes(interview.code))
-                            input.checkbox-input(type='checkbox', name="interviews", value=interview.code, checked)
+                        if (sources && sources.includes(source.code))
+                            input.checkbox-input(type='checkbox', name="sources", value=source.code, checked)
                         else  
-                            input.checkbox-input(type='checkbox', name="interviews", value=interview.code)
-                       td= interview.code
-                       td= interview.interviewee
-                       td= moment(interview.date).utc().format('MMMM Do, YYYY')
+                            input.checkbox-input(type='checkbox', name="sources", value=source.code)
+                       td= source.code
+                       td= source.type
+                       td= source.subtype
+                       td= source.source_title
 
      br
      br
     
-    div#wrapper 
-      a(href="#" onclick="return toggle_visibility('relatedFiles');") Files #{files} (click to modify)
+    //- div#wrapper 
+    //-   a(href="#" onclick="return toggle_visibility('relatedFiles');") Files #{files} (click to modify)
       
-      div#relatedFiles(class='dropMenu')
-        if (fileslist)
-         table(id="filesList")
-          thead    
-            tr#headtag
-                th Select
-                th Code
-                th Description
-                th File
+    //-   div#relatedFiles(class='dropMenu')
+    //-     if (fileslist)
+    //-      table(id="filesList")
+    //-       thead    
+    //-         tr#headtag
+    //-             th Select
+    //-             th Code
+    //-             th Description
+    //-             th File
 
-          tbody    
-            each file, i in fileslist
-             tr
-               td
-                if (files && files.includes(file.code))
-                    input.checkbox-input(type='checkbox', name="files", value=file.code, checked)
-                else  
-                    input.checkbox-input(type='checkbox', name="files", value=file.code)
-                td= file.code
-                td= file.description
-                td= file.file
-      br
-      br
+    //-       tbody    
+    //-         each file, i in fileslist
+    //-          tr
+    //-            td
+    //-             if (files && files.includes(file.code))
+    //-                 input.checkbox-input(type='checkbox', name="files", value=file.code, checked)
+    //-             else  
+    //-                 input.checkbox-input(type='checkbox', name="files", value=file.code)
+    //-             td= file.code
+    //-             td= file.description
+    //-             td= file.file
+    //-   br
+    //-   br
     div#wrapper 
      span Notes
      br
@@ -807,12 +808,9 @@ block content
         $('#sitesList').DataTable( {
             paging: false
         } );
-        $('#filesList').DataTable( {
-            paging: false
-        } );
         $('#contactsList').DataTable( {
             paging: false
         } );
-        $('#interviewsList').DataTable( {
+        $('#sourcesList').DataTable( {
                 paging: false
         } );

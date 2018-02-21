@@ -44,8 +44,19 @@ block content
         var basemapSatellite = L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
              attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
              maxZoom: 18,
-             //id: 'mapbox.streets',
              id: 'mapbox.streets-satellite',
+             accessToken: 'pk.eyJ1IjoibWFsZW5hZ2UiLCJhIjoiY2o5c2FyczJwMG5xNzMzanp1Mm9nNWlvYyJ9.zyD3dgUl-JqNoSU3TeuL9g'
+        });
+        var basemapWheatpaste = L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+             attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
+             maxZoom: 18,
+             id: 'mapbox.wheatpaste',
+             accessToken: 'pk.eyJ1IjoibWFsZW5hZ2UiLCJhIjoiY2o5c2FyczJwMG5xNzMzanp1Mm9nNWlvYyJ9.zyD3dgUl-JqNoSU3TeuL9g'
+        });
+        var basemapHighcontrast = L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+             attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
+             maxZoom: 18,
+             id: 'mapbox.high-contrast',
              accessToken: 'pk.eyJ1IjoibWFsZW5hZ2UiLCJhIjoiY2o5c2FyczJwMG5xNzMzanp1Mm9nNWlvYyJ9.zyD3dgUl-JqNoSU3TeuL9g'
         });
         var map = L.map('map', {
@@ -56,7 +67,9 @@ block content
         });
         var baseMaps = {
           "Streets": basemapStreet,
-          "Satellite":basemapSatellite
+          "Satellite":basemapSatellite,
+          "Wheat Paste" : basemapWheatpaste,
+          "High Contrast" : basemapHighcontrast
         };
 
         //- functions
