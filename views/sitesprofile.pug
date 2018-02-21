@@ -225,23 +225,12 @@ block content
       - if (value.sources)  
            p
             each source, i in value.sources
-             a(href="#" onclick="loadProfile('sources','"+source+"');") #{source}
+             if(sourcesList)
+              each sourceProfile, i in sourcesList
+               -if (source == sourcesList.code) sourceTitle = sourcesList.title
+             a(href="#" onclick="loadProfile('sources','"+source+"');") #{source} #{sourceTitle}
              br
-      
-      //- - if (value.files && (value.files).length>0)
-      //-  p
-      //-   span.title Files:
-      //-   span 
-      //-       - var name = "";
-      //-       - var type = "";
-      //-       each file, i in value.files
-      //-        if(filesList)
-      //-          each fileProfile, i in filesList
-      //-             - if (file == fileProfile.code) name =  fileProfile.description
-      //-             - if (file == fileProfile.code) type =  fileProfile.type
-      //-        a(href="#" onclick="loadProfile('files','"+file+"');") #{type} - #{name} (#{file})
-      //-        br
-      
+            
       - if (value.notes)
        p 
         span.title Notes: 
