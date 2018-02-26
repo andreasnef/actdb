@@ -114,6 +114,7 @@ block content
               each eventProfile, i in eventsList
                -if(event==eventProfile.code)name=eventProfile.name.en
              a(href="#" onclick="loadProfile('events','"+event+"');") #{event} #{name}
+             br
           - if ((value.related.sites).length)
            p
             span.title Related Sites: 
@@ -122,6 +123,7 @@ block content
               each siteProfile, i in sitesList
                -if(site==siteProfile.code) name = siteProfile.name.en
              a(href="#" onclick="loadProfile('sites','"+site+"');") #{site} #{name}
+             br
           - if ((value.related.locations).length)
            p
             span.title Related Locations: 
@@ -130,6 +132,7 @@ block content
               each locationProfile, i in locationsList
                -if(location==locationProfile.code) name = locationProfile.name.en
              a(href="#" onclick="loadProfile('locations','"+location+"');") #{location} #{name}
+             br
           - if ((value.related.mps).length)
            p
             span.title Related Missing Persons: 
@@ -138,11 +141,13 @@ block content
               each missingProfile, i in missingList
                -if(mp==missingProfile.code) name = missingProfile.name.ar.last
              a(href="#" onclick="loadProfile('missing','"+mp+"');") #{mp} #{name}
+             br
           - if (value.related.sources && (value.related.sources).length)
            p
             span.title Related Sources: 
             each source, i in value.related.sources
              a(href="#" onclick="loadProfile('sources','"+source+"');") #{source}  
+             br
 
       div#wrapper
           - if (file_urls && file_urls.length)

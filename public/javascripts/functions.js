@@ -177,6 +177,7 @@ function showFields(type) {
                 document.getElementById("fileUpload").style.display = "none";
                 document.getElementById("interviewee").style.display = "none";  
                 document.getElementById("interviewer").style.display = "none"; 
+                document.getElementById("number").style.display = "none";
               }
           }
 }     

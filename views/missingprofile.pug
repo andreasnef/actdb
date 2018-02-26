@@ -19,6 +19,7 @@ block content
              div#pic
                each url in file_urls
                  img.className#IdName(src=url height="182")
+                 br
           - else if (value.picture == "YES") 
             p 
              span Picture exists but hasn't been uploaded
@@ -231,7 +232,7 @@ block content
             span.title Notes: 
             span #{value.notes}
           
-       if(value.source || value.sorces)
+       if(value.source || value.sources)
           h4 Sources     
           - if (value.source)  
            p

@@ -815,7 +815,7 @@ block content
      legend Sources
      a(href="#" onclick="return toggle_visibility('sources');") Sources #{sources} (click to modify)
     
-     div#sources(class='dropMenu')
+    div#sources(class='dropMenu')
         if(sourceslist)
                 table(id="sourcesList")
                  thead    
@@ -839,11 +839,10 @@ block content
                        td= source.subtype
                        td= source.source_title
 
-     br
-     br
-
-      if (picture)
-       input#input_picture(type="text", placeholder="Picture", name="picture", value=picture readonly)
+    br
+    
+    if (picture)
+     input#input_picture(type="text", placeholder="Picture", name="picture", value=picture readonly)
     br
     br
     
