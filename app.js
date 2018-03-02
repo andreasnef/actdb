@@ -45,6 +45,7 @@ app.use(session({
     path: "/",
     httpOnly: true,
     secure: true,
+    sameSite: 'strict',
     maxAge:  7200000  //2 hours
   },
   name: "id"
