@@ -71,7 +71,7 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
-app.use(helmet.frameguard({ action: 'sameorigin' }));
+app.use(helmet.frameguard({ action: 'deny' }));
 
 //use in PRO
 var port = process.env.PORT || 3000;

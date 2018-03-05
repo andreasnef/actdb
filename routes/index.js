@@ -58,7 +58,7 @@ router.post('/login', function(req, res){
     var date = new Date().toISOString();
     var MongoClient = mongodb.MongoClient;
     var url = 'mongodb://'+user+':'+pass+'@cluster0-shard-00-00-tey75.mongodb.net:27017,cluster0-shard-00-01-tey75.mongodb.net:27017,cluster0-shard-00-02-tey75.mongodb.net:27017/Act?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin';
-
+    
     //Validate Fields
     req.check('user', 'User cannot be empty').notEmpty();
     req.check('pass', 'Password cannot be empty').notEmpty();
@@ -84,18 +84,6 @@ router.post('/login', function(req, res){
             //save user in session
             req.session.user = user;
             console.log("user:" + req.session.user);
-            
-            // //open change stream and record any changes
-            // const missingCollection = db.collection('missing');
-            // var changeStream = missingCollection.watch();
-            // changeStream.on("change", function(change) {
-            //     var newChange = {user: user, date: date, collection: change.ns.coll, operation: change.operationType, fullDocument: change.fullDocument, updateDescription: change.updateDescription};
-            //     db.collection('updates').insert([newChange],function(err,result){
-            //         if (err){
-            //             console.log(err)
-            //          }
-            //     });
-            //});
             
             if(user != "public"){
                //save the login info in the db
@@ -437,7 +425,7 @@ function uploadFile(req, res, callback){
                             console.log("Cloudinary upload error: "+JSON.stringify(uploadError));
                             //remove from list if there was an error
                         }
-                        console.log(result);
+                        //console.log(result);
                     });  
                 });
             });    
@@ -461,6 +449,7 @@ router.get('/missing', function(req, res){
                 return console.error(err);
             } else if (missingList.length) {
                     var nextrecord = calcLastRecord(missingList, "missing");
+                    req.session.nextrecord = nextrecord;
                     res.render('missinglist', {
                         "collList" : missingList,
                         title: "List of Missing People",
@@ -538,6 +527,7 @@ router.get('/sites', function(req, res){
         getSites(req.session.user,function(){
                 if (sitesList.length) {
                     var nextrecord = calcLastRecord(sitesList, "sites");
+                    req.session.nextrecord = nextrecord;
                     res.render('siteslist', {
                         "collList" : sitesList,
                         nextrecord : nextrecord,
@@ -606,6 +596,9 @@ router.get('/map', function(req, res){
         eventsList.forEach(function (e){
             if(e.location.coordinates) eventsLayer.push(e);
         });
+
+        var muniString = JSON.stringify(municipalities);
+
         res.render('map', {
             "user": req.session.user,
             "missing": missingLayer,
@@ -614,7 +607,9 @@ router.get('/map', function(req, res){
             "centres": detentionCentresLayer,
             "sites": sitesLayer,
             "events": eventsLayer,
-            "parties": partiesList
+            "parties": partiesList,
+            //"municipalities" : encodeURIComponent(JSON.stringify(municipalities))
+            "municipalities" : muniString
         });  
     } else {
         res.render('index', { title: 'Login to Database'});
@@ -2719,7 +2714,7 @@ router.post('/searchmissing', function(req, res){
                         "collList" : result,
                         parties : partiesList,
                         title: "List of Missing People",
-                        nextrecord : nextrecord,
+                        nextrecord : req.session.nextrecord,
                         "user": req.session.user,
                         parties : partiesList,
                         locations: locationsList, 
@@ -2777,7 +2772,7 @@ router.post('/searchsites', function(req, res){
                         "collList" : result,
                         parties : partiesList,
                         title: "List of Sites",
-                        nextrecord : nextrecord,
+                        nextrecord : req.session.nextrecord,
                         "user": req.session.user,
                         parties : partiesList,
                         locations: locationsList, 
@@ -2877,9 +2872,12 @@ router.post('/deleteEntry', function (req,res){
 
 router.post('/logout', function(req, res){
     //dbclient.close();
-    req.session.destroy;
-    res.render('index', { title: 'Login to Database'});
-    //res.redirect("/");
+    //var dbclient = req.session.dbclient;
+    //console.log("dbclient" +dbclient);
+    db.close();
+    res.redirect("/");
+    //req.session.destroy;
+    // res.render('index', { title: 'Login to Database'}); 
 });
 
 module.exports = router;
