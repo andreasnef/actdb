@@ -16,11 +16,19 @@ cloudinary.config({
     api_key: '971837284457376', 
     api_secret: 'q__oUqJiwGAcJhDoYl3zaQjEPx4'
 });
+var RateLimit = require('express-rate-limit');
+app.enable('trust proxy'); // only if you're behind a reverse proxy (Heroku, Bluemix, AWS if you use an ELB, custom Nginx setup, etc) 
+var loginLimiter = new RateLimit({
+    windowMs: 60*60*1000, // 1 hour window 
+    delayAfter: 3, // begin slowing down responses after the first request 
+    delayMs: 3*1000, // slow down subsequent responses by 3 seconds per request 
+    max: 3, // start blocking after 5 requests 
+    message: "You have tried to login more than 3 times, please try again after an hour"
+});
 var municipalities = require("../public/javascripts/lebanonAdministrative.js");
 //var functions = require("./functions.js")();
  
 var db;
-var dbclient;
 var collectionsList;
 var partiesList;
 var locationsList;
@@ -39,7 +47,6 @@ var storage = multer.diskStorage({
 
 var upload = multer({ storage : storage}).any();
 
-
 /* GET home page. */
 router.get('/', function(req, res, next) {
     if(req.session && db) {
@@ -50,7 +57,7 @@ router.get('/', function(req, res, next) {
 });
 
 /*Log in*/
-router.post('/login', function(req, res){
+router.post('/login', loginLimiter, function(req, res){
     
     var user = req.body.user;
     var pass = req.body.pass;
@@ -80,7 +87,6 @@ router.post('/login', function(req, res){
         } else {
             //Store the connection globally
             db = client.db("Act");
-            dbclient = client;
             //save user in session
             req.session.user = user;
             console.log("user:" + req.session.user);
@@ -705,7 +711,6 @@ router.get('/profile', function(req, res){
                         var extension = (fileSplit[fileSplit.length -1]).slice(0, -1);
                         var url = cloudinary.utils.private_download_url(file,extension);
                         urls.push(url);
-                        console.log(url);    
                       });  
                     } 
                 }
@@ -2871,13 +2876,10 @@ router.post('/deleteEntry', function (req,res){
 });
 
 router.post('/logout', function(req, res){
-    //dbclient.close();
-    //var dbclient = req.session.dbclient;
-    //console.log("dbclient" +dbclient);
-    db.close();
-    res.redirect("/");
-    //req.session.destroy;
-    // res.render('index', { title: 'Login to Database'}); 
+    if(req.session){
+        req.session.destroy();
+    }
+    res.render('index', { title: 'Login to Database'}); 
 });
 
 module.exports = router;

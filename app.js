@@ -1,5 +1,5 @@
 "use strict";
-var express = require('express')
+var express = require('express');
 var path = require('path');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
@@ -19,6 +19,12 @@ var users = require('./routes/users');
 
 var app = express();
 app.locals.moment = require('moment');
+
+app.use(helmet({
+  frameguard: {
+    action: 'deny'
+  }
+}))
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -44,8 +50,8 @@ app.use(session({
   cookie: {
     path: "/",
     httpOnly: true,
-    secure: true,
     sameSite: 'strict',
+    secure: true, 
     maxAge:  7200000  //2 hours
   },
   name: "id"
@@ -71,12 +77,23 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
-app.use(helmet.frameguard({ action: 'deny' }));
-
-//use in PRO
+use in PRO
 var port = process.env.PORT || 3000;
 app.listen(port, "0.0.0.0", function() {
   console.log("Listening on Port 3000");
 });
+
+var RateLimit = require('express-rate-limit');
+ 
+app.enable('trust proxy'); // only if you're behind a reverse proxy (Heroku, Bluemix, AWS if you use an ELB, custom Nginx setup, etc) 
+ 
+var limiter = new RateLimit({
+  windowMs: 15*60*1000, // 15 minutes 
+  max: 30, // limit each IP to 100 requests per windowMs 
+  delayMs: 0 // disable delaying - full speed until the max limit is reached 
+});
+ 
+//  apply to all requests 
+app.use(limiter);
 
 module.exports = app;
