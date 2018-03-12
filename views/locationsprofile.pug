@@ -143,18 +143,6 @@ block content
             each source, i in value.sources
              a(href="#" onclick="loadProfile('sources','"+source+"');") #{source}
              br
-      
-      //- - if(value.files)
-      //-  p 
-      //-   span.title Files: 
-      //-       - var name = "";
-      //-       each file, i in value.files
-      //-        if(filesList)
-      //-          each fileProfile, i in filesList
-      //-             - if (file == fileProfile.code) name =  fileProfile.description
-      //-             - if (file == fileProfile.code)type =  fileProfile.type
-      //-        a(href="#" onclick="loadProfile('files','"+file+"');") #{type} - #{name} (#{file})
-      //-        br
       - if (value.notes)
        p 
         span.title Notes: 
@@ -184,6 +172,7 @@ block content
                     input(type="hidden" name="interviews" value=value.interviews)
                     input(type="hidden" name="contacts" value=value.contacts)
                     input(type="hidden" name="files" value=value.files)
+                    input(type="hidden" name="_csrf" value=csrfToken)
                     
                     button#submit_event(class="buttons", type="submit") Delete   
       

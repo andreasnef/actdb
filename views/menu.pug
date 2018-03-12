@@ -38,6 +38,7 @@ block content
     //br
     //a(href='/logout') Logout
     form#logout(name="logout", method="post", action="/logout")
+        input(type="hidden" name="_csrf" value=csrfToken)
         button#logout(type="submit") Logout
   
   script.

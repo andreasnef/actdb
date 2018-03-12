@@ -82,6 +82,7 @@ block content
     br
     div#wrapper 
       div(class='btn menu')
+        input(type="hidden" name="_csrf" value=csrfToken)
         button#submit_site(type="submit" role='submit' class="buttons") submit
       div(class='btn menu')
         a(href="/parties") Go back to Parties

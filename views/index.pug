@@ -8,6 +8,7 @@ block content
     input#input_user(type="text", placeholder="User Name", name="user")
     br
     input#input_pass(type="password", placeholder="Password", name="pass")
+    input(type="hidden" name="_csrf" value=csrfToken)
     br
     br
     div(class='btn menu login')

@@ -44,6 +44,7 @@ block content
             form#deleteEntry(name="deleteEntry", method="post", action="/deleteEntry" onclick="return confirm('This will delete the party permanently. Are you sure?')")
                     input(type="hidden" name="code" value=value.code)
                     input(type="hidden" name="collection" value="parties")
+                    input(type="hidden" name="_csrf" value=csrfToken)
                     //- input(type="hidden" name="related_events" value=value.related.events)
                     //- input(type="hidden" name="related_sites" value=value.related.sites)
                     //- input(type="hidden" name="related_locations" value=value.related.locations)

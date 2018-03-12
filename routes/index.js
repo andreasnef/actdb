@@ -5,7 +5,13 @@ var router = express.Router();
 var mongodb = require('mongodb');
 var session = require('express-session');
 var MongoStore = require('connect-mongo')(session);
+var csrf = require('csurf');
 var bodyParser = require('body-parser');
+
+var parseJson = bodyParser.json();
+var parseForm = bodyParser.urlencoded({ extended: false });
+var csrfProtection = csrf();
+
 var validator = require('express-validator');
 var async = require('async');
 var multer  = require('multer');
@@ -26,7 +32,6 @@ var loginLimiter = new RateLimit({
     message: "You have tried to login more than 3 times, please try again after an hour"
 });
 var municipalities = require("../public/javascripts/lebanonAdministrative.js");
-//var functions = require("./functions.js")();
  
 var db;
 var collectionsList;
@@ -48,16 +53,17 @@ var storage = multer.diskStorage({
 var upload = multer({ storage : storage}).any();
 
 /* GET home page. */
-router.get('/', function(req, res, next) {
+router.get('/', csrfProtection, function(req, res, next) {
     if(req.session && db) {
         res.redirect("missing");
     } else {
-        res.render('index', { title: 'Login to Database'});   
+        res.render('index', { title: 'Login to Database', csrfToken: req.csrfToken()});  
+        console.log(req.csrfToken()); 
     }
 });
 
 /*Log in*/
-router.post('/login', loginLimiter, function(req, res){
+router.post('/login', loginLimiter, parseForm, csrfProtection, function(req, res){
     
     var user = req.body.user;
     var pass = req.body.pass;
@@ -441,7 +447,7 @@ function uploadFile(req, res, callback){
 };
 
 /* GET list of missing */
-router.get('/missing', function(req, res){
+router.get('/missing', csrfProtection, function(req, res){
     if (req.session.user){
         async.parallel([
             getMissing.bind(null, req.session),
@@ -464,7 +470,8 @@ router.get('/missing', function(req, res){
                         parties : partiesList,
                         locations: locationsList, 
                         events: eventsList, 
-                        sites: sitesList
+                        sites: sitesList, 
+                        csrfToken: req.csrfToken()
                     });   
     
                 } else {
@@ -478,7 +485,7 @@ router.get('/missing', function(req, res){
 });
 
 /* GET list of Events */
-router.get('/events', function(req, res){
+router.get('/events', csrfProtection, function(req, res){
     if (req.session.user){      
         getEvents(req.session.user,function(){
             if (eventsList.length) {
@@ -486,7 +493,8 @@ router.get('/events', function(req, res){
                 res.render('eventslist', {
                     "collList" : eventsList,
                     nextrecord : nextrecord,
-                    user: req.session.user
+                    user: req.session.user, 
+                    csrfToken: req.csrfToken()
                 });   
 
             } else {
@@ -499,7 +507,7 @@ router.get('/events', function(req, res){
 });
 
 /* GET list of Locations */
-router.get('/locations', function(req, res){
+router.get('/locations', csrfProtection, function(req, res){
     if (req.session.user){
         getLocations(req.session.user, function(){
                 if (locationsList.length) {
@@ -516,6 +524,7 @@ router.get('/locations', function(req, res){
                         "nextcenter" : nextrecord[6],
                         "nextscenter" : nextrecord[7],
                         "nexticenter" : nextrecord[8],
+                        csrfToken: req.csrfToken()
                     });   
 
                 } else {
@@ -528,7 +537,7 @@ router.get('/locations', function(req, res){
 });
 
 /* GET list of Sites */
-router.get('/sites', function(req, res){
+router.get('/sites', csrfProtection, function(req, res){
     if (req.session.user){
         getSites(req.session.user,function(){
                 if (sitesList.length) {
@@ -542,7 +551,8 @@ router.get('/sites', function(req, res){
                         events: eventsList, 
                         sites: sitesList,
                         mps: missingList,
-                        "user": req.session.user
+                        "user": req.session.user,
+                        csrfToken: req.csrfToken()
                     });   
 
                 } else {
@@ -555,7 +565,7 @@ router.get('/sites', function(req, res){
 });
 
 /* GET list of Logins */
-router.get('/logins', function(req, res){
+router.get('/logins', csrfProtection, function(req, res){
     if (req.session.user && db){
         var loginsColl = db.collection('logins');
 
@@ -565,7 +575,8 @@ router.get('/logins', function(req, res){
             } else if (result.length) {
                     res.render('loginslist', {
                         "collList" : result,
-                        "user": req.session.user
+                        "user": req.session.user,
+                        csrfToken: req.csrfToken()
                         });    
             } else {
                     res.send('No Sites found');
@@ -577,7 +588,7 @@ router.get('/logins', function(req, res){
 });
 
 /*GET mapping*/
-router.get('/map', function(req, res){
+router.get('/map', csrfProtection, function(req, res){
     var missingLayer = [];
     var barracksLayer = [];
     var checkpointsLayer = [];
@@ -615,7 +626,8 @@ router.get('/map', function(req, res){
             "events": eventsLayer,
             "parties": partiesList,
             //"municipalities" : encodeURIComponent(JSON.stringify(municipalities))
-            "municipalities" : muniString
+            "municipalities" : muniString,
+            csrfToken: req.csrfToken()
         });  
     } else {
         res.render('index', { title: 'Login to Database'});
@@ -623,7 +635,7 @@ router.get('/map', function(req, res){
 });
 
 /* GET list of Parties */
-router.get('/parties', function(req, res){
+router.get('/parties', csrfProtection, function(req, res){
     if (req.session.user){
         getParties(function(){
                 if (partiesList.length) {
@@ -631,7 +643,8 @@ router.get('/parties', function(req, res){
                     res.render('partieslist', {
                         "collList" : partiesList,
                         nextrecord : nextrecord,
-                        "user": req.session.user
+                        "user": req.session.user,
+                        csrfToken: req.csrfToken()
                     });   
 
                 } else {
@@ -644,7 +657,7 @@ router.get('/parties', function(req, res){
 });
 
 /* GET list of Contacts */
-router.get('/contacts', function(req, res){
+router.get('/contacts', csrfProtection, function(req, res){
     if (req.session.user){
         getContacts(function(){
                 if (contactsList.length) {
@@ -652,7 +665,8 @@ router.get('/contacts', function(req, res){
                     res.render('contactslist', {
                         "collList" : contactsList,
                         nextrecord : nextrecord,
-                        "user": req.session.user
+                        "user": req.session.user,
+                        csrfToken: req.csrfToken()
                     });   
 
                 } else {
@@ -665,7 +679,7 @@ router.get('/contacts', function(req, res){
 });
 
 /* GET list of Files */
-router.get('/sources', function(req, res){
+router.get('/sources', csrfProtection, function(req, res){
     if (req.session.user){
         getSources(function(){
                 if (sourcesList.length) {
@@ -673,7 +687,8 @@ router.get('/sources', function(req, res){
                     res.render('sourceslist', {
                         "collList" : sourcesList,
                         nextrecord : nextrecord,
-                        "user": req.session.user
+                        "user": req.session.user,
+                        csrfToken: req.csrfToken()
                     });   
 
                 } else {
@@ -681,7 +696,8 @@ router.get('/sources', function(req, res){
                     res.render('sourceslist', {
                         "collList" : sourcesList,
                         nextrecord : nextrecord,
-                        "user": req.session.user
+                        "user": req.session.user,
+                        csrfToken: req.csrfToken()
                     }); 
                 }
             }); 
@@ -691,7 +707,7 @@ router.get('/sources', function(req, res){
 });
 
 /* GET profile*/
-router.get('/profile', function(req, res){
+router.get('/profile', csrfProtection, function(req, res){
     if (req.session.user && db) {
             var collName = req.query.type;
             if (req.session.user == "public") collName = collName+"_public"
@@ -711,6 +727,7 @@ router.get('/profile', function(req, res){
                         var extension = (fileSplit[fileSplit.length -1]).slice(0, -1);
                         var url = cloudinary.utils.private_download_url(file,extension);
                         urls.push(url);
+                        console.log(url);    
                       });  
                     } 
                 }
@@ -723,7 +740,8 @@ router.get('/profile', function(req, res){
                     "sitesList" : sitesList,
                     "eventsList" : eventsList,
                     "contactsList" : contactsList,
-                    "sourcesList" : sourcesList
+                    "sourcesList" : sourcesList,
+                    csrfToken: req.csrfToken()
                     });    
             } else {
                 res.send('No data found');
@@ -735,7 +753,7 @@ router.get('/profile', function(req, res){
 });
 
 /* ADD or EDIT */
-router.get('/newprofile', function(req, res){
+router.get('/newprofile', csrfProtection, function(req, res){
     if (req.session.user){  
         async.parallel([
             getMissing.bind(null, req.session),
@@ -751,9 +769,9 @@ router.get('/newprofile', function(req, res){
             }
             var type = req.query.type;
             if (req.query.nextrecord){
-                res.render('new'+type, { title: 'Add New '+type, user: req.session.user, nextrecord : req.query.nextrecord, parties : partiesList, mps: missingList, locations: locationsList, events: eventsList, sites: sitesList, contactslist: contactsList, sourceslist: sourcesList, municipalities : municipalities});
+                res.render('new'+type, { title: 'Add New '+type, user: req.session.user, nextrecord : req.query.nextrecord, parties : partiesList, mps: missingList, locations: locationsList, events: eventsList, sites: sitesList, contactslist: contactsList, sourceslist: sourcesList, municipalities : municipalities, csrfToken: req.csrfToken()});
             } else {
-                res.render('new'+type, { title: 'Edit '+type, user: req.session.user, editprofile : req.session.profile, parties : partiesList, mps: missingList, locations: locationsList, events: eventsList, sites: sitesList, contactslist: contactsList, sourceslist: sourcesList, municipalities : municipalities});
+                res.render('new'+type, { title: 'Edit '+type, user: req.session.user, editprofile : req.session.profile, parties : partiesList, mps: missingList, locations: locationsList, events: eventsList, sites: sitesList, contactslist: contactsList, sourceslist: sourcesList, municipalities : municipalities, csrfToken: req.csrfToken()});
             }
         });
     } else {
@@ -773,7 +791,7 @@ function dateConverter(day, month, year) {
 
 
 /*INSERT or UPDATE Missing*/
-router.post('/addmissing', function(req, res){
+router.post('/addmissing',parseForm, csrfProtection, function(req, res){
         if (db) {
             var collection = db.collection('missing');
             var profile = req.session.profile;
@@ -1154,7 +1172,7 @@ router.post('/addmissing', function(req, res){
 });
 
 /*INSERT or UPDATE Event*/
-router.post('/addevent', function(req, res){
+router.post('/addevent',parseForm, csrfProtection, function(req, res){
         if (db) {
             var collection = db.collection('events');
             var profile = req.session.profile;
@@ -1424,7 +1442,7 @@ router.post('/addevent', function(req, res){
 });
 
 /*INSERT or UPDATE Location*/
-router.post('/addlocation', function(req, res){
+router.post('/addlocation',parseForm, csrfProtection, function(req, res){
         if (db) {
             var collection = db.collection('locations');
             var profile = req.session.profile;
@@ -1704,7 +1722,7 @@ router.post('/addlocation', function(req, res){
 });
 
 /*INSERT or UPDATE Sites*/
-router.post('/addsite', function(req, res){
+router.post('/addsite',parseForm, csrfProtection, function(req, res){
         if (db) {
             var collection = db.collection('sites');
             var profile = req.session.profile;
@@ -2037,7 +2055,7 @@ router.post('/addsite', function(req, res){
 });
 
 /*INSERT or UPDATE Party*/
-router.post('/addparty', function(req, res){
+router.post('/addparty', parseForm, csrfProtection, function(req, res){
         if (db) {
             var collection = db.collection('parties');
             var profile = req.session.profile;
@@ -2154,7 +2172,7 @@ router.post('/addparty', function(req, res){
 });
 
 /*INSERT or UPDATE Contact*/
-router.post('/addcontact', function(req, res){
+router.post('/addcontact', parseForm, csrfProtection, function(req, res){
         if (db) {
             var collection = db.collection('contacts');
             var profile = req.session.profile;
@@ -2396,7 +2414,7 @@ router.post('/addcontact', function(req, res){
 });
 
 /*INSERT or UPDATE Source*/
-router.post('/addsource', function(req, res){
+router.post('/addsource', parseForm, csrfProtection, function(req, res){
 
     //validation
     if (db) {
@@ -2666,7 +2684,7 @@ router.post('/addsource', function(req, res){
 });
 
 /*Missing - Advanced Search*/
-router.post('/searchmissing', function(req, res){
+router.post('/searchmissing', parseForm, csrfProtection, function(req, res){
     
     if (db) {
         var collection = db.collection('missing');
@@ -2734,7 +2752,7 @@ router.post('/searchmissing', function(req, res){
 });
 
 /*Site - Advanced Search*/
-router.post('/searchsites', function(req, res){
+router.post('/searchsites', parseForm, csrfProtection, function(req, res){
     var sitesResult;
     if (db) {
         var collection = db.collection('sites');
@@ -2791,7 +2809,7 @@ router.post('/searchsites', function(req, res){
     }    
 });
 
-router.post('/uploadPicture',function(req,res){
+router.post('/uploadPicture',parseForm, csrfProtection, function(req,res){
     uploadFile(req, res, function(filesList, uploadError){
         var collection = db.collection('missing');
 
@@ -2812,7 +2830,7 @@ router.post('/uploadPicture',function(req,res){
     });
 });
 
-router.post('/deleteEntry', function (req,res){
+router.post('/deleteEntry', parseForm, csrfProtection, function (req,res){
     var collection = db.collection(req.body.collection);
     var code = req.body.code;
 
@@ -2875,7 +2893,7 @@ router.post('/deleteEntry', function (req,res){
 
 });
 
-router.post('/logout', function(req, res){
+router.post('/logout', parseForm, csrfProtection, function(req, res){
     if(req.session){
         req.session.destroy();
     }
