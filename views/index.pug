@@ -7,7 +7,7 @@ block content
   form#form_login(name="login", method="post", action="/login")
     input#input_user(type="text", placeholder="User Name", name="user")
     br
-    input#input_pass(type="password", placeholder="Password", name="pass")
+    input#input_pass(type="password", placeholder="Password", name="pass", autocomplete="off")
     input(type="hidden" name="_csrf" value=csrfToken)
     br
     br
