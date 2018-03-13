@@ -8,9 +8,11 @@ var MongoStore = require('connect-mongo')(session);
 var csrf = require('csurf');
 var bodyParser = require('body-parser');
 
+
 var parseJson = bodyParser.json();
 var parseForm = bodyParser.urlencoded({ extended: false });
 var csrfProtection = csrf();
+
 
 var validator = require('express-validator');
 var async = require('async');
@@ -32,6 +34,7 @@ var loginLimiter = new RateLimit({
     message: "You have tried to login more than 3 times, please try again after an hour"
 });
 var municipalities = require("../public/javascripts/lebanonAdministrative.js");
+//var functions = require("./functions.js")();
  
 var db;
 var collectionsList;
@@ -238,7 +241,7 @@ function getMissing(session, callback){
 function getContacts(callback){ 
     if (db) {
         var contactsColl = db.collection('contacts');
-        contactsColl.find({}).project({'name': 1, code: 1, confidential:1, category: 1}).sort({'name.en':1}).toArray(function(err, result){
+        contactsColl.find({}).project({'name': 1, code: 1, confidential:1, category: 1, 'phone_1': 1}).sort({'name.en':1}).toArray(function(err, result){
             if (err){
                     res.send(err);
             } else {
