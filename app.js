@@ -52,7 +52,7 @@ app.use(session({
     httpOnly: true,
     sameSite: 'strict',
     secure: true, 
-    maxAge:  7200000  //2 hours
+    maxAge:  28800000  //8 hours
   },
   name: "id"
 }));
