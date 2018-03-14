@@ -57,12 +57,12 @@ var upload = multer({ storage : storage}).any();
 
 /* GET home page. */
 router.get('/', csrfProtection, function(req, res, next) {
-    if(req.session && db) {
-        res.redirect("missing");
-    } else {
+    // if(req.session && db) {
+    //     res.redirect("missing");
+    // } else {
         res.render('index', { title: 'Login to Database', csrfToken: req.csrfToken()});  
         console.log(req.csrfToken()); 
-    }
+    // }
 });
 
 /*Log in*/
