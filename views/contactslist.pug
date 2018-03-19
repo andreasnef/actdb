@@ -7,6 +7,83 @@ block content
    div#table
     div(class='btn menu')
      a(href="/newprofile/?type=contact&nextrecord="+nextrecord) Add a New Contact
+    div(class='btn menu')
+        a(href="#" onclick="toggle_visibility('divSearch');") Advance Search of a Contact 
+
+    div#divSearch(class='dropMenu')
+          form#form_search(name="searchcontacts", method="post", action="/searchcontacts")
+              
+              span Confidential:
+              br
+              select#input_confidential(name="confidential", value=confidential)
+                option(value="") Select
+                - var confidential = ["Yes", "No"];
+                each confid in confidential
+                   option(value=confid) #{confid}
+              br     
+              span Category
+              br
+              select#input_category(name="category", value=category)
+                option(value="") Select
+                - var categories = ["Family Member", "Victim", "Former Fighter", "Reporter", "Photographer", "Witness", "Neighbour", "Other"];
+                each category in categories
+                  option(value=category) #{category}
+              br
+              span Sex
+              br
+              select#input_sex(name="sex", value=sex)
+               option(value="") Select
+               - var sexes = ["M", "F"];
+               each se in sexes
+                option(value=se) #{se}
+              br
+              input#input_keyword(type="text", placeholder="Keyword", name="keyword", value=keyword)
+              br
+              span Related Event
+              br
+              select#input_perpetrators(name="related_event", value=related_event)
+                option(value="") Select
+                if (events)
+                 each event, i in events
+                     option(value=event.code) #{event.code} - #{event.name.en}
+              br            
+              span Related Location
+              br
+              select#input_perpetrators(name="related_location", value=related_location)
+                option(value="") Select
+                if (locations)
+                 each location, i in locations
+                     option(value=location.code) #{location.code} - #{location.name.en} (#{location.groups_responsible}) 
+              br
+              span Related Site
+              br
+              select#input_perpetrators(name="related_site", value=related_site)
+                option(value="") Select
+                if (sites)
+                 each site, i in sites
+                     option(value=site.code) #{site.code} - #{site.name.en}
+              br
+              span Related Missing Person
+              br
+              select#input_perpetrators(name="related_mps", value=related_mps)
+                option(value="") Select
+                if (mps)
+                 each mp, i in mps
+                     option(value=mp.code) #{mp.code} - #{mp.name.ar.last} #{mp.name.ar.first}
+              br
+              span ICRC:
+              br
+              select#input_icrc(name="icrc", value=icrc)
+                option(value="") Select
+                - var icrc = ["Yes", "No"];
+                each ic in icrc
+                   option(value=ic) #{ic}
+              br
+              br
+              input(type="hidden" name="_csrf" value=csrfToken)
+              div(class='btn menu')
+               button#search(type="submit" class="buttons") Search
+           
   
     h3. 
       Contacts

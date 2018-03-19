@@ -100,6 +100,7 @@ router.post('/login', loginLimiter, parseForm, csrfProtection, function(req, res
             req.session.user = user;
             console.log("user:" + req.session.user);
             
+            
             if(user != "public"){
                //save the login info in the db
                 var collection = db.collection('logins');
@@ -669,6 +670,10 @@ router.get('/contacts', csrfProtection, function(req, res){
                         "collList" : contactsList,
                         nextrecord : nextrecord,
                         "user": req.session.user,
+                        locations: locationsList, 
+                        events: eventsList, 
+                        sites: sitesList,
+                        mps: missingList,
                         csrfToken: req.csrfToken()
                     });   
 
@@ -2738,14 +2743,14 @@ router.post('/searchmissing', parseForm, csrfProtection, function(req, res){
                         req.session.missingResult = result;
                         res.render('missinglist', {
                         "collList" : result,
-                        parties : partiesList,
                         title: "List of Missing People",
                         nextrecord : req.session.nextrecord,
                         "user": req.session.user,
                         parties : partiesList,
                         locations: locationsList, 
                         events: eventsList, 
-                        sites: sitesList    
+                        sites: sitesList,
+                        csrfToken: req.csrfToken()    
                         }); 
                 }
             }); 
@@ -2796,14 +2801,66 @@ router.post('/searchsites', parseForm, csrfProtection, function(req, res){
                         sitesResult = result;
                         res.render('siteslist', {
                         "collList" : result,
-                        parties : partiesList,
                         title: "List of Sites",
                         nextrecord : req.session.nextrecord,
                         "user": req.session.user,
                         parties : partiesList,
                         locations: locationsList, 
                         events: eventsList, 
-                        sites: sitesList    
+                        sites: sitesList,
+                        mps: missingList,
+                        csrfToken: req.csrfToken()   
+                        }); 
+                }
+            }); 
+    } else { 
+        res.render('index', { title: 'Login to Database'});
+    }    
+});
+
+/*Contact - Advanced Search*/
+router.post('/searchcontacts', parseForm, csrfProtection, function(req, res){
+    
+    if (db) {
+        var collection = db.collection('contacts');
+        var query = {};
+        
+        //search by confidential
+        if (req.body.confidential) query['disappearance.confidential'] = req.body.confidential
+        //search by category
+        if (req.body.category) query['disappearance.category'] = req.body.category
+        //search by sex
+        if (req.body.sex) query['sex'] = req.body.sex
+        //search by keyword
+        if (req.body.keyword) query['$text'] = { $search: req.body.keyword}
+        //search by related event
+        if (req.body.related_event) query['related.events'] = req.body.related_event
+        //search by related location
+        if (req.body.related_location) query['related.locations'] = req.body.related_location
+        //search by related site
+        if (req.body.related_site) query['related.sites'] = req.body.related_site
+        //search by related mps
+        if (req.body.related_mps) query['related.mps'] = req.body.related_mps
+        //search by icrc
+        if (req.body.icrc) query['icrc'] = req.body.icrc
+        //search by contacted by ACT
+        if (req.body.contacted_act) query['contacted_act'] = req.body.contacted_act
+
+        collection.find(query).toArray(function(err, result){
+                if (err){
+                        res.send(err);
+                } else{
+                        req.session.contactsResult = result;
+                        res.render('contactslist', {
+                        "collList" : result,
+                        title: "List of Contacts",
+                        nextrecord : req.session.nextrecord,
+                        "user": req.session.user,
+                        locations: locationsList, 
+                        events: eventsList, 
+                        sites: sitesList,
+                        mps: missingList,
+                        csrfToken: req.csrfToken()
                         }); 
                 }
             }); 

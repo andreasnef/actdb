@@ -118,9 +118,10 @@ block content
                 option(value="") Select
                 if (mps)
                  each mp, i in mps
-                     option(value=mp.code) #{mp.code} - #{mp.name.en}
+                     option(value=mp.code) #{mp.code} - #{mp.name.ar.last} #{mp.name.ar.first}
               br
               br
+              input(type="hidden" name="_csrf" value=csrfToken)
               div(class='btn menu')
                button#search(type="submit" class="buttons") Search 
   
