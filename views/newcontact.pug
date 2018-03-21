@@ -32,6 +32,8 @@ block content
         - birth_date_month = ("0" + (birthdate.getMonth()+1)).slice(-2);
         - birth_date_year = birthdate.getFullYear();
         - residence = value.residence
+        - district = value.district
+        - governorate = value.governorate
         - nationality = value.nationality
         - profession = value.profession
         - status_war = value.status_war
@@ -43,7 +45,7 @@ block content
         - related_sites = value.related.sites
         - related_locations = value.related.locations
         - related_mps = value.related.mps
-        - interviews = value.interviews
+        - sources = value.sources
         - phone_1 = value.phone_1
         - phone_2 = value.phone_2
         - email = value.email
@@ -217,6 +219,28 @@ block content
     div#wrapper 
      input#input_residence(type="text", placeholder="Residence", name="residence", value=residence)
      br
+     span District
+     br
+     select#input_district(name="district", value=district)
+        option(value="") Select
+        - var districts = ["Akkar", "Baalbek", "Hermel", "Beirut", "Rashaya", "Western Beqaa", "Zahle", "Aley", "Baabda", "Chouf", "Jbeil", "Keserwan", "Matn", "Batroun", "Bsharri", "Koura", "Miniyeh-Danniyeh", "Tripoli", "Zgharta", "Bint Jbeil", "Hasbaya", "Marjeyoun", "Nabatiyeh", "Sidon", "Jezzine", "Tyre"];
+        each district in districts
+           if(location_district==district)
+                option(value=district selected="selected") #{district}
+           else
+                option(value=district) #{district}
+     br
+     span Governorate
+     br
+     select#input_governorate(name="governorate", value=governorate)
+        option(value="") Select
+        - var governorates = ["Akkar", "Baalbek-Hermel", "Beirut", "Beqaa", "Mount Lebanon", "Nabatieh", "North", "South"];
+        each governorate in governorates
+           if(location_governorate==governorate)
+                option(value=governorate selected="selected") #{governorate}
+           else
+                option(value=governorate) #{governorate}
+     br
      input#input_nationality(type="text", placeholder="Nationality", name="nationality", value=nationality)
      br
      input#input_profession(type="text", placeholder="Profession", name="profession", value=profession)
@@ -353,33 +377,36 @@ block content
              td= mp.name.ar.last+', '+mp.name.ar.first+' '+mp.name.ar.middle
              td= mp.name.en.last+', '+mp.name.en.first+' '+mp.name.en.middle 
      br
-     //Related Interviews
-     a(href="#" onclick="return toggle_visibility('relatedInterviews');") Interviews #{interviews} (click to modify)
+     br
+     legend Sources
+     a(href="#" onclick="return toggle_visibility('sources');") Sources #{sources} (click to modify)
     
-     div#relatedInterviews(class='dropMenu')
-      if (interviewslist)
-       table(id="interviewsList")
-        thead    
-         tr#headtag
-            th Select
-            th Code
-            th Interviewee
-            th Date
+     div#sources(class='dropMenu')
+        if(sourceslist)
+                table(id="sourcesList")
+                 thead    
+                    tr#headtag
+                        th Select
+                        th Code
+                        th Type
+                        th Subtype
+                        th Title
 
-        tbody    
-         each interview, i in interviewslist
-            tr
-             td
-              if (interviews && interviews.includes(interview.code))
-                input.checkbox-input(type='checkbox', name="interviews", value=interview.code, checked)
-              else  
-                input.checkbox-input(type='checkbox', name="interviews", value=interview.code)
-             td= interview.code
-             td= interview.interviewee
-             td= interview.date 
-     br
-     br
+                 tbody    
+                    each source, i in sourceslist
+                      tr
+                       td
+                        if (sources && sources.includes(source.code))
+                            input.checkbox-input(type='checkbox', name="sources", value=source.code, checked)
+                        else  
+                            input.checkbox-input(type='checkbox', name="sources", value=source.code)
+                       td= source.code
+                       td= source.type
+                       td= source.subtype
+                       td= source.source_title
      
+     br
+     br
      div#wrapper
      legend Contact Information
      input#input_phone_1(type="text", placeholder="First Contact Phone", name="phone_1", value=phone_1)
@@ -463,6 +490,6 @@ block content
         $('#contactsList').DataTable( {
             paging: false
         } );
-        $('#interviewsList').DataTable( {
+        $('#sourcesList').DataTable( {
             paging: false
         } );

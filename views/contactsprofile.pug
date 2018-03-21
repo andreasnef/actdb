@@ -65,6 +65,17 @@ block content
            p 
             span.title Residence: 
             span #{value.residence}
+
+          -if (value.district)
+           p 
+            span.title District: 
+            span #{value.district}
+
+          -if (value.governorate)
+           p 
+            span.title Governorate: 
+            span #{value.governorate}
+
           - if (value.nationality)
            p
             span.title Nationality: 
@@ -117,11 +128,14 @@ block content
             each mp, i in value.related.mps
              a(href="#" onclick="loadProfile('missing','"+mp+"');") #{mp} 
 
-          - if (value.interviews)
+          - if (value.sources)
            p
-            span.title Interviews: 
-            each interview, i in value.interviews
-             a(href="#" onclick="loadProfile('interviews','"+interview+"');") #{interview}
+            span.title Sources: 
+            each source, i in value.sources
+             if(sourcesList)
+              each sourceProfile, i in sourcesList
+               - if (source == sourceProfile.code) source_title =  sourceProfile.source_title
+             a(href="#" onclick="loadProfile('sources','"+source+"');") #{source} #{source_title}
           
           - if (value.phone_1 || value.phone_2)
            p 

@@ -101,6 +101,7 @@ router.post('/login', loginLimiter, parseForm, csrfProtection, function(req, res
             console.log("user:" + req.session.user);
             
             
+            
             if(user != "public"){
                //save the login info in the db
                 var collection = db.collection('logins');
@@ -2209,6 +2210,8 @@ router.post('/addcontact', parseForm, csrfProtection, function(req, res){
                     "birth_date_month": req.body.birth_date_month, 
                     "birth_date_year": req.body.birth_date_year,
                     "residence": req.body.residence,
+                    "district" : req.body.district,
+                    "governorate" : req.body.governorate,
                     "nationality": req.body.nationality,
                     "profession": req.body.profession,
                     "status_war": req.body.status_war,
@@ -2268,6 +2271,8 @@ router.post('/addcontact', parseForm, csrfProtection, function(req, res){
                     if (profile[0].birth.place!= req.body.birth_place) updateVal['birth.place'] =  req.body.birth_place
                     if (profile[0].birth.date!= dateConverter(req.body.birth_date_day,req.body.birth_date_month, req.body.birth_date_year)) updateVal['birth.date'] =  dateConverter(req.body.birth_date_day,req.body.birth_date_month, req.body.birth_date_year)
                     if (profile[0].residence!= req.body.residence) updateVal['residence'] =  req.body.residence
+                    if (profile[0].district!= req.body.district) updateVal['district'] =  req.body.district
+                    if (profile[0].governorate!= req.body.governorate) updateVal['governorate'] =  req.body.governorate
                     if (profile[0].nationality!= req.body.nationality) updateVal['nationality'] =  req.body.nationality
                     if (profile[0].profession!= req.body.profession) updateVal['profession'] =  req.body.profession
                     if (profile[0].status_war!= req.body.status_war) updateVal['status_war'] =  req.body.status_war
@@ -2359,6 +2364,8 @@ router.post('/addcontact', parseForm, csrfProtection, function(req, res){
                                     "date" : dateConverter(req.body.birth_date_day,req.body.birth_date_month, req.body.birth_date_year)
                                 },
                                 "residence" : req.body.residence,
+                                "district": req.body.district,
+                                "governorate" : req.body.governorate,
                                 "nationality" : req.body.nationality,
                                 "profession" : req.body.profession,
                                 "status_war": req.body.status_war,
