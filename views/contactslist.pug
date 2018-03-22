@@ -93,9 +93,9 @@ block content
         tr#headtag
             th Code
             th Name in Arabic
-            th Name in English
             th Category
             th Phone Numbers
+            th
             
             
       tbody        
@@ -105,12 +105,11 @@ block content
                         a(href="#" onclick="loadProfile('contacts','"+contact.code+"');") #{contact.code}
                     if (contact.confidential == "Yes")
                         td= "Confidential"
-                        td= "Confidential"
                     else   
                         td=contact.name.ar.last+" "+contact.name.ar.first
-                        td=contact.name.en.first +" "+contact.name.en.last
                     td=contact.category
                     td=contact.phone_1
+                    td=contact.phone_2
                     
    div#sideProfile
   
