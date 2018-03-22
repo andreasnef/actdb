@@ -243,7 +243,7 @@ function getMissing(session, callback){
 function getContacts(callback){ 
     if (db) {
         var contactsColl = db.collection('contacts');
-        contactsColl.find({}).project({'name': 1, code: 1, confidential:1, category: 1, 'phone_1': 1}).sort({'name.en':1}).toArray(function(err, result){
+        contactsColl.find({}).project({'name': 1, code: 1, confidential:1, category: 1, 'phone_1': 1, 'phone_2': 1}).sort({'name.en':1}).toArray(function(err, result){
             if (err){
                     res.send(err);
             } else {
