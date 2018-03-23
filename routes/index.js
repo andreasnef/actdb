@@ -30,8 +30,8 @@ var loginLimiter = new RateLimit({
     windowMs: 60*60*1000, // 1 hour window 
     delayAfter: 3, // begin slowing down responses after the first request 
     delayMs: 3*1000, // slow down subsequent responses by 3 seconds per request 
-    max: 3, // start blocking after 5 requests 
-    message: "You have tried to login more than 3 times, please try again after an hour"
+    max: 5, // start blocking after 5 requests 
+    message: "You have tried to login more than 5 times, please try again after an hour"
 });
 var municipalities = require("../public/javascripts/lebanonAdministrative.js");
 //var functions = require("./functions.js")();
@@ -99,7 +99,6 @@ router.post('/login', loginLimiter, parseForm, csrfProtection, function(req, res
             //save user in session
             req.session.user = user;
             console.log("user:" + req.session.user);
-            
             
             
             if(user != "public"){
@@ -345,8 +344,12 @@ function calcLastRecord(list, type){
         
     }else {
         list.forEach(function(doc) {
-            number = parseInt(doc.code.match(/[a-zA-Z]+|[0-9]+/g)[1])
-            numbers.push(number); 
+            if(doc.code){
+             number = parseInt(doc.code.match(/[a-zA-Z]+|[0-9]+/g)[1])
+             numbers.push(number);
+            } else{
+             console.log("ERROR in record "+doc+" Code missing");   
+            }
         })
         nextrecord = (Math.max.apply(null, numbers))+1;
         return nextrecord;             
