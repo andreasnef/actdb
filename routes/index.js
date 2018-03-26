@@ -68,8 +68,7 @@ router.post('/login', loginLimiter, parseForm, csrfProtection, function(req, res
     var ip = req.connection.remoteAddress;
     var date = new Date().toISOString();
     var MongoClient = mongodb.MongoClient;
-    var url = 'mongodb://'+user+':'+pass+'@localhost:27017,localhost:27018,localhost:27019/Act?replicaSet=mongo-repl&authSource=admin';
-    //var url = 'mongodb://'+user+':'+pass+'@cluster0-shard-00-00-tey75.mongodb.net:27017,cluster0-shard-00-01-tey75.mongodb.net:27017,cluster0-shard-00-02-tey75.mongodb.net:27017/Act?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin';
+    var url = 'mongodb://'+user+':'+pass+'@cluster0-shard-00-00-tey75.mongodb.net:27017,cluster0-shard-00-01-tey75.mongodb.net:27017,cluster0-shard-00-02-tey75.mongodb.net:27017/Act?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin';
     
     //Validate Fields
     req.check('user', 'User cannot be empty').notEmpty();
@@ -97,18 +96,6 @@ router.post('/login', loginLimiter, parseForm, csrfProtection, function(req, res
             //save user in session
             req.session.user = user;
             console.log("user:" + req.session.user);
-            
-            //open change stream and record any changes
-            const missingCollection = db.collection('missing');
-            var changeStream = missingCollection.watch();
-            changeStream.on("change", function(change) {
-                var newChange = {user: user, date: date, collection: change.ns.coll, operation: change.operationType, fullDocument: change.fullDocument, updateDescription: change.updateDescription};
-                db.collection('updates').insert([newChange],function(err,result){
-                    if (err){
-                        console.log(err)
-                     }
-                });
-            });
             
             if(user != "public"){
                //save the login info in the db
