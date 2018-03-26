@@ -111,23 +111,34 @@ block content
            p
             span.title Related Events: 
             each event, i in value.related.events
-             a(href="#" onclick="loadProfile('events','"+event+"');") #{event} 
+             each eventProfile, i in eventsList
+               - if (event == eventProfile.code) name =  eventProfile.name.en
+             a(href="#" onclick="loadProfile('events','"+event+"');") #{event} #{name}
+             br
           - if (value.related.sites)
            p
             span.title Related Sites: 
             each site, i in value.related.sites
-             a(href="#" onclick="loadProfile('sites','"+site+"');") #{site} 
+             each siteProfile, i in sitesList
+               - if (site == siteProfile.code) name =  siteProfile.name.en
+             a(href="#" onclick="loadProfile('sites','"+site+"');") #{site} #{name}
+             br
           - if (value.related.locations)
            p
             span.title Related Locations: 
             each location, i in value.related.locations
-             a(href="#" onclick="loadProfile('locations','"+location+"');") #{location} 
+             each locationProfile, i in locationsList
+               - if (location == locationProfile.code) name =  locationProfile.name.en
+             a(href="#" onclick="loadProfile('locations','"+location+"');") #{location} #{name}
+             br
           - if (value.related.mps)
            p
             span.title Related Missing Persons: 
             each mp, i in value.related.mps
-             a(href="#" onclick="loadProfile('missing','"+mp+"');") #{mp} 
-
+             each missingProfile, i in missingList
+               - if (mp == missingProfile.code) name =  missingProfile.name.ar.last+" "+missingProfile.name.ar.middle+" "+missingProfile.name.ar.first
+             a(href="#" onclick="loadProfile('missing','"+mp+"');") #{mp} #{name} 
+             br
           - if (value.sources)
            p
             span.title Sources: 
@@ -136,6 +147,7 @@ block content
               each sourceProfile, i in sourcesList
                - if (source == sourceProfile.code) source_title =  sourceProfile.source_title
              a(href="#" onclick="loadProfile('sources','"+source+"');") #{source} #{source_title}
+             br
           
           - if (value.phone_1 || value.phone_2)
            p 

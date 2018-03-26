@@ -57,7 +57,12 @@ var upload = multer({ storage : storage}).any();
 
 /* GET home page. */
 router.get('/', csrfProtection, function(req, res, next) {
-    res.render('index', { title: 'Login to Database', csrfToken: req.csrfToken()});  
+    // if(req.session && db) {
+    //     res.redirect("missing");
+    // } else {
+        res.render('index', { title: 'Login to Database', csrfToken: req.csrfToken()});  
+        console.log(req.csrfToken()); 
+    // }
 });
 
 /*Log in*/
@@ -68,8 +73,7 @@ router.post('/login', loginLimiter, parseForm, csrfProtection, function(req, res
     var ip = req.connection.remoteAddress;
     var date = new Date().toISOString();
     var MongoClient = mongodb.MongoClient;
-    var url = 'mongodb://'+user+':'+pass+'@localhost:27017,localhost:27018,localhost:27019/Act?replicaSet=mongo-repl&authSource=admin';
-    //var url = 'mongodb://'+user+':'+pass+'@cluster0-shard-00-00-tey75.mongodb.net:27017,cluster0-shard-00-01-tey75.mongodb.net:27017,cluster0-shard-00-02-tey75.mongodb.net:27017/Act?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin';
+    var url = 'mongodb://'+user+':'+pass+'@cluster0-shard-00-00-tey75.mongodb.net:27017,cluster0-shard-00-01-tey75.mongodb.net:27017,cluster0-shard-00-02-tey75.mongodb.net:27017/Act?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin';
     
     //Validate Fields
     req.check('user', 'User cannot be empty').notEmpty();
@@ -78,8 +82,7 @@ router.post('/login', loginLimiter, parseForm, csrfProtection, function(req, res
     errors.then(function (result) {
      if (!result.isEmpty()) {
             res.render('index', {
-                "validationErrors" : result.mapped(),
-                csrfToken: req.csrfToken()
+                "validationErrors" : result.mapped()
             });    
 
      } else {
@@ -88,8 +91,7 @@ router.post('/login', loginLimiter, parseForm, csrfProtection, function(req, res
             if (err){
             console.log("User:"+user+" Unable to connect to server", err);
             res.render('index', {
-                "errormessage" : err,
-                csrfToken: req.csrfToken()
+                "errormessage" : err
             });
         } else {
             //Store the connection globally
@@ -98,17 +100,6 @@ router.post('/login', loginLimiter, parseForm, csrfProtection, function(req, res
             req.session.user = user;
             console.log("user:" + req.session.user);
             
-            //open change stream and record any changes
-            const missingCollection = db.collection('missing');
-            var changeStream = missingCollection.watch();
-            changeStream.on("change", function(change) {
-                var newChange = {user: user, date: date, collection: change.ns.coll, operation: change.operationType, fullDocument: change.fullDocument, updateDescription: change.updateDescription};
-                db.collection('updates').insert([newChange],function(err,result){
-                    if (err){
-                        console.log(err)
-                     }
-                });
-            });
             
             if(user != "public"){
                //save the login info in the db
@@ -141,7 +132,7 @@ function getParties(callback){
             callback();
         });
      } else { 
-        res.render('index', { title: 'Login to Database', csrfToken: req.csrfToken()});
+        res.render('index', { title: 'Login to Database'});
     }         
 };
 
@@ -170,7 +161,7 @@ function getLocations(user, callback){
         }); 
         }
      } else { 
-        res.render('index', { title: 'Login to Database', csrfToken: req.csrfToken()});
+        res.render('index', { title: 'Login to Database'});
     }       
 };
 
@@ -191,7 +182,7 @@ function getEvents(user, callback){
                 callback();
             });     
     } else { 
-        res.render('index', { title: 'Login to Database', csrfToken: req.csrfToken()});
+        res.render('index', { title: 'Login to Database'});
     }                       
 };   
 
@@ -212,7 +203,7 @@ function getSites(user, callback){
                 callback();
             }); 
     } else { 
-        res.render('index', { title: 'Login to Database', csrfToken: req.csrfToken()});
+        res.render('index', { title: 'Login to Database'});
     }    
 };
 
@@ -244,7 +235,7 @@ function getMissing(session, callback){
         }
          
     } else { 
-        res.render('index', { title: 'Login to Database', csrfToken: req.csrfToken()});
+        res.render('index', { title: 'Login to Database'});
     }    
 };
 
@@ -260,7 +251,7 @@ function getContacts(callback){
             callback();
         });
      } else { 
-        res.render('index', { title: 'Login to Database', csrfToken: req.csrfToken()});
+        res.render('index', { title: 'Login to Database'});
     }         
 };
 
@@ -276,7 +267,7 @@ function getSources(callback){
             callback();
         });
      } else { 
-        res.render('index', { title: 'Login to Database', csrfToken: req.csrfToken()});
+        res.render('index', { title: 'Login to Database'});
     }         
 };
 
@@ -397,7 +388,7 @@ function updateRelated(collection, codeUpdate, codePush, field){
         } 
         
     } else { 
-        res.render('index', { title: 'Login to Database', csrfToken: req.csrfToken()});
+        res.render('index', { title: 'Login to Database'});
     } 
     
 };
@@ -432,7 +423,7 @@ function removeRelated(collection, codeUpdate, codePush, field){
         }
         
     } else { 
-        res.render('index', { title: 'Login to Database', csrfToken: req.csrfToken()});
+        res.render('index', { title: 'Login to Database'});
     } 
     
 };
@@ -496,7 +487,7 @@ router.get('/missing', csrfProtection, function(req, res){
                 }
         });
     } else {
-        res.render('index', { title: 'Login to Database', csrfToken: req.csrfToken()});
+        res.render('index', { title: 'Login to Database'});
     }
     
 });
@@ -519,7 +510,7 @@ router.get('/events', csrfProtection, function(req, res){
             }
         });
     } else {
-        res.render('index', { title: 'Login to Database', csrfToken: req.csrfToken()});
+        res.render('index', { title: 'Login to Database'});
     }    
 });
 
@@ -549,7 +540,7 @@ router.get('/locations', csrfProtection, function(req, res){
                 }
             }); 
     } else {
-        res.render('index', { title: 'Login to Database', csrfToken: req.csrfToken()});
+        res.render('index', { title: 'Login to Database'});
     }    
 });
 
@@ -577,7 +568,7 @@ router.get('/sites', csrfProtection, function(req, res){
                 }
             });
     } else {
-        res.render('index', { title: 'Login to Database', csrfToken: req.csrfToken()});
+        res.render('index', { title: 'Login to Database'});
     }         
 });
 
@@ -600,7 +591,7 @@ router.get('/logins', csrfProtection, function(req, res){
             }
         }); 
     } else {
-        res.render('index', { title: 'Login to Database', csrfToken: req.csrfToken()});
+        res.render('index', { title: 'Login to Database'});
     }    
 });
 
@@ -647,7 +638,7 @@ router.get('/map', csrfProtection, function(req, res){
             csrfToken: req.csrfToken()
         });  
     } else {
-        res.render('index', { title: 'Login to Database', csrfToken: req.csrfToken()});
+        res.render('index', { title: 'Login to Database'});
     }  
 });
 
@@ -669,7 +660,7 @@ router.get('/parties', csrfProtection, function(req, res){
                 }
             }); 
     } else {
-        res.render('index', { title: 'Login to Database', csrfToken: req.csrfToken()});
+        res.render('index', { title: 'Login to Database'});
     }          
 });
 
@@ -695,7 +686,7 @@ router.get('/contacts', csrfProtection, function(req, res){
                 }
             });       
     } else {
-        res.render('index', { title: 'Login to Database', csrfToken: req.csrfToken()});
+        res.render('index', { title: 'Login to Database'});
     }     
 });
 
@@ -723,7 +714,7 @@ router.get('/sources', csrfProtection, function(req, res){
                 }
             }); 
     } else {
-        res.render('index', { title: 'Login to Database', csrfToken: req.csrfToken()});
+        res.render('index', { title: 'Login to Database'});
     }           
 });
 
@@ -769,7 +760,7 @@ router.get('/profile', csrfProtection, function(req, res){
             }
             });  
     } else {
-            res.render('index', { title: 'Login to Database', csrfToken: req.csrfToken()});
+            res.render('index', { title: 'Login to Database'});
     }       
 });
 
@@ -796,7 +787,7 @@ router.get('/newprofile', csrfProtection, function(req, res){
             }
         });
     } else {
-        res.render('index', { title: 'Login to Database', csrfToken: req.csrfToken()});
+        res.render('index', { title: 'Login to Database'});
     }
 });
 
@@ -1187,7 +1178,7 @@ router.post('/addmissing',parseForm, csrfProtection, function(req, res){
           }
          });   
         } else { 
-        res.render('index', { title: 'Login to Database', csrfToken: req.csrfToken()});
+        res.render('index', { title: 'Login to Database'});
     }      
             
 });
@@ -1457,7 +1448,7 @@ router.post('/addevent',parseForm, csrfProtection, function(req, res){
           }
          });   
         } else { 
-        res.render('index', { title: 'Login to Database', csrfToken: req.csrfToken()});
+        res.render('index', { title: 'Login to Database'});
     }      
             
 });
@@ -1737,7 +1728,7 @@ router.post('/addlocation',parseForm, csrfProtection, function(req, res){
           }
          });   
         } else { 
-        res.render('index', { title: 'Login to Database', csrfToken: req.csrfToken()});
+        res.render('index', { title: 'Login to Database'});
     }      
             
 });
@@ -2070,7 +2061,7 @@ router.post('/addsite',parseForm, csrfProtection, function(req, res){
           }
          });  
         } else { 
-        res.render('index', { title: 'Login to Database', csrfToken: req.csrfToken()});
+        res.render('index', { title: 'Login to Database'});
     }      
             
 });
@@ -2187,7 +2178,7 @@ router.post('/addparty', parseForm, csrfProtection, function(req, res){
           }
          });  
         } else { 
-        res.render('index', { title: 'Login to Database', csrfToken: req.csrfToken()});
+        res.render('index', { title: 'Login to Database'});
     }      
             
 });
@@ -2435,7 +2426,7 @@ router.post('/addcontact', parseForm, csrfProtection, function(req, res){
          });
             
         } else { 
-        res.render('index', { title: 'Login to Database', csrfToken: req.csrfToken()});
+        res.render('index', { title: 'Login to Database'});
     }      
             
 });
@@ -2706,7 +2697,7 @@ router.post('/addsource', parseForm, csrfProtection, function(req, res){
         }
         });
     } else { 
-        res.render('index', { title: 'Login to Database', csrfToken: req.csrfToken()});
+        res.render('index', { title: 'Login to Database'});
     }   
 });
 
@@ -2774,7 +2765,7 @@ router.post('/searchmissing', parseForm, csrfProtection, function(req, res){
                 }
             }); 
     } else { 
-        res.render('index', { title: 'Login to Database', csrfToken: req.csrfToken()});
+        res.render('index', { title: 'Login to Database'});
     }    
 });
 
@@ -2833,7 +2824,7 @@ router.post('/searchsites', parseForm, csrfProtection, function(req, res){
                 }
             }); 
     } else { 
-        res.render('index', { title: 'Login to Database', csrfToken: req.csrfToken()});
+        res.render('index', { title: 'Login to Database'});
     }    
 });
 
@@ -2884,7 +2875,7 @@ router.post('/searchcontacts', parseForm, csrfProtection, function(req, res){
                 }
             }); 
     } else { 
-        res.render('index', { title: 'Login to Database', csrfToken: req.csrfToken()});
+        res.render('index', { title: 'Login to Database'});
     }    
 });
 
@@ -2976,7 +2967,7 @@ router.post('/logout', parseForm, csrfProtection, function(req, res){
     if(req.session){
         req.session.destroy();
     }
-    res.render('index', { title: 'Login to Database', csrfToken: req.csrfToken()}); 
+    res.render('index', { title: 'Login to Database'}); 
 });
 
 module.exports = router;
