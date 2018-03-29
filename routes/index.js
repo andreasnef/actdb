@@ -96,7 +96,7 @@ router.post('/login', loginLimiter, parseForm, csrfProtection, function(req, res
             //save user in session
             req.session.user = user;
             console.log("user:" + req.session.user);
-
+            
             
             if(user != "public"){
                //save the login info in the db
@@ -1274,7 +1274,7 @@ router.post('/addevent',parseForm, csrfProtection, function(req, res){
                 if (profile[0].location.place!= req.body.location_place) updateVal['location.place'] =  req.body.location_place
                 if (profile[0].location.district!= req.body.location_district) updateVal['location.district'] =  req.body.location_district
                 if (profile[0].location.governorate!= req.body.location_governorate) updateVal['location.governorate'] =  req.body.location_governorate
-                if (profile[0].location.latitude && profile[0].location.longitude && (profile[0].location.latitude!= req.body.location_latitude || profile[0].location.longitude!= req.body.location_longitude)) {
+                if (profile[0].specific.latitude && profile[0].specific.longitude && (profile[0].specific.latitude!= req.body.location_latitude || profile[0].specific.longitude!= req.body.location_longitude)) {
                     updateVal['location.coordinates'] =  [long, lat]
                     updateVal['specific.latitude'] =  req.body.location_latitude
                     updateVal['specific.longitude'] =  req.body.location_longitude
@@ -2436,6 +2436,7 @@ router.post('/addsource', parseForm, csrfProtection, function(req, res){
         var collection = db.collection('sources');
         var profile = req.session.profile;
 
+        console.log("i get here");
         //Validate Fields
         //req.check('code', 'Code cannot be empty').notEmpty();
         //req.check('type', 'Type cannot be empty').notEmpty();
