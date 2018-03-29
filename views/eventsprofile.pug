@@ -161,18 +161,18 @@ block content
       
       
      div(class='btn menu')
-        a(href="/newprofile/?type=event&code="+value.code) Edit
-       div(class='btn menu')
-            form#deleteEntry(name="deleteEntry", method="post", action="/deleteEntry" onclick="return confirm('This will delete the event permanently. Are you sure?')")
-                    input(type="hidden" name="code" value=value.code)
-                    input(type="hidden" name="collection" value="events")
-                    input(type="hidden" name="related_events" value=value.related.events)
-                    input(type="hidden" name="related_sites" value=value.related.sites)
-                    input(type="hidden" name="related_locations" value=value.related.locations)
-                    input(type="hidden" name="related_mps" value=value.related.mps)
-                    input(type="hidden" name="interviews" value=value.interviews)
-                    input(type="hidden" name="contacts" value=value.contacts)
-                    input(type="hidden" name="files" value=value.files)
-                    input(type="hidden" name="_csrf" value=csrfToken)
+      a(href="/newprofile/?type=event&code="+value.code) Edit
+     div(class='btn menu')
+        form#deleteEntry(name="deleteEntry", method="post", action="/deleteEntry" onclick="return confirm('This will delete the event permanently. Are you sure?')")
+          input(type="hidden" name="code" value=value.code)
+          input(type="hidden" name="collection" value="events")
+          input(type="hidden" name="related_events" value=value.related.events)
+          input(type="hidden" name="related_sites" value=value.related.sites)
+          input(type="hidden" name="related_locations" value=value.related.locations)
+          input(type="hidden" name="related_mps" value=value.related.mps)
+          input(type="hidden" name="interviews" value=value.interviews)
+          input(type="hidden" name="contacts" value=value.contacts)
+          input(type="hidden" name="files" value=value.files)
+          input(type="hidden" name="_csrf" value=csrfToken)
                     
-                    button#submit_event(class="buttons", type="submit") Delete  
+          button#submit_event(class="buttons", type="submit") Delete  
