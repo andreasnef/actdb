@@ -96,6 +96,7 @@ router.post('/login', loginLimiter, parseForm, csrfProtection, function(req, res
             //save user in session
             req.session.user = user;
             console.log("user:" + req.session.user);
+
             
             if(user != "public"){
                //save the login info in the db
@@ -891,7 +892,7 @@ router.post('/addmissing',parseForm, csrfProtection, function(req, res){
                     "notes" : req.body.notes,
                     "sources": req.body.sources,
                     "contacts" : req.body.contacts,
-                    
+                    csrfToken: req.csrfToken(),
                     parties : partiesList, mps: missingList, locations: locationsList, events: eventsList, sites: sitesList,
 
                     "validationErrors" : result.mapped()
@@ -1224,7 +1225,7 @@ router.post('/addevent',parseForm, csrfProtection, function(req, res){
                     "notes" : req.body.notes,
                     "sources" : req.body.sources,
                     "contacts" : req.body.contacts,
-                    
+                    csrfToken: req.csrfToken(),
                     parties : partiesList, mps: missingList, locations: locationsList, events: eventsList, sites: sitesList, contactslist: contactsList, sourceslist: sourcesList,
 
                     "validationErrors" : result.mapped()
@@ -1492,7 +1493,7 @@ router.post('/addlocation',parseForm, csrfProtection, function(req, res){
                     "notes" : req.body.notes,
                     "sources" : req.body.sources,
                     "contacts" : req.body.contacts,
-                    
+                    csrfToken: req.csrfToken(),
                     parties : partiesList, mps: missingList, locations: locationsList, events: eventsList, sites: sitesList,
 
                     "validationErrors" : result.mapped()
@@ -1794,7 +1795,7 @@ router.post('/addsite',parseForm, csrfProtection, function(req, res){
                     "notes" : req.body.notes,
                     "sources" : req.body.sources,
                     "contacts" : req.body.contacts,
-                    
+                    csrfToken: req.csrfToken(),
                     parties : partiesList, mps: missingList, locations: locationsList, events: eventsList, sites: sitesList, contactslist: contactsList, sourceslist: sourcesList,
 
                     "validationErrors" : result.mapped()
@@ -2090,7 +2091,7 @@ router.post('/addparty', parseForm, csrfProtection, function(req, res){
                     "control_areas" : control_areas,
                     "color" : req.body.color,
                     "sources" : req.body.sources,
-                    
+                    csrfToken: req.csrfToken(),
                     parties : partiesList, mps: missingList, locations: locationsList, events: eventsList, sites: sitesList,
 
                     "validationErrors" : result.mapped()
@@ -2231,7 +2232,7 @@ router.post('/addcontact', parseForm, csrfProtection, function(req, res){
                     "family_associations": req.body.family_associations,
                     "contacted_act": req.body.contacted_act,
                     "notes": req.body.notes,
-                    
+                    csrfToken: req.csrfToken(),
                     parties : partiesList, mps: missingList, locations: locationsList, events: eventsList, sites: sitesList,
 
                     "validationErrors" : result.mapped()
@@ -2471,7 +2472,7 @@ router.post('/addsource', parseForm, csrfProtection, function(req, res){
                 "production" : req.body.production,
                 "notes": req.body.notes,
                 "files": req.file,
-                
+                csrfToken: req.csrfToken(),
                 parties : partiesList, mps: missingList, locations: locationsList, events: eventsList, sites: sitesList,
     
                 "validationErrors" : result.mapped()
