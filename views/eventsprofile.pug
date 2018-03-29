@@ -120,7 +120,7 @@ block content
       
       
   div#wrapper       
-      if(user!="public")
+      if(user!="public" && (value.sources).lenght>0)
        h4 Sources 
        if(value.interviews && (value.interviews).length>0)
         p
@@ -136,20 +136,11 @@ block content
        - if (value.sources)  
            p
             each source, i in value.sources
-             a(href="#" onclick="loadProfile('sources','"+source+"');") #{source}
+             if(sourcesList)
+              each sourceProfile, i in sourcesList
+               - if (source == sourceProfile.code) source_title =  sourceProfile.source_title
+             a(href="#" onclick="loadProfile('sources','"+source+"');") #{source} #{source_title}
              br
-      
-       //-  - if(value.files && (value.files).length>0)
-          //-   p 
-          //-    span.title Files: 
-          //-       - var name = "";
-          //-       each file, i in value.files
-          //-        if(filesList)
-          //-          each fileProfile, i in filesList
-          //-             - if (file == fileProfile.code) name =  fileProfile.description
-          //-             - if (file == fileProfile.code)type =  fileProfile.type
-          //-        a(href="#" onclick="loadProfile('files','"+file+"');") #{type} - #{name} (#{file})
-          //-        br
 
        - if (value.notes)
         p 

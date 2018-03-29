@@ -404,7 +404,7 @@ block content
     div#wrapper
      span Notes
      br
-     textarea#input_itinerary(type="text", placeholder="Notes", cols="120" rows="10", name="itinerary", value=notes)
+     textarea#input_itinerary(type="text", placeholder="Notes", cols="120" rows="10", name="notes", value=notes)
         | #{notes}
     
      br
@@ -416,7 +416,7 @@ block content
     
      div#sources(class='dropMenu')
         if(sourceslist)
-                table(id="sourcesList")
+            table(id="sourcesList")
                  thead    
                     tr#headtag
                         th Select
@@ -494,10 +494,7 @@ block content
         $('#contactsList').DataTable( {
             paging: false
         } );
-        $('#interviewsList').DataTable( {
-                paging: false
-        } );
-        $('#filesList').DataTable( {
+        $('#sourcesList').DataTable( {
                 paging: false
         } );
     
