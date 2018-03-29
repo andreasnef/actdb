@@ -120,7 +120,8 @@ block content
       
       
   div#wrapper       
-      if(user!="public" && (value.sources).lenght>0)
+    if(user!="public")
+     if((value.sources).lenght>0)
        h4 Sources 
        if(value.interviews && (value.interviews).length>0)
         p
@@ -142,12 +143,12 @@ block content
              a(href="#" onclick="loadProfile('sources','"+source+"');") #{source} #{source_title}
              br
 
-       - if (value.notes)
+     - if (value.notes)
         p 
          span.title Notes: 
          span #{value.notes} 
 
-       - if (value.contacts && (value.contacts).length>0)
+     - if (value.contacts && (value.contacts).length>0)
         p 
          span.title Contacts: 
             - var name = "";
@@ -159,7 +160,7 @@ block content
              br  
       
       
-       div(class='btn menu')
+     div(class='btn menu')
         a(href="/newprofile/?type=event&code="+value.code) Edit
        div(class='btn menu')
             form#deleteEntry(name="deleteEntry", method="post", action="/deleteEntry" onclick="return confirm('This will delete the event permanently. Are you sure?')")
