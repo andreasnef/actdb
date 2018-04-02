@@ -5,19 +5,12 @@ var router = express.Router();
 var mongodb = require('mongodb');
 var session = require('express-session');
 var MongoStore = require('connect-mongo')(session);
-var csrf = require('csurf');
-var bodyParser = require('body-parser');
-
-
-var parseJson = bodyParser.json();
-var parseForm = bodyParser.urlencoded({ extended: false });
-var csrfProtection = csrf();
-
-
 var validator = require('express-validator');
 var async = require('async');
 var multer  = require('multer');
 var fs = require("fs");
+var csrf = require('csurf');
+var bodyParser = require('body-parser');
 var cloudinary = require('cloudinary');
 cloudinary.config({ 
     cloud_name: 'hxxbdvyzc', 
@@ -34,7 +27,6 @@ var loginLimiter = new RateLimit({
     message: "You have tried to login more than 5 times, please try again after an hour"
 });
 var municipalities = require("../public/javascripts/lebanonAdministrative.js");
-//var functions = require("./functions.js")();
  
 var db;
 var collectionsList;
@@ -54,6 +46,10 @@ var storage = multer.diskStorage({
 })
 
 var upload = multer({ storage : storage}).any();
+
+var parseJson = bodyParser.json();
+var parseForm = bodyParser.urlencoded({ extended: false });
+var csrfProtection = csrf();
 
 /* GET home page. */
 router.get('/', csrfProtection, function(req, res, next) {
@@ -2436,7 +2432,6 @@ router.post('/addsource', parseForm, csrfProtection, function(req, res){
         var collection = db.collection('sources');
         var profile = req.session.profile;
 
-        console.log("i get here");
         //Validate Fields
         //req.check('code', 'Code cannot be empty').notEmpty();
         //req.check('type', 'Type cannot be empty').notEmpty();

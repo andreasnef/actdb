@@ -188,7 +188,8 @@ block content
           h4 Related: 
           - if (value.related.events && (value.related.events).length>0)
            p
-            span.title Related Events: 
+            span.title Related Events: #{(value.related.events).length}
+            br
             - var name = "";
             each event, i in value.related.events
              each eventProfile, i in eventsList
@@ -197,7 +198,8 @@ block content
              br
           - if (value.related.sites && (value.related.sites).length>0)
            p
-            span.title Related Sites: 
+            span.title Related Sites: #{(value.related.sites).length}
+            br
             - var name = "";
             each site, i in value.related.sites
              each siteProfile, i in sitesList
@@ -206,7 +208,8 @@ block content
              br
           - if (value.related.locations && (value.related.locations).length>0)
            p
-            span.title Related Locations: 
+            span.title Related Locations: #{(value.related.locations).length}
+            br
             - var name = "";
             each location, i in value.related.locations
              each locationProfile, i in locationsList
@@ -215,7 +218,8 @@ block content
              br
           - if (value.related.mps && (value.related.mps).length>0)
            p
-            span.title Related Missing Persons: 
+            span.title Related Missing Persons: #{(value.related.mps).length}
+            br
             - var name = "";
             each mp, i in value.related.mps
              each missingProfile, i in missingList

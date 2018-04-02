@@ -44,7 +44,8 @@ block content
         - notes = value.notes
         - files = value.files
      
- form#form_file(name="addsource", method="post", action="/addsource" enctype="multipart/form-data")
+
+ form#form_file(name="addsource", method="post", enctype="multipart/form-data" action="/addsource?_csrf="+csrfToken)
     div#wrapper
      if (editprofile)
         input#input_code(type="text", value=code, name="code" readonly)
@@ -484,9 +485,8 @@ block content
      br
     
     div#wrapper
-     #{csrfToken}
      div(class='btn menu')
-      input(type="hidden" name="_csrf" value=csrfToken)
+      //input(type="hidden" name="_csrf" value=csrfToken)
       button#submit_missing(type="submit" role='submit' class="buttons") submit
      div(class='btn menu')
       a(href="/sources") Go back to list of Sources
@@ -521,9 +521,6 @@ block content
             paging: false
      } );
      $('#sourcesList').DataTable( {
-                paging: false
-     } );
-     $('#contactsListInt').DataTable( {
                 paging: false
      } );
 
