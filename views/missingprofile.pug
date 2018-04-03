@@ -261,7 +261,8 @@ block content
           h4 Contact:
           - if (value.contacts && (value.contacts).length>0)
            p
-            span.title Contacts: 
+            span.title Contacts: #{(value.contacts).length>}
+            br
             - var name = "";
             each contact, i in value.contacts
              if(contactsList)

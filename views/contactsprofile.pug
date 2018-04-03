@@ -144,7 +144,7 @@ block content
             - var name = "";
             each mp, i in value.related.mps
              each missingProfile, i in missingList
-               - if (mp == missingProfile.code) name =  missingProfile.name.ar.last+" "+missingProfile.name.ar.middle+" "+missingProfile.name.ar.first
+               - if (mp == missingProfile.code) name =  missingProfile.name.ar.last+", "+missingProfile.name.ar.first+" "+missingProfile.name.ar.middle
              a(href="#" onclick="loadProfile('missing','"+mp+"');") #{mp} #{name} 
              br
           - if (value.sources && (value.sources).length>0)
