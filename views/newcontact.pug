@@ -224,22 +224,22 @@ block content
      select#input_district(name="district", value=district)
         option(value="") Select
         - var districts = ["Akkar", "Baalbek", "Hermel", "Beirut", "Rashaya", "Western Beqaa", "Zahle", "Aley", "Baabda", "Chouf", "Jbeil", "Keserwan", "Matn", "Batroun", "Bsharri", "Koura", "Miniyeh-Danniyeh", "Tripoli", "Zgharta", "Bint Jbeil", "Hasbaya", "Marjeyoun", "Nabatiyeh", "Sidon", "Jezzine", "Tyre"];
-        each district in districts
-           if(location_district==district)
-                option(value=district selected="selected") #{district}
+        each dis in districts
+           if(dis==district)
+                option(value=dis selected="selected") #{dis}
            else
-                option(value=district) #{district}
+                option(value=dis) #{dis}
      br
      span Governorate
      br
      select#input_governorate(name="governorate", value=governorate)
         option(value="") Select
         - var governorates = ["Akkar", "Baalbek-Hermel", "Beirut", "Beqaa", "Mount Lebanon", "Nabatieh", "North", "South"];
-        each governorate in governorates
-           if(location_governorate==governorate)
-                option(value=governorate selected="selected") #{governorate}
+        each gov in governorates
+           if(gov==governorate)
+                option(value=gov selected="selected") #{gov}
            else
-                option(value=governorate) #{governorate}
+                option(value=gov) #{gov}
      br
      input#input_nationality(type="text", placeholder="Nationality", name="nationality", value=nationality)
      br
