@@ -932,10 +932,16 @@ block content
                     input.checkbox-input(type='checkbox', name="contacts", value=contact.code, checked)
                   else  
                     input.checkbox-input(type='checkbox', name="contacts", value=contact.code)
-                 td= contact.code
-                 td= contact.name.ar.last+', '+contact.name.ar.first
-                 td= contact.name.en.first+', '+contact.name.en.last
-                 td= contact.category
+                 if(contact.confidential=="Yes")
+                  td= contact.code
+                  td= "Confidential"
+                  td= "Confidential"
+                  td= "Confidential" 
+                 else
+                  td= contact.code
+                  td= contact.name.ar.last+', '+contact.name.ar.first
+                  td= contact.name.en.first+', '+contact.name.en.last
+                  td= contact.category 
 
     br
     br

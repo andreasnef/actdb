@@ -4,14 +4,23 @@ block content
  if profile
      each value, i in profile
       div#profileTitle
-       h3.
+       if(value.confidential == "Yes")
+        h3.
+          #{value.code} - Confidential
+       else
+        h3.
          #{value.name.ar.last}, #{value.name.ar.first}
          - #{value.code}
 
-      div#wrapper
-
+      if(value.confidential == "Yes")
+       div
+        p
+        p
+          span.title This contact is confidential.
+          span Information should be requested to the system administrator.
+      else
+       div
           h4 Basic Info
-          
           p
             span.title Confidential: 
             span #{value.confidential}
@@ -106,7 +115,7 @@ block content
             span #{value.languages}
           br 
 
-      div#wrapper  
+       div  
           - if (value.related.events && (value.related.events).length>0)
            p
             span.title Related Events: #{(value.related.events)}

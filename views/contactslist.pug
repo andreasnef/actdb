@@ -105,11 +105,14 @@ block content
                         a(href="#" onclick="loadProfile('contacts','"+contact.code+"');") #{contact.code}
                     if (contact.confidential == "Yes")
                         td= "Confidential"
+                        td= "Confidential"
+                        td= "Confidential"
+                        td= "Confidential"
                     else   
                         td=contact.name.ar.last+", "+contact.name.ar.first
-                    td=contact.category
-                    td=contact.phone_1
-                    td=contact.phone_2
+                        td=contact.category
+                        td=contact.phone_1
+                        td=contact.phone_2
                     
    div#sideProfile
   

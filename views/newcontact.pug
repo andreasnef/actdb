@@ -65,12 +65,14 @@ block content
         input#input_code(type="text", value="CON"+nextrecord, name="code" readonly)
      br
      br
-     span Confidential
-     span &nbsp;
+     span.title Confidential:
+     br
+     span When creating a confidential contact all data will be hidden and only the code will be visible. The data will be stored in the database and accessed by the administrator upon request. It cannot be editted from this platform. 
+     span Is this contact confidential? &nbsp;
      if (confidential && confidential=="Yes")
         input(type='radio', name="confidential", value="Yes", checked)
         label Yes
-        span &nbsp;
+        
         input(type='radio', name="confidential", value="No") 
         label No
               
