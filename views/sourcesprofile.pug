@@ -7,8 +7,7 @@ block content
        h3.
           #{value.source_title}
 
-      div#wrapper
-
+      div
           br
           p
            span.title Code: 
@@ -105,7 +104,7 @@ block content
             span.title Notes: 
             span #{value.notes}
             
-      div#wrapper  
+      div  
           - if ((value.related.events).length)
            p
             span.title Related Events: 
@@ -149,16 +148,18 @@ block content
              a(href="#" onclick="loadProfile('sources','"+source+"');") #{source}  
              br
 
-      div#wrapper
-          - if (file_urls && file_urls.length)
+      div
+          - if (file_urls && file_urls.length>0)
            p
-            span.title Files: 
-            each file in value.files
+            span.title Files: #{file_urls.length}
+            br
+            each file, i in value.files
               span #{file}
               br
-            each url in file_urls
-              a(href=url target="_blank") Open file
-              br
+              each url, x in file_urls
+               if(i==x)
+                a(href=url target="_blank") Open file
+                br
 
           div(class='btn menu')
             a(href="/newprofile/?type=source&code="+value.code) Edit
