@@ -130,27 +130,16 @@ block content
       
       
   div    
+     - if ((value.sources && (value.sources).length>0) || (value.contacts && (value.contacts).length>0))
       h4 Sources 
-      if(value.interviews && (value.interviews).length>0)
-       p
-        span.title Interviews: 
-              - var name = "";
-              each interview, i in value.interviews
-                if(interviewsList) 
-                  each interviewProfile, i in interviewsList
-                    - if (interview == interviewProfile.code) name =  interviewProfile.interviewee
-                a(href="#" onclick="loadProfile('interviews','"+interview+"');") #{interview} #{name}
-                br
-
-      - if (value.sources)  
+      - if (value.sources && (value.sources).length>0)  
            p
+            - var nameSource = "";
             each source, i in value.sources
-             a(href="#" onclick="loadProfile('sources','"+source+"');") #{source}
+             each sourceProfile, i in sourcesList
+              - if (source == sourceProfile.code) nameSource = sourceProfile.source_title
+             a(href="#" onclick="loadProfile('sources','"+source+"');") #{source} #{nameSource}
              br
-      - if (value.notes)
-       p 
-        span.title Notes: 
-        span #{value.notes}
         
       - if (value.contacts && (value.contacts).length>0)
        p
@@ -160,9 +149,15 @@ block content
                each contactProfile, i in contactsList
                   - if (contact == contactProfile.code) name =  contactProfile.name.ar.last+" "+contactProfile.name.ar.first
              a(href="#" onclick="loadProfile('contacts','"+contact+"');") #{contact} #{name}
-             br           
+             br  
+
+     - if (value.notes)   
+       p 
+        span.title Notes: 
+        span #{value.notes}                
       
-      if (user != "public")
+  div   
+    if (user != "public")
        div(class='btn menu')
         a(href="/newprofile/?type=location&mpcode="+value.code) Edit
        div(class='btn menu')

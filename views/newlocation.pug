@@ -424,27 +424,27 @@ block content
     
      div#sources(class='dropMenu')
         if(sourceslist)
-                table(id="sourcesList")
-                 thead    
-                    tr#headtag
-                        th Select
-                        th Code
-                        th Type
-                        th Subtype
-                        th Title
+         table(id="sourcesList")
+          thead    
+            tr#headtag
+                th Select
+                th Code
+                th Type
+                th Subtype
+                th Title
 
-                 tbody    
-                    each source, i in sourceslist
-                      tr
-                       td
-                        if (sources && sources.includes(source.code))
-                            input.checkbox-input(type='checkbox', name="sources", value=source.code, checked)
-                        else  
-                            input.checkbox-input(type='checkbox', name="sources", value=source.code)
-                       td= source.code
-                       td= source.type
-                       td= source.subtype
-                       td= source.source_title
+          tbody    
+           each source, i in sourceslist
+            tr
+                td
+                  if (sources && sources.includes(source.code))
+                    input.checkbox-input(type='checkbox', name="sources", value=source.code, checked)
+                  else  
+                    input.checkbox-input(type='checkbox', name="sources", value=source.code)
+                td= source.code
+                td= source.type
+                td= source.subtype
+                td= source.source_title
 
      br
      br
@@ -505,22 +505,7 @@ block content
         $('#contactsList').DataTable( {
             paging: false
         } );
-        $('#filesList').DataTable( {
-            paging: false
-        } );
-        $('#interviewsList').DataTable( {
+        $('#sourcesList').DataTable( {
                 paging: false
-        } );
-        $('#interviewsList2').DataTable( {
-                    paging: false
-        } );
-        $('#interviewsList3').DataTable( {
-                    paging: false
-        } );
-        $('#interviewsList4').DataTable( {
-                    paging: false
-        } );
-        $('#interviewsList5').DataTable( {
-                    paging: false
         } );
         
