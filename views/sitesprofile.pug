@@ -77,7 +77,8 @@ block content
       
       if(value.related.events && (value.related.events).length>0)
        p 
-        span.title Related Events: 
+        span.title Related Events: #{(value.related.events).length}
+          br
           - var name = "";
           each event, i in value.related.events
             each eventProfile, i in eventsList
@@ -87,7 +88,8 @@ block content
       
       - if(value.related.sites && (value.related.sites).length>0)
        p
-        span.title Related Sites: 
+        span.title Related Sites: #{(value.related.sites).length}
+          br
           - var name = "";
           each site, i in value.related.sites
             each siteProfile, i in sitesList
@@ -97,7 +99,8 @@ block content
       
       - if (value.related.locations && (value.related.locations).length>0)
        p
-        span.title Related Locations: 
+        span.title Related Locations: #{(value.related.locations).length}
+            br
             - var name = "";
             each location, i in value.related.locations
              each locationProfile, i in locationsList
@@ -107,7 +110,8 @@ block content
       
       - if (value.related.mps && (value.related.mps).length>0)
        p
-        span.title Related Missing Persons: 
+        span.title Related Missing Persons: #{(value.related.mps).length}
+            br
             - var name = "";
             each mp, i in value.related.mps
              each missingProfile, i in missingList
@@ -211,17 +215,6 @@ block content
         span #{value.identification.dna}  
   div
       h4 Sources 
-      if(value.interviews && (value.interviews).length>0)
-       p
-        span.title Interviews: 
-              - var name = "";
-              each interview, i in value.interviews
-                if(interviewsList) 
-                  each interviewProfile, i in interviewsList
-                    - if (interview == interviewProfile.code) name =  interviewProfile.interviewee
-                a(href="#" onclick="loadProfile('interviews','"+interview+"');") #{interview} #{name}
-                br
-
       - if (value.sources)  
            p
             each source, i in value.sources

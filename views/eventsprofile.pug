@@ -6,7 +6,7 @@ block content
       h3. 
          #{value.name.en}
       
-  div#wrapper
+  div
       p
        span.title Type: 
        span #{value.type}
@@ -18,7 +18,7 @@ block content
             span.title Name in Arabic: 
             span #{value.name.ar}
 
-  div#wrapper
+  div
       h4 Location
     
       - if(value.location.place || value.location.district || value.location.governorate)
@@ -36,7 +36,7 @@ block content
         span.title UNHCR Coordinates: 
         span #{value.UNHCR.coordinates}
       
-  div#wrapper  
+  div  
      if(value.dates.beg || value.dates.end) 
       h4 Event Period:
       if(!value.dates.beg)
@@ -61,7 +61,7 @@ block content
          span.title To: 
          span #{moment(value.dates.end).format('MMMM Do, YYYY')}
       
-  div#wrapper        
+  div        
       if((value.related.events && (value.related.events).length>0 )|| (value.related.sites && (value.related.sites).length>0) || (value.related.locations && (value.related.locations).length>0) || (value.related.mps && (value.related.mps).length>0))
       h4 Related: 
       
@@ -109,7 +109,7 @@ block content
              a(href="#" onclick="loadProfile('missing','"+mp+"');") #{mp} #{name} 
              br
 
-  div#wrapper
+  div
      if(value.groups_responsible || value.groups_responsible_name)
       h4 Responsible:    
       - if (value.groups_responsible)
@@ -123,21 +123,10 @@ block content
       //-   span #{value.groups_responsible_name}  
       
       
-  div#wrapper       
+  div       
     if(user!="public")
-     if((value.sources).lenght>0)
+     if(value.sources && (value.sources).lenght>0)
        h4 Sources 
-       if(value.interviews && (value.interviews).length>0)
-        p
-         span.title Interviews: 
-              - var name = "";
-              each interview, i in value.interviews
-                if(interviewsList) 
-                  each interviewProfile, i in interviewsList
-                    - if (interview == interviewProfile.code) name =  interviewProfile.interviewee
-                a(href="#" onclick="loadProfile('interviews','"+interview+"');") #{interview} #{name}
-                br
-
        - if (value.sources)  
            p
             each source, i in value.sources
