@@ -125,9 +125,8 @@ block content
       
   div       
     if(user!="public")
-     if(value.sources && (value.sources).lenght>0)
-       h4 Sources 
-       - if (value.sources)  
+     if(value.sources && (value.sources).length>0)
+       h4 Sources  
            p
             each source, i in value.sources
              if(sourcesList)
