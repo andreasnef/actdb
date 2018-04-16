@@ -93,7 +93,6 @@ router.post('/login', loginLimiter, parseForm, csrfProtection, function(req, res
             req.session.user = user;
             console.log("user:" + req.session.user);
             
-            
             if(user != "public"){
                //save the login info in the db
                 var collection = db.collection('logins');
@@ -341,7 +340,7 @@ function calcLastRecord(list, type){
              number = parseInt(doc.code.match(/[a-zA-Z]+|[0-9]+/g)[1])
              numbers.push(number);
             } else{
-             console.log("ERROR in record "+doc+" Code missing");   
+             console.log("ERROR in record "+JSON.stringify(doc)+" Code missing");   
             }
         })
         nextrecord = (Math.max.apply(null, numbers))+1;
@@ -2884,8 +2883,9 @@ router.post('/uploadPicture',parseForm, csrfProtection, function(req,res){
                     "collList" : req.session.missingResult,
                     parties : partiesList,
                     title: "List of Missing People",
-                    nextrecord : nextrecord,
-                    "user": req.session.user   
+                    nextrecord : req.session.nextrecord,
+                    "user": req.session.user,
+                    csrfToken: req.csrfToken()   
                     });
             }
         }); 

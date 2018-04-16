@@ -257,9 +257,7 @@ block content
           br
           
       div
-          //if((value.contacts && (value.contacts).length>0) || value.contact || value.contact.phone_1)
-          h4 Contact:
-          - if (value.contacts && (value.contacts).length>0)
+         - if (value.contacts && (value.contacts).length>0)
            p
             span.title Contacts: #{(value.contacts).length}
             br
@@ -270,53 +268,7 @@ block content
                   - if (contact == contactProfile.code && contactProfile.confidential == "No") name =  contactProfile.name.ar.last+" "+contactProfile.name.ar.first
              a(href="#" onclick="loadProfile('contacts','"+contact+"');") #{contact} #{name}
              br
-             
-          - if (value.contact)      
-              - if (value.contact.name)
-               p
-                span.title Name: 
-                span #{value.contact.name}
-              - if (value.contact.date_birth) 
-               - var contact_birth = moment(value.contact.date_birth).utc().format('MMMM Do, YYYY');
-               p
-                span.title Date of Birth: 
-                span #{contact_birth}
-              - if (value.contact.address)    
-               p 
-                span.title Address: 
-                span #{value.contact.address}
-              - if (value.contact.relationship)
-               p 
-                span.title Relationship: 
-                span #{value.contact.relationship}
-              - if (value.contact.phone_1 || value.contact.phone_2)
-               p 
-                span.title Phones: 
-                span #{value.contact.phone_1}  #{value.contact.phone_2}
-              - if (value.contact.other_contact)
-               p 
-                span.title Other contacts: 
-                span #{value.contact.other_contact}
-              - if (value.contact.email)
-               p 
-                span.title Email: 
-                span #{value.contact.email}
-              - if (value.contact.icrc)
-               p 
-                span.title ICRC: 
-                span #{value.contact.icrc}
-              - if (value.contact.family_associations)
-               p 
-                span.title Family Asociations: 
-                span #{value.contact.family_associations}
-              - if (value.contact.contacted_act)
-               p 
-                span.title Contacted by Act: 
-                span #{value.contact.contacted_act}
-              - if (value.contact.notes)
-               p 
-                span.title Notes: 
-                span #{value.contact.notes}
+            
 
       if(user!="public")
            div(class='btn menu')
@@ -324,10 +276,12 @@ block content
            div(class='btn menu') 
             a(href="#" onclick="return toggle_visibility('addProfilePic');") Edit Picture
            div#addProfilePic
-            form#uploadPicture(name="uploadPicture", method="post", action="/uploadPicture" enctype="multipart/form-data")
+            form#uploadPicture(name="uploadPicture", method="post", enctype="multipart/form-data" action="/uploadPicture?_csrf="+csrfToken )
                input#file_pic(type="file", name="profilePic", value=profilePic)
                input#text_pic(type="hidden", name="code", value=value.code)
-               button#submit_missing(type="submit" role='submit') submit
+               button#submit_missing(class="buttons" type="submit" role='submit') Submit Picture
+               br
+               br
            div(class='btn menu')
             form#deleteEntry(name="deleteEntry", method="post", action="/deleteEntry" onclick="return confirm('This will delete the missing person case permanently. Are you sure?')")
                     input(type="hidden" name="code" value=value.code)
