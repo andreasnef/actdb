@@ -22,6 +22,7 @@ block content
         var sitesArray = !{JSON.stringify(sites)};
         var eventsArray = !{JSON.stringify(events)};
         var partiesArray = !{JSON.stringify(parties)};
+        var itinerariesArray = !{JSON.stringify(itineraries)};
 
         var redMarker = L.AwesomeMarkers.icon({icon: 'ban-circle', markerColor: 'red'});
         var orangeMarker = L.AwesomeMarkers.icon({icon: 'glyphicon-fire', markerColor: 'orange'});
@@ -212,6 +213,33 @@ block content
           eventsLayer.addLayer(marker);
         }
 
+        var itinerariesLayer = new L.LayerGroup();
+
+        for(var i=0; i< itinerariesArray.length; i++){
+          var code = itinerariesArray[i].code,
+          name = itinerariesArray[i].name.ar.first+" "+itinerariesArray[i].name.ar.middle+" "+itinerariesArray[i].name.ar.last
+          for(var x=0; x<(itinerariesArray[i].itinerary).length ; x++){
+            if(itinerariesArray[i].itinerary[0]) var pointA = new L.LatLng(itinerariesArray[i].itinerary[0][1], itinerariesArray[i].itinerary[0][0]);
+            if(itinerariesArray[i].itinerary[1]) var pointB = new L.LatLng(itinerariesArray[i].itinerary[1][1], itinerariesArray[i].itinerary[1][0]);
+            if(itinerariesArray[i].itinerary[2]) var pointC = new L.LatLng(itinerariesArray[i].itinerary[2][1], itinerariesArray[i].itinerary[2][0]);
+            if(itinerariesArray[i].itinerary[3]) var pointD = new L.LatLng(itinerariesArray[i].itinerary[3][1], itinerariesArray[i].itinerary[3][0]);
+          }
+          if(pointA && pointB && pointC && pointD) {
+            var pointList = [pointA, pointB, pointC, pointD];
+          }else if(pointA && pointB && pointC){
+            var pointList = [pointA, pointB, pointC];
+          } else {
+            var pointList = [pointA, pointB];
+          }
+          itineraryPolyline = new L.Polyline(pointList, {
+            color: 'red',
+            weight: 3,
+            opacity: 0.5,
+            smoothFactor: 1
+            });
+          itinerariesLayer.addLayer(itineraryPolyline);
+        }
+
         var poiLayers = L.layerGroup([
           missingLayer,
           checkpointsLayer,
@@ -280,7 +308,8 @@ block content
           "Detention Centres" : centresLayer,
           "Sites": sitesLayer,
           "Events": eventsLayer,
-          "Municipalities": municipalitiesLayer
+          "Municipalities": municipalitiesLayer,
+          "Itineraries" : itinerariesLayer
         };
 
         L.control.layers(baseMaps, overlayMaps).addTo(map);

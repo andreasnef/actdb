@@ -77,6 +77,7 @@ block content
             - last_seen_date_month = ("0" + (lastseendate.getMonth()+1)).slice(-2);
             - last_seen_date_year = lastseendate.getFullYear();
         - itinerary = value.itinerary
+        - itinerary_route = value.itinerary_route
         - perpetrators = value.perpetrators
         - perpetrators_name = value.perpetrators_name
         - related_events = value.related.events
@@ -87,18 +88,15 @@ block content
         - notes = value.notes
         - sources = value.sources
         - picture = value.picture
-        - lists_syria_2000 = value.lists.syria_2000
-        - lists_syria_2002 = value.lists.syria_2002
-        - lists_syria_2005 = value.lists.syria_2005
-        - lists_israel_2005 = value.lists.israel_2005
         - fushatamal_published = value.fushatamal.published
-        - fushatamal_auth_type = value.fushatamal.auth_type
-        - fushatamal_auth_notes = value.fushatamal.auth_notes
-        - fushatamal_auth_name = value.fushatamal.auth_name
-        - fushatamal_auth_last = value.fushatamal.auth_last
-        - fushatamal_auth_email = value.fushatamal.auth_email
-        - fushatamal_auth_phone = value.fushatamal.auth_phone
-        - fushatamal_auth_relationship = value.fushatamal.auth_relationship
+        - fushatamal_url = value.fushatamal.url
+        //- - fushatamal_auth_type = value.fushatamal.auth_type
+        //- - fushatamal_auth_notes = value.fushatamal.auth_notes
+        //- - fushatamal_auth_name = value.fushatamal.auth_name
+        //- - fushatamal_auth_last = value.fushatamal.auth_last
+        //- - fushatamal_auth_email = value.fushatamal.auth_email
+        //- - fushatamal_auth_phone = value.fushatamal.auth_phone
+        //- - fushatamal_auth_relationship = value.fushatamal.auth_relationship
         - contacts = value.contacts
      
   form#form_add_missing(name="addmissing", method="post", action="/addmissing")
@@ -665,12 +663,113 @@ block content
     br
     br
     div#wrapper
-     legend Itinerary Description
+     legend Itinerary
      textarea#input_itinerary(type="text", placeholder="Itinerary Description", cols="120" rows="10", name="itinerary", value=itinerary)
         | #{itinerary}
      br
      br
+     span Itinerary Route
+     br
+     br
+     a(href="#" onclick="return toggle_visibility('itinerary1');") First Location #{itinerary_route[0]} (click to modify)
+    
+     div#itinerary1(class='dropMenu')
+      if (locations)
+       table(id="locationsList")
+        thead    
+         tr#headtag
+            th Select
+            th Code
+            th Name
+            th Groups Responsible
+
+        tbody    
+         each location, i in locations
+          tr
+           td
+            if (itinerary_route && itinerary_route[0]==location.code)
+              input.checkbox-input(type='checkbox', name="itinerary_route", value=location.code, checked)
+            else
+              input.checkbox-input(type='checkbox', name="itinerary_route", value=location.code)
+            td=location.code
+            td=location.name.en
+            td=location.groups_responsible
+
+     br
+     a(href="#" onclick="return toggle_visibility('itinerary2');") Second Location #{itinerary_route[1]} (click to modify)
+    
+     div#itinerary2(class='dropMenu')
+      if (locations)
+       table(id="locationsList2")
+        thead    
+         tr#headtag
+            th Select
+            th Code
+            th Name
+            th Groups Responsible
+
+        tbody    
+         each location, i in locations
+          tr
+           td
+            if (itinerary_route && itinerary_route[1]==location.code)
+              input.checkbox-input(type='checkbox', name="itinerary_route", value=location.code, checked)
+            else
+              input.checkbox-input(type='checkbox', name="itinerary_route", value=location.code)
+            td=location.code
+            td=location.name.en
+            td=location.groups_responsible 
      
+     br
+     a(href="#" onclick="return toggle_visibility('itinerary3');") Third Location #{itinerary_route[2]} (click to modify)
+    
+     div#itinerary3(class='dropMenu')
+      if (locations)
+       table(id="locationsList3")
+        thead    
+         tr#headtag
+            th Select
+            th Code
+            th Name
+            th Groups Responsible
+
+        tbody    
+         each location, i in locations
+          tr
+           td
+            if (itinerary_route && itinerary_route[2]==location.code)
+              input.checkbox-input(type='checkbox', name="itinerary_route", value=location.code, checked)
+            else
+              input.checkbox-input(type='checkbox', name="itinerary_route", value=location.code)
+            td=location.code
+            td=location.name.en
+            td=location.groups_responsible 
+
+     br
+     a(href="#" onclick="return toggle_visibility('itinerary4');") Presumed Site #{itinerary_route[3]} (click to modify)
+    
+     div#itinerary4(class='dropMenu')
+      if (sites)
+       table(id="sitesList")
+        thead    
+         tr#headtag
+            th Select
+            th Code
+            th Name
+
+        tbody  
+         each site, i in sites
+          tr
+           td
+             if (itinerary_route && itinerary_route[3]==site.code)
+              input.checkbox-input(type='checkbox', name="itinerary_route", value=site.code, checked)
+             else
+              input.checkbox-input(type='checkbox', name="itinerary_route", value=site.code)
+             td=site.code
+             td=site.name.en
+     br
+     br
+     br
      span Groups Responsible
      br
      if (parties)
@@ -845,47 +944,7 @@ block content
      input#input_picture(type="text", placeholder="Picture", name="picture", value=picture readonly)
     br
     br
-    
-    //- div#wrapper
-     
-    //-  legend Lists
-    //-  span المعتقلون اللبنانيون في سوريا حسب اللائحة التي نشرتها السلطات اللبنانية في 16 كانون الأول 2000
-    //-  span &nbsp;
-    //-  select#select_lists_syria_2000(name="lists_syria_2000", value=lists_syria_2000)
-    //-     option(value="No")  No
-    //-     if(lists_syria_2000=="Yes")
-    //-         option(value="Yes" selected="Selected")  Yes
-    //-     else    
-    //-         option(value="Yes")  Yes
-    //-  br
-    //-  span List of Lebanese detainees and victims of enforced disappearances delivered to the Syrian Minister of Interior 22 July 2002
-    //-  span &nbsp;
-    //-  select#select_lists_syria_2002(name="lists_syria_2002", value=lists_syria_2002)
-    //-     option(value="No")  No
-    //-     if(lists_syria_2002=="Yes")
-    //-         option(value="Yes" selected="Selected")  Yes
-    //-     else    
-    //-         option(value="Yes")  Yes
-    //-  br
-    //-  span لائحة باسماء المفقودين الذين ترى "الهيئة" فائدة من الاستفسار عنهم لدى السلطات السورية نشرت بتاريخ 29 نيسان 2005 العدد 1905 - والسفير بتاريخ 29 نيسان 2005
-    //-  span &nbsp;
-    //-  select#select_lists_syria_2005(name="lists_syria_2005", value=lists_syria_2005)
-    //-     option(value="No")  No
-    //-     if(lists_syria_2005=="Yes")
-    //-         option(value="Yes" selected="Selected")  Yes
-    //-     else    
-    //-         option(value="Yes")  Yes
-    //-  br
-    //-  span لائحة باسماء المفقودين في السجون الاسرائيلية نشرت في المستقبل بتاريخ 29 نيسان 2005 العدد 1905- لائحة لجنة تلقي شكاوى المفقودين نشرت في السفير بتاريخ 29 نيسان 2005
-    //-  span &nbsp;
-    //-  select#select_lists_israel_2005(name="lists_israel_2005", value=lists_israel_2005)
-    //-     option(value="No")  No
-    //-     if(lists_israel_2005=="Yes")
-    //-         option(value="Yes" selected="Selected")  Yes
-    //-     else    
-    //-         option(value="Yes")  Yes
-    //- br
-    //- br
+
     div#wrapper
      legend Fushat Amal
      span Published
@@ -894,19 +953,21 @@ block content
         option(value="No")  No
         option(value="Yes")  Yes
      br
-     input#input_auth_type(type="text", placeholder="Author Type", name="fushatamal_auth_type", value=fushatamal_auth_type)
-     br
-     input#input_auth_notes(type="text", placeholder="Notes", name="fushatamal_auth_notes", value=fushatamal_auth_notes)
-     br
-     input#input_auth_name(type="text", placeholder="Author's Name", name="fushatamal_auth_name", value=fushatamal_auth_name)
-     br
-     input#input_auth_last(type="text", placeholder="Last Name", name="fushatamal_auth_last", value=fushatamal_auth_last)
-     br
-     input#input_auth_email(type="text", placeholder="Email", name="fushatamal_auth_email", value=fushatamal_auth_email)
-     br
-     input#input_auth_phone(type="text", placeholder="Phone", name="fushatamal_auth_phone", value=fushatamal_auth_phone)
-     br
-     input#input_fushatamal_auth_relationship(type="text", placeholder="Relationship", name="fushatamal_auth_relationship", value=fushatamal_auth_relationship)
+     input(type="text", placeholder="Author Type", name="fushatamal_url", value=fushatamal_url)
+    //-  br
+    //-  input#input_auth_type(type="text", placeholder="Author Type", name="fushatamal_auth_type", value=fushatamal_auth_type)
+    //-  br
+    //-  input#input_auth_notes(type="text", placeholder="Notes", name="fushatamal_auth_notes", value=fushatamal_auth_notes)
+    //-  br
+    //-  input#input_auth_name(type="text", placeholder="Author's Name", name="fushatamal_auth_name", value=fushatamal_auth_name)
+    //-  br
+    //-  input#input_auth_last(type="text", placeholder="Last Name", name="fushatamal_auth_last", value=fushatamal_auth_last)
+    //-  br
+    //-  input#input_auth_email(type="text", placeholder="Email", name="fushatamal_auth_email", value=fushatamal_auth_email)
+    //-  br
+    //-  input#input_auth_phone(type="text", placeholder="Phone", name="fushatamal_auth_phone", value=fushatamal_auth_phone)
+    //-  br
+    //-  input#input_fushatamal_auth_relationship(type="text", placeholder="Relationship", name="fushatamal_auth_relationship", value=fushatamal_auth_relationship)
     br
     br
     div#wrapper 
@@ -967,6 +1028,12 @@ block content
         paging: false
     } );
     $('#contactsList').DataTable( {
+        paging: false
+    } );
+    $('#locationsList2').DataTable( {
+        paging: false
+    } );
+    $('#locationsList3').DataTable( {
         paging: false
     } );
     

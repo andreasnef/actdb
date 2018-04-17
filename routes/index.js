@@ -215,7 +215,7 @@ function getMissing(session, callback){
         } else {
             var missingColl = db.collection('missing');
 
-            missingColl.find({}).project({_id: 0, name: 1, code: 1, "disappearance.place": 1, "disappearance.date": 1, location:1}).sort({"name.ar.last":1}).toArray(function(err, result){
+            missingColl.find({}).project({_id: 0, name: 1, code: 1, "disappearance.place": 1, "disappearance.date": 1, location:1, 'itinerary_route':1}).sort({"name.ar.last":1}).toArray(function(err, result){
                 if (err){
                         res.send(err);
                 } else {
@@ -595,10 +595,25 @@ router.get('/map', csrfProtection, function(req, res){
     var detentionCentresLayer = [];
     var sitesLayer = [];
     var eventsLayer = [];
+    var itineraryLayer = [];
 
     if (req.session.user){
         missingList.forEach(function (e){
             if(e.location.coordinates) missingLayer.push(e);
+            if(e.itinerary_route && (e.itinerary_route).length>0) {
+               var itineraryArray = []; 
+               itineraryArray.push(e.location.coordinates);
+               e.itinerary_route.forEach (function (e){
+                locationsList.forEach(function(f){
+                  if(e==f.code) itineraryArray.push(f.location.coordinates)
+                })
+               })
+             itineraryLayer.push({
+                 "code": e.code, 
+                 "name": e.name, 
+                 "itinerary": itineraryArray 
+             });
+            }      
         });
         locationsList.forEach(function (e){
             if(e.location.coordinates){
@@ -625,6 +640,7 @@ router.get('/map', csrfProtection, function(req, res){
             "sites": sitesLayer,
             "events": eventsLayer,
             "parties": partiesList,
+            "itineraries" : itineraryLayer,
             //"municipalities" : encodeURIComponent(JSON.stringify(municipalities))
             "municipalities" : muniString,
             csrfToken: req.csrfToken()
@@ -877,6 +893,7 @@ router.post('/addmissing',parseForm, csrfProtection, function(req, res){
                     "last_seen_date_month" : req.body.last_seen_date_month,
                     "last_seen_date_year" : req.body.last_seen_date_year,
                     "itinerary" : req.body.itinerary,
+                    "itinerary_route" : req.body.itinerary_route,
                     "perpetrators" : req.body.perpetrators,
                     "perpetrators_name" : req.body.perpetrators_name,
                     "related_events" : req.body.related_events,
@@ -886,6 +903,8 @@ router.post('/addmissing',parseForm, csrfProtection, function(req, res){
                     "fate" : req.body.fate,
                     "notes" : req.body.notes,
                     "sources": req.body.sources,
+                    "fushatamal_published": req.body.fushatamal_published,
+                    "fushatamal_url": req.body.fushatamal_url,
                     "contacts" : req.body.contacts,
                     csrfToken: req.csrfToken(),
                     parties : partiesList, mps: missingList, locations: locationsList, events: eventsList, sites: sitesList,
@@ -901,6 +920,8 @@ router.post('/addmissing',parseForm, csrfProtection, function(req, res){
               var relMPs = req.body.related_mps;
               var contacts = req.body.contacts;
               var sources = req.body.sources;
+              var itinerary_route = req.body.itinerary_route;
+              //var itineraryArray = [];
               var long;
               var lat; 
             
@@ -923,7 +944,8 @@ router.post('/addmissing',parseForm, csrfProtection, function(req, res){
               if (!relMPs) relMPs = [];
               if (!contacts) contacts = [];
               if (!sources) sources = [];
-              
+              if (!itinerary_route) itinerary_route = []; 
+
               /*if its an edit*/   
               if (req.body._id){  
                 var updateVal = {};                                                     
@@ -971,6 +993,7 @@ router.post('/addmissing',parseForm, csrfProtection, function(req, res){
                 if (profile[0].last_seen.country!= req.body.last_seen_country) updateVal['last_seen.country'] =  req.body.last_seen_country 
                 if (profile[0].last_seen.date!= dateConverter(req.body.last_seen_date_day,req.body.last_seen_date_month, req.body.last_seen_date_year)) updateVal['last_seen.date'] =  dateConverter(req.body.last_seen_date_day,req.body.last_seen_date_month, req.body.last_seen_date_year)
                 if (profile[0].itinerary!= req.body.itinerary) updateVal['itinerary'] =  req.body.itinerary
+                if (profile[0].itinerary_route != itinerary_route) updateVal['itinerary_route'] = itinerary_route
                 if (profile[0].perpetrators!= req.body.perpetrators) updateVal['perpetrators'] =  req.body.perpetrators
                 if (profile[0].perpetrators_name!= req.body.perpetrators_name) updateVal['perpetrators_name'] =  req.body.perpetrators_name
                 if (profile[0].related.events!= relEvents)updateVal['related.events'] = relEvents
@@ -980,6 +1003,8 @@ router.post('/addmissing',parseForm, csrfProtection, function(req, res){
                 if (profile[0].fate!= req.body.fate) updateVal['fate'] =  req.body.fate
                 if (profile[0].notes!= req.body.notes) updateVal['notes'] =  req.body.notes
                 if (profile[0].sources!= sources) updateVal['sources'] =  sources
+                if (profile[0].fushatamal.published != req.body.fushatamal_published) updateVal['fushatamal.published'] = req.body.fushatamal_published
+                if (profile[0].fushatamal.url != req.body.fushatamal_url) updateVal['fushatamal.url'] = req.body.fushatamal_url
                 if (profile[0].contacts!=contacts) updateVal['contacts'] = contacts
                     
                 collection.update({code: profile[0].code}, {$set: updateVal}, function(err, result){
@@ -1108,6 +1133,7 @@ router.post('/addmissing',parseForm, csrfProtection, function(req, res){
                                     "date" : dateConverter(req.body.last_seen_date_day, req.body.last_seen_date_month, req.body.last_seen_date_year)
                                 },
                                 "itinerary" : req.body.itinerary,
+                                "itinerary_route" : itinerary_route,
                                 "perpetrators" : req.body.perpetrators,
                                 "perpetrators_name" : req.body.perpetrators_name,
                                 "related" : {
@@ -1123,6 +1149,10 @@ router.post('/addmissing',parseForm, csrfProtection, function(req, res){
                                 "location" : {
                                     "coordinates" : [ long, lat ],
                                     "type" : "Point"
+                                },
+                                "fushatamal" : {
+                                    "published" : req.body.fushatamal_published,
+                                    "url" : req.body.fushatamal_url
                                 }
                              };
                 collection.insert([missingnew], function(err, result){

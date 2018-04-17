@@ -170,8 +170,13 @@ block content
             span #{value.last_seen.country}
           - if(value.itinerary)
            p
-            span.title Itinerary: 
+            span.title Itinerary Notes: 
             span #{value.itinerary}
+
+          - if(value.itinerary_route)
+           p
+            span.title Itinerary Route:
+            span #{value.itinerary_route}  
        
        if(value.perpetrators || value.perpetrators_name)
           h4 Responsibles:
@@ -275,7 +280,7 @@ block content
             a(href="/newprofile/?type=missing&mpcode="+value.code) Edit
            div(class='btn menu') 
             a(href="#" onclick="return toggle_visibility('addProfilePic');") Edit Picture
-           div#addProfilePic
+           div#addProfilePic(class='btn menu')
             form#uploadPicture(name="uploadPicture", method="post", enctype="multipart/form-data" action="/uploadPicture?_csrf="+csrfToken )
                input#file_pic(type="file", name="profilePic", value=profilePic)
                input#text_pic(type="hidden", name="code", value=value.code)
