@@ -173,7 +173,7 @@ block content
             span.title Itinerary Notes: 
             span #{value.itinerary}
 
-          - if(value.itinerary_route && (value.itinerary_route).length.0)
+          - if(value.itinerary_route && (value.itinerary_route).length>0)
            p
             span.title Itinerary Route:
             span #{value.itinerary_route}  
