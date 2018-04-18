@@ -173,7 +173,7 @@ block content
             span.title Itinerary Notes: 
             span #{value.itinerary}
 
-          - if(value.itinerary_route)
+          - if(value.itinerary_route && (value.itinerary_route).length.0)
            p
             span.title Itinerary Route:
             span #{value.itinerary_route}  
@@ -241,14 +241,14 @@ block content
             span.title Notes: 
             span #{value.notes}
           
-       if(value.source || value.sources)
+       if(value.source || (value.sources && (value.sources).length>0))
           h4 Sources     
           - if (value.source)  
            p
             span.title Old Source Field:  
             span #{value.source}
           
-          - if (value.sources)  
+          - if (value.sources && (value.sources).length>0)  
            p
             span.title Sources: 
             - var source_title;

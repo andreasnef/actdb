@@ -602,7 +602,7 @@ router.get('/map', csrfProtection, function(req, res){
             if(e.location.coordinates) missingLayer.push(e);
             if(e.itinerary_route && (e.itinerary_route).length>0) {
                var itineraryArray = []; 
-               itineraryArray.push(e.location.coordinates);
+               if(e.location.coordinates)itineraryArray.push(e.location.coordinates);
                e.itinerary_route.forEach (function (e){
                 locationsList.forEach(function(f){
                   if(e==f.code) itineraryArray.push(f.location.coordinates)
@@ -613,6 +613,7 @@ router.get('/map', csrfProtection, function(req, res){
                  "name": e.name, 
                  "itinerary": itineraryArray 
              });
+             console.log("itineraryLayer "+JSON.stringify(itineraryLayer));
             }      
         });
         locationsList.forEach(function (e){
