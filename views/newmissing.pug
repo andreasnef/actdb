@@ -746,27 +746,29 @@ block content
             td=location.groups_responsible 
 
      br
-     a(href="#" onclick="return toggle_visibility('itinerary4');") Presumed Site (click to modify)
+     a(href="#" onclick="return toggle_visibility('itinerary4');") Forth Location (click to modify)
     
      div#itinerary4(class='dropMenu')
-      if (sites)
-       table(id="sitesList")
+      if (locations)
+       table(id="locationsList3")
         thead    
          tr#headtag
             th Select
             th Code
             th Name
+            th Groups Responsible
 
-        tbody  
-         each site, i in sites
+        tbody    
+         each location, i in locations
           tr
            td
-             if (itinerary_route && itinerary_route[3]==site.code)
-              input.checkbox-input(type='checkbox', name="itinerary_route", value=site.code, checked)
-             else
-              input.checkbox-input(type='checkbox', name="itinerary_route", value=site.code)
-             td=site.code
-             td=site.name.en
+            if (itinerary_route && itinerary_route[3]==location.code)
+              input.checkbox-input(type='checkbox', name="itinerary_route", value=location.code, checked)
+            else
+              input.checkbox-input(type='checkbox', name="itinerary_route", value=location.code)
+            td=location.code
+            td=location.name.en
+            td=location.groups_responsible 
      br
      br
      br
