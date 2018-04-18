@@ -675,7 +675,7 @@ block content
     
      div#itinerary1(class='dropMenu')
       if (locations)
-       table(id="locationsList")
+       table(id="locationsList1")
         thead    
          tr#headtag
             th Select
@@ -750,7 +750,7 @@ block content
     
      div#itinerary4(class='dropMenu')
       if (locations)
-       table(id="locationsList3")
+       table(id="locationsList4")
         thead    
          tr#headtag
             th Select
@@ -1032,10 +1032,16 @@ block content
     $('#contactsList').DataTable( {
         paging: false
     } );
+    $('#contactsList1').DataTable( {
+        paging: false
+    } );
     $('#locationsList2').DataTable( {
         paging: false
     } );
     $('#locationsList3').DataTable( {
+        paging: false
+    } );
+    $('#locationsList4').DataTable( {
         paging: false
     } );
     

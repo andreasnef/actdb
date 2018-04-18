@@ -175,8 +175,14 @@ block content
 
           - if(value.itinerary_route && (value.itinerary_route).length>0)
            p
-            span.title Itinerary Route:
-            span #{value.itinerary_route}  
+            span.title Itinerary Route: #{(value.itinerary_route).length}
+            br
+            - var name = "";
+            each itinerary, i in value.itinerary_route
+             each locationProfile, i in locationsList
+               - if (itinerary == locationProfile.code) name =  locationProfile.name.en
+             a(href="#" onclick="loadProfile('locations','"+itinerary+"');") #{itinerary} #{name}
+             br
        
        if(value.perpetrators || value.perpetrators_name)
           h4 Responsibles:
