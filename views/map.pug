@@ -223,9 +223,12 @@ block content
             if(itinerariesArray[i].itinerary[1]) var pointB = new L.LatLng(itinerariesArray[i].itinerary[1][1], itinerariesArray[i].itinerary[1][0]);
             if(itinerariesArray[i].itinerary[2]) var pointC = new L.LatLng(itinerariesArray[i].itinerary[2][1], itinerariesArray[i].itinerary[2][0]);
             if(itinerariesArray[i].itinerary[3]) var pointD = new L.LatLng(itinerariesArray[i].itinerary[3][1], itinerariesArray[i].itinerary[3][0]);
+            if(itinerariesArray[i].itinerary[4]) var pointE = new L.LatLng(itinerariesArray[i].itinerary[4][1], itinerariesArray[i].itinerary[4][0]);
           }
-          if(pointA && pointB && pointC && pointD) {
-            var pointList = [pointA, pointB, pointC, pointD];
+          if(pointA && pointB && pointC && pointD && pointE) {
+            var pointList = [pointA, pointB, pointC, pointD, pointE];
+          else if(pointA && pointB && pointC && pointD) {
+            var pointList = [pointA, pointB, pointC, pointD];  
           }else if(pointA && pointB && pointC){
             var pointList = [pointA, pointB, pointC];
           } else {
