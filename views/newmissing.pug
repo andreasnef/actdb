@@ -668,7 +668,7 @@ block content
         | #{itinerary}
      br
      br
-     span Itinerary Route
+     span Itinerary Route: #{itinerary_route}
      br
      br
      a(href="#" onclick="return toggle_visibility('itinerary1');") First Location (click to modify)
@@ -942,10 +942,10 @@ block content
 
     br
     
-    if (picture)
-     input#input_picture(type="text", placeholder="Picture", name="picture", value=picture readonly)
-    br
-    br
+    //- if (picture)
+    //-  input#input_picture(type="text", placeholder="Picture", name="picture", value=picture readonly)
+    //- br
+    //- br
 
     div#wrapper
      legend Fushat Amal
