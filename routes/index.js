@@ -939,6 +939,7 @@ router.post('/addmissing',parseForm, csrfProtection, function(req, res){
               if (typeof relMPs == "string") relMPs = [relMPs]
               if (typeof contacts == "string") contacts = [contacts]
               if (typeof sources == "string") sources = [sources]
+              if (typeof itinerary_route == "string") itinerary_route = [itinerary_route]
               if (!relEvents) relEvents = [];
               if (!relSites) relSites = [];
               if (!relLocations) relLocations = [];
