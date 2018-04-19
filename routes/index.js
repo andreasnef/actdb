@@ -26,7 +26,7 @@ var loginLimiter = new RateLimit({
     max: 5, // start blocking after 5 requests 
     message: "You have tried to login more than 5 times, please try again after an hour"
 });
-var municipalities = require("../public/javascripts/lebanonAdministrative.js");
+var municipalities = require("../public/javascripts/lebanonAdministrativeSimplified70.js");
  
 var db;
 var collectionsList;
@@ -613,7 +613,6 @@ router.get('/map', csrfProtection, function(req, res){
                  "name": e.name, 
                  "itinerary": itineraryArray 
              });
-             console.log("itineraryLayer "+JSON.stringify(itineraryLayer));
             }      
         });
         locationsList.forEach(function (e){
@@ -630,7 +629,7 @@ router.get('/map', csrfProtection, function(req, res){
             if(e.location.coordinates) eventsLayer.push(e);
         });
 
-        var muniString = JSON.stringify(municipalities);
+        //var muniString = JSON.stringify(municipalities);
 
         res.render('map', {
             "user": req.session.user,
@@ -643,7 +642,7 @@ router.get('/map', csrfProtection, function(req, res){
             "parties": partiesList,
             "itineraries" : itineraryLayer,
             //"municipalities" : encodeURIComponent(JSON.stringify(municipalities))
-            "municipalities" : muniString,
+            "municipalities" : municipalities,
             csrfToken: req.csrfToken()
         });  
     } else {
