@@ -92,6 +92,7 @@ router.post('/login', loginLimiter, parseForm, csrfProtection, function(req, res
             //save user in session
             req.session.user = user;
             console.log("user:" + req.session.user);
+
             
             if(user != "public"){
                //save the login info in the db
@@ -613,6 +614,7 @@ router.get('/map', csrfProtection, function(req, res){
                  "name": e.name, 
                  "itinerary": itineraryArray 
              });
+             console.log("itineraryLayer "+JSON.stringify(itineraryLayer));
             }      
         });
         locationsList.forEach(function (e){
@@ -747,7 +749,7 @@ router.get('/profile', csrfProtection, function(req, res){
                         var extension = (fileSplit[fileSplit.length -1]).slice(0, -1);
                         var url = cloudinary.utils.private_download_url(file,extension);
                         urls.push(url);
-                        console.log(url);    
+                        //console.log(url);    
                       });  
                     } 
                 }
