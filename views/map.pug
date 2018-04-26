@@ -74,8 +74,8 @@ block content
 
         //- functions
         function style(feature) {
-          //var color;
-          var color = [];
+          var color;
+          //var color = [];
           for(var i = 0; i < partiesArray.length; i++){
             if((partiesArray[i].control_areas) && (partiesArray[i].control_areas).length)
               if ((partiesArray[i].control_areas).indexOf(feature.id) != -1)
@@ -87,10 +87,6 @@ block content
           return {
             //fillColor: getColor(feature.id),
             fillColor: color,
-            //background: 'red',
-            //- background: -webkit-linear-gradient(red, blue),
-            //- background:    -moz-linear-gradient(red, blue),
-            //- background:         linear-gradient(red, blue),
             weight: 2,
             opacity: 1,
             color: 'white',
@@ -101,28 +97,12 @@ block content
 
         function highlightFeature(e) {
           var layer = e.target;
-
-          //- layer.setStyle({
-          //-     weight: 3,
-          //-     color: '#edeaea',
-          //-     dashArray: '',
-          //-     fillOpacity: 0.7
-          //- });
-
-          //- if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
-          //-     layer.bringToFront();
-          //- }
           info.update(layer.feature.properties);
         }
 
         function resetHighlight(e) {
-          //- municipalitiesLayer.resetStyle(e.target);
           info.update();
         }
-
-        //- function zoomToFeature(e) {
-        //-   map.fitBounds(e.target.getBounds());
-        //- }
 
         var info = L.control();
         info.onAdd = function (map) {
@@ -140,8 +120,7 @@ block content
         function onEachFeature(feature, layer) {  
           layer.on({
             mouseover: highlightFeature,
-            mouseout: resetHighlight,
-            //- click: zoomToFeature
+            mouseout: resetHighlight
           });
         }
 
