@@ -32,9 +32,8 @@ block content
         var darkgreenMarker = L.AwesomeMarkers.icon({icon: 'glyphicon-record', markerColor: 'darkgreen'});
         var coordinatesMarker = L.AwesomeMarkers.icon({icon: 'flag', markerColor: 'black'});
 
-        //var municipalities = #{municipalities};
-
         var municipalitiesLayer = L.geoJson(municipalities, {style: style, onEachFeature: onEachFeature});
+
         
         var basemapStreet = L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
              attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
@@ -48,18 +47,18 @@ block content
              id: 'mapbox.streets-satellite',
              accessToken: 'pk.eyJ1IjoibWFsZW5hZ2UiLCJhIjoiY2o5c2FyczJwMG5xNzMzanp1Mm9nNWlvYyJ9.zyD3dgUl-JqNoSU3TeuL9g'
         });
-        var basemapWheatpaste = L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
-             attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
-             maxZoom: 18,
-             id: 'mapbox.wheatpaste',
-             accessToken: 'pk.eyJ1IjoibWFsZW5hZ2UiLCJhIjoiY2o5c2FyczJwMG5xNzMzanp1Mm9nNWlvYyJ9.zyD3dgUl-JqNoSU3TeuL9g'
-        });
-        var basemapHighcontrast = L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
-             attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
-             maxZoom: 18,
-             id: 'mapbox.high-contrast',
-             accessToken: 'pk.eyJ1IjoibWFsZW5hZ2UiLCJhIjoiY2o5c2FyczJwMG5xNzMzanp1Mm9nNWlvYyJ9.zyD3dgUl-JqNoSU3TeuL9g'
-        });
+        //- var basemapWheatpaste = L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+        //-      attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
+        //-      maxZoom: 18,
+        //-      id: 'mapbox.wheatpaste',
+        //-      accessToken: 'pk.eyJ1IjoibWFsZW5hZ2UiLCJhIjoiY2o5c2FyczJwMG5xNzMzanp1Mm9nNWlvYyJ9.zyD3dgUl-JqNoSU3TeuL9g'
+        //- });
+        //- var basemapHighcontrast = L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+        //-      attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
+        //-      maxZoom: 18,
+        //-      id: 'mapbox.high-contrast',
+        //-      accessToken: 'pk.eyJ1IjoibWFsZW5hZ2UiLCJhIjoiY2o5c2FyczJwMG5xNzMzanp1Mm9nNWlvYyJ9.zyD3dgUl-JqNoSU3TeuL9g'
+        //- });
         var map = L.map('map', {
           center: [33.8699, 35.8274],
           zoom: 9,
@@ -69,8 +68,8 @@ block content
         var baseMaps = {
           "Streets": basemapStreet,
           "Satellite":basemapSatellite,
-          "Wheat Paste" : basemapWheatpaste,
-          "High Contrast" : basemapHighcontrast
+          //- "Wheat Paste" : basemapWheatpaste,
+          //- "High Contrast" : basemapHighcontrast
         };
 
         //- functions
@@ -103,21 +102,21 @@ block content
         function highlightFeature(e) {
           var layer = e.target;
 
-          layer.setStyle({
-              weight: 3,
-              color: '#7F7E7E',
-              dashArray: '',
-              fillOpacity: 0.7
-          });
+          //- layer.setStyle({
+          //-     weight: 3,
+          //-     color: '#edeaea',
+          //-     dashArray: '',
+          //-     fillOpacity: 0.7
+          //- });
 
-          if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
-              layer.bringToFront();
-          }
+          //- if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+          //-     layer.bringToFront();
+          //- }
           info.update(layer.feature.properties);
         }
 
         function resetHighlight(e) {
-          municipalitiesLayer.resetStyle(e.target);
+          //- municipalitiesLayer.resetStyle(e.target);
           info.update();
         }
 

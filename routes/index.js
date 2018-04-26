@@ -614,7 +614,6 @@ router.get('/map', csrfProtection, function(req, res){
                  "name": e.name, 
                  "itinerary": itineraryArray 
              });
-             console.log("itineraryLayer "+JSON.stringify(itineraryLayer));
             }      
         });
         locationsList.forEach(function (e){
