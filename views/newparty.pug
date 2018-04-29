@@ -69,7 +69,7 @@ block content
      if (municipalities.features)
        each municipality, i in municipalities.features
             div(class="columns")
-             if (control_areas && control_areas.include(municipality.id)) 
+             if (control_areas && control_areas.includes(municipality.id)) 
               input(type='checkbox', name="control_areas", value=municipality.id, checked)
               label #{municipality.id} - #{municipality.properties.name} 
              else
