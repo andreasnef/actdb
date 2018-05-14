@@ -264,6 +264,13 @@ block content
                - if (source == sourceProfile.code) source_title =  sourceProfile.source_title
              a(href="#" onclick="loadProfile('sources','"+source+"');") #{source} #{source_title}
              br
+          p
+            span.title Published in Fushat Amal: 
+            span #{value.fushatamal.published}  
+          - if(value.fushatamal.url)
+           p
+            a(href=value.fushatamal.url target="_blank") 
+             img(src="/stylesheets/images/external-link.png" height="16" width="16")
 
           br
           
