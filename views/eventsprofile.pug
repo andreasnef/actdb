@@ -18,6 +18,10 @@ block content
             span.title Name in Arabic: 
             span #{value.name.ar}
 
+  -if (value.description)
+      p
+        span.title Description: 
+        span #{value.description}
   div
       h4 Location
     
@@ -110,7 +114,7 @@ block content
              br
 
   div
-     if(value.groups_responsible || value.groups_responsible_name)
+     if((value.groups_responsible && (value.groups_responsible).length>0)|| value.groups_responsible_name)
       h4 Responsible:    
       - if (value.groups_responsible)
        p 
@@ -127,7 +131,8 @@ block content
     if(user!="public")
      if(value.sources && (value.sources).length>0)
        h4 Sources  
-           p
+       -if ((value.sources).length>0)
+        p
             each source, i in value.sources
              if(sourcesList)
               each sourceProfile, i in sourcesList
