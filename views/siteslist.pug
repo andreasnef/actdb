@@ -83,7 +83,16 @@ block content
               br
               select#input_exhumed_status(name="exhumed_status", value=exhumed_status)
                option(value="") Select
-                - var status = ["Accidental-Partial", "Exhumed-No Identification", "Exhumed-Partial Identification", "Exhumed-Identified", "No exhumation"];
+                - var status = ["Yes", "No", "Partial", "Unknown"];
+                each type in status
+                 option(value=type) #{type}
+              br
+
+              span Identification Status
+              br
+              select#input_identification_status(name="identification_status", value=identification_status)
+               option(value="") Select
+                - var status = ["Yes", "No", "Partial", "Unknown"];
                 each type in status
                  option(value=type) #{type}
               br

@@ -92,7 +92,6 @@ router.post('/login', loginLimiter, parseForm, csrfProtection, function(req, res
             //save user in session
             req.session.user = user;
             console.log("user:" + req.session.user);
-
             
             if(user != "public"){
                //save the login info in the db
@@ -2816,6 +2815,8 @@ router.post('/searchsites', parseForm, csrfProtection, function(req, res){
         if (req.body.credibility_index) query['credibility.index'] = req.body.credibility_index
         //search by exhumation
         if (req.body.exhumed_status) query['exhumed.status'] = req.body.exhumed_status
+        //search by identification
+        if (req.body.identification_status) query['identification.status'] = req.body.identification_status
         //search by keyword
         if (req.body.keyword) query['$text'] = { $search: req.body.keyword}
         //search by perpetrator
