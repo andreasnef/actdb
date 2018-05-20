@@ -501,10 +501,10 @@ block content
      legend Information on Exhumation
      span Status
      br
-     select#input_disappearance_place_governorate(name="exhumed_status", value=exhumed_status)
+     select#input_exhumed_status(name="exhumed_status", value=exhumed_status)
         option(value="") Select
-        - var exhumed_status = ["Yes","No","Partial", "Unknown"];
-        each status in exhumed_status
+        - var exhumed_stats = ["Yes","No","Partial", "Unknown"];
+        each status in exhumed_stats
            if(exhumed_status==status)
                 option(value=status selected="selected") #{status}
            else
@@ -600,8 +600,8 @@ block content
      br
      select#input_identification_status(name="identification_status", value=identification_status)
         option(value="") Select
-        - var identification_status = ["Yes", "No", "Partial", "Unknown"];
-        each status in identification_status
+        - var identification_stats = ["Yes", "No", "Partial", "Unknown"];
+        each status in identification_stats
            if(identification_status==status)
                 option(value=status selected="selected") #{status}
            else
