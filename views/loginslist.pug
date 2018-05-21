@@ -9,15 +9,16 @@ block content
   table(id="loginsList")
       thead    
         tr#headtag
-            th Date (UTC)
             th User
+            th Date (UTC)
             th IP
             
       tbody        
             each login, i in collList
                 tr
-                    td=moment(login.date).format('MMMM Do, YYYY, h:mm:ss a')
                     td=login.user
+                    td=moment(login.date).format('MMMM Do, YYYY, h:mm:ss a')
+                    //td=login.date
                     td=login.ip
                     
   
