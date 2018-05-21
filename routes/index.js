@@ -96,7 +96,6 @@ router.post('/login', loginLimiter, parseForm, csrfProtection, function(req, res
             
             if(user != "public"){
                //save the login info in the db as admin
-               console.log("url: "+process.env.MONGODB_URI);
                MongoClient.connect(process.env.MONGODB_URI, function(err, client){
                 if (err){
                     console.log("Unable to log "+user+ " into the database logins record. " + err);
