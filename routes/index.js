@@ -81,7 +81,7 @@ router.post('/login', loginLimiter, parseForm, csrfProtection, function(req, res
         /*Connect to the BD*/
         MongoClient.connect(url, function(err,client){
             if (err){
-            console.log("User:"+user+" Unable to connect to server", err);
+            console.log("User:"+user+" unable to connect to server", err);
             res.render('index', {
                 "errormessage" : err,
                 csrfToken: req.csrfToken()
@@ -92,17 +92,29 @@ router.post('/login', loginLimiter, parseForm, csrfProtection, function(req, res
             //save user in session
             req.session.user = user;
             console.log("user:" + req.session.user);
+
             
             if(user != "public"){
-               //save the login info in the db
-                var collection = db.collection('logins');
-                var newlongin = {user: req.body.user, ip: ip, date: date};
+               //save the login info in the db as admin
+               console.log("url: "+process.env.MONGODB_URI);
+               MongoClient.connect(process.env.MONGODB_URI, function(err, client){
+                if (err){
+                    console.log("Unable to log "+user+ " into the database logins record. " + err);
+                } else {
+                    let adminDB = client.db("Act");
+                    let collection = adminDB.collection('logins');
+                    let newlongin = {user: req.body.user, ip: ip, date: date};
 
-                collection.insert([newlongin], function(err, result){
-                 if (err){
-                    console.log(err)
-                 }
-                });     
+                    collection.insert([newlongin], function(err, result){
+                        if (err){
+                            console.log(err)
+                        } else {
+                            adminDB.close();
+                        }
+                    });  
+                }
+               });
+                   
             }
             res.redirect("missing"); 
          }   
@@ -569,7 +581,7 @@ router.get('/logins', csrfProtection, function(req, res){
     if (req.session.user && db){
         var loginsColl = db.collection('logins');
 
-        loginsColl.find({}, {user:1, ip:1, date:1}).toArray(function(err, result){
+        loginsColl.find({}, {user:1, ip:1, date:1}).sort({'date':-1}).toArray(function(err, result){
             if (err){
                     res.send(err);
             } else if (result.length) {
