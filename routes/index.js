@@ -108,8 +108,8 @@ router.post('/login', loginLimiter, parseForm, csrfProtection, function(req, res
                     collection.insert([newlongin], function(err, result){
                         if (err){
                             console.log(err)
-                        } else {
-                            adminDB.close();
+                        // } else {
+                        //     adminDB.close();
                         }
                     });  
                 }
