@@ -144,7 +144,8 @@ block content
             th Name
             th District
             th Governorate
-            th Exhumation Status
+            th Exhumation
+            th Report
             
       tbody        
             each site, i in collList
@@ -156,6 +157,9 @@ block content
                     td=site.location.governorate
                     if(site.exhumed)
                      td=site.exhumed.status
+                    td
+                      a(href='/report?code='+site.code target="_blank")
+                       img(src="/stylesheets/images/report-icon.png" height="20" width="20") 
                     
    div#sideProfile
   
