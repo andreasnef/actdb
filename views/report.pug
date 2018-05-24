@@ -1,0 +1,139 @@
+extends layout
+
+block content
+ each value, i in profile
+  div#reportTitle
+   h3. 
+    #{value.name.en}
+  
+  div#siteProfile.reportLeft
+    h3. 
+      Description
+    span Code:
+    span #{value.code}
+    p 
+    span Name in Arabic: 
+    span #{value.name.ar}
+    p 
+    span Type: 
+    span #{value.type}
+    br
+    p #{value.description}
+      
+    p 
+    span Known Activity Period: 
+    -if(value.dates.beg){
+       - var from = moment(value.dates.beg).utc().format('MMMM Do, YYYY'); 
+       span #{from} 
+    -}else{
+      span Unknown 
+    -} 
+    span to 
+    -if(value.dates.end){
+      - var to = moment(value.dates.end).utc().format('MMMM Do, YYYY');
+      span #{to}
+    -} else {
+      span Unknown
+    -}
+    
+    p 
+    span Group Responsible: 
+    span #{value.perpetrators} 
+    - if(value.perpetrators_name)
+     span (#{value.perpetrators_name})
+
+    p 
+    span Expected number of remains:  
+    span #{value.number_expected}
+
+    p
+    span Notes: 
+    span #{value.notes}
+    
+  div#siteIndexes.reportRight
+    span Risk:
+    p #{value.risk.index}
+    p #{value.risk.reasons}
+    
+    span Credibility:
+    p #{value.credibility.index}
+    p #{value.credibility.reasons}
+
+    span Sensitivity:
+    p #{value.sensitivity.index}
+    p #{value.sensitivity.reasons}
+  
+  div#exhumation.reportLeft
+    h3.
+      Information on Exhumation and Identification
+    p 
+    span Exhumed: 
+    span #{value.exhumed.status}
+    p 
+    span Date: 
+    span #{value.exhumed.date}
+    p 
+    span Number of Exhumed bodies: 
+    span #{value.exhumed.number}
+    p 
+    span Contact Information: 
+    span #{value.exhumed.contact}
+    p 
+    span Notes on Exhumation: 
+    span #{value.exhumed.notes}
+
+    - if(value.identification)
+     p 
+     span Identified bodies: 
+     span #{value.identification.status}
+     p
+     span Date of identification: 
+     span #{value.identification.date}
+     p 
+     span Number of identified bodies: 
+     span #{value.identification.number}
+     p
+     span Notes on identification: 
+     span #{value.identification.notes}
+     p
+     span DNA: 
+     span #{value.identification.dna}
+     p
+     span Contact Information: 
+     span #{value.contacts}
+    
+  div#siteMap
+    h3.
+      Location
+    span #{value.location.place}
+    -if(value.location.district) 
+     span - #{value.location.district}
+    -if(value.location.governorate)
+     span - #{value.location.governorate}
+    p #{value.location.coordinates}
+    <div class="mapouter"><div class="gmap_canvas"><iframe width="300" height="250" id="gmap_canvas" src="https://maps.google.com/maps?q=#{value.location.coordinates[1]}%2C%20#{value.location.coordinates[0]}&t=&z=14&ie=UTF8&iwloc=&output=embed" frameborder="0" scrolling="no" marginheight="0" marginwidth="0"></iframe>google maps <a href="http://www.pureblack.de/google-maps/">pure black</a></div><style>.mapouter{overflow:hidden;height:250px;width:300px;}.gmap_canvas {background:none!important;height:500px;width:600px;}</style></div>
+  
+  
+  div.reportLeft
+    h3.
+      Related Events
+    p #{value.related.events}
+  div.reportLeft
+    h3.
+      Related Locations
+    p #{value.related.locations}
+  div.reportLeft
+    h3.
+     Related Missing Persons
+    p #{value.related.mps}
+  div.reportLeft 
+    h3.
+     Related Sites
+    p #{value.related.sites}
+    
+  div#siteSources.reportRight
+   h3.
+    Sources
+   each source, i in value.sources
+     p #{source}
+   

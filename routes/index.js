@@ -79,7 +79,7 @@ router.post('/login', loginLimiter, parseForm, csrfProtection, function(req, res
 
      } else {
         /*Connect to the BD*/
-        MongoClient.connect(url, function(err,client){
+        MongoClient.connect(url, {poolSize: 30}, function(err,client){
             if (err){
             console.log("User:"+user+" unable to connect to server", err);
             res.render('index', {
@@ -92,7 +92,7 @@ router.post('/login', loginLimiter, parseForm, csrfProtection, function(req, res
             //save user in session
             req.session.user = user;
             console.log("user:" + req.session.user);
-
+            
             
             if(user != "public"){
                //save the login info in the db as admin
@@ -111,8 +111,53 @@ router.post('/login', loginLimiter, parseForm, csrfProtection, function(req, res
                         //     adminDB.close();
                         }
                     });  
+
+                    //if user has writing priviledges, open change stream and record any changes
+                    // (async function(){
+                    //   try {
+                    //     let admin = adminDB.admin();
+                    //     let roles = await admin.command({ rolesInfo: 1, showBuiltinRoles: 1 });
+                    //     console.log(JSON.stringify(roles,undefined,2));
+                    //   } catch(e) {
+                    //     console.error(e);
+                    //   } finally {
+                    //     //db.close();
+                    //   } 
+                    // })() 
+                    // let roles = adminDB.runCommand(
+                    //     {
+                    //       usersInfo:  { user: user, db: "Act" },
+                    //       showPrivileges: true
+                    //     }
+                    // )
+                    // console.log("roles: "+roles);
                 }
                });
+
+               
+               
+               
+                const missingCollection = db.collection('missing');
+                const sitesCollection = db.collection('sites');
+                const eventsCollection = db.collection('events');
+                const locationsCollection = db.collection('locations');
+                const partiesCollection = db.collection('parties');
+                const contactsCollection = db.collection('contacts');
+                const sourcesCollection = db.collection('sources');
+
+                var collectionsArray = [missingCollection, sitesCollection, eventsCollection, locationsCollection, partiesCollection, contactsCollection, sourcesCollection];
+                
+                collectionsArray.forEach(function (e){
+                    var changeStream = e.watch();
+                    changeStream.on("change", function(change) {
+                        var newChange = {user: user, date: date, collection: change.ns.coll, operation: change.operationType, documentKey: change.documentKey, updateDescription: change.updateDescription};
+                        db.collection('updates').insert([newChange],function(err,result){
+                            if (err){
+                            console.log(err);
+                            }
+                        });
+                    });
+                });
                    
             }
             res.redirect("missing"); 
@@ -503,6 +548,7 @@ router.get('/events', csrfProtection, function(req, res){
                 var nextrecord = calcLastRecord(eventsList, "events");
                 res.render('eventslist', {
                     "collList" : eventsList,
+                    title: "List of Events",
                     nextrecord : nextrecord,
                     user: req.session.user, 
                     csrfToken: req.csrfToken()
@@ -525,6 +571,7 @@ router.get('/locations', csrfProtection, function(req, res){
                     var nextrecord = calcLastRecord(locationsList, "locations");
                     res.render('locationslist', {
                         "user": req.session.user,
+                        title: "List of Locations",
                         "collList" : locationsList,
                         "nextbarrack" : nextrecord[0],
                         "nextsbarrack" : nextrecord[1],
@@ -556,6 +603,7 @@ router.get('/sites', csrfProtection, function(req, res){
                     req.session.nextrecord = nextrecord;
                     res.render('siteslist', {
                         "collList" : sitesList,
+                        title: "List of Sites",
                         nextrecord : nextrecord,
                         parties : partiesList,
                         locations: locationsList, 
@@ -691,6 +739,7 @@ router.get('/contacts', csrfProtection, function(req, res){
                     var nextrecord = calcLastRecord(contactsList, "contacts");
                     res.render('contactslist', {
                         "collList" : contactsList,
+                        title: "List of Contacts",
                         nextrecord : nextrecord,
                         "user": req.session.user,
                         locations: locationsList, 
@@ -709,7 +758,7 @@ router.get('/contacts', csrfProtection, function(req, res){
     }     
 });
 
-/* GET list of Files */
+/* GET list of Souces */
 router.get('/sources', csrfProtection, function(req, res){
     if (req.session.user){
         getSources(function(){
@@ -781,6 +830,37 @@ router.get('/profile', csrfProtection, function(req, res){
     } else {
             res.render('index', { title: 'Login to Database', csrfToken: req.csrfToken()});
     }       
+});
+
+/* GET Report*/
+router.get('/report', csrfProtection, function(req, res){
+    //get site profile
+    if (req.session.user && req.session.user != "public" && db) {
+        var collection = db.collection("sites");
+        collection.find({code:req.query.code}).toArray(function(err, result){
+            if (err){
+                res.send(err);
+            } else if (result.length) {
+                //get profiles of related locations - events - mps - sites
+                // if (result.related.events){
+
+                // }
+                res.render('report', {    
+                    "profile" : result,
+                    "user" : req.session.user,
+                    // "locationsList" : locationsList,
+                    // "missingList" : missingList,
+                    // "sitesList" : sitesList,
+                    // "eventsList" : eventsList,
+                    // "contactsList" : contactsList,
+                    // "sourcesList" : sourcesList,
+                    csrfToken: req.csrfToken()
+                    });  
+            } else {
+                res.send('No data found');
+            }
+        });
+    }
 });
 
 /* ADD or EDIT */
@@ -2011,7 +2091,6 @@ router.post('/addsite',parseForm, csrfProtection, function(req, res){
                                     "end" : dateConverter(req.body.date_end_day,req.body.date_end_month,req.body.date_end_year)
                                 },
                                 "description" : req.body.description,
-                                "type" : req.body.type,
                                 "related" : {
                                     "events" : relEvents,
                                     "sites" : relSites,

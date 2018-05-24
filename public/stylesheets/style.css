@@ -224,3 +224,40 @@ span {
     margin: 0 0 5px;
     color: #777;
 }
+/*Reports*/
+
+#reportTitle {
+    width: 60%;
+    margin: 0 auto;
+    border: 1px solid black;
+    border-radius: 5px;
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.reportLeft {
+    width: 69%;
+    float: left;
+    border: 1px solid black;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    padding: 10px;
+}
+
+.reportRight {
+    width: 30%;
+    border: 1px solid black;
+    border-radius: 5px;
+    float: right;
+    margin-bottom: 10px;
+    padding: 10px;
+}
+
+#siteMap {
+    /* width: 300px; */
+    border: 1px solid black;
+    border-radius: 5px;
+    float: right;
+    margin-bottom: 10px;
+    padding: 10px;
+} 
