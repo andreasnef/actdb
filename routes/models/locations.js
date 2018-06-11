@@ -16,7 +16,7 @@ module.exports = {
     sortBy: {'name.en': 1},
 
     newLocation: function (form, relEvents, relSites, relLocations, relMPs, contacts, sources, groups){
-        return locationnew = {
+        let locationnew = {
             "code" : form.code,
             "public": form.public,
             "category" : form.category,
@@ -57,6 +57,7 @@ module.exports = {
             "contacts" : contacts,
             "sources" : sources
          };
+         return locationnew;
     }, 
 
     updateLocation: function(profile, form, relEvents, relSites, relLocations, relMPs, contacts, sources, groups){

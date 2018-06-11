@@ -19,7 +19,7 @@ module.exports = {
     },
 
     newSite: function (form, relEvents, relSites, relLocations, relMPs, contacts, sources){
-        return sitenew = {
+        let sitenew = {
             "code" : form.code,
             "public": form.public,
             "type" : form.type,
@@ -87,7 +87,7 @@ module.exports = {
             "sources" : sources,
             "notes" : form.notes,
          };
-
+         return sitenew;
     },
 
     updateSite : function(profile, form, relEvents, relSites, relLocations, relMPs, contacts, sources){

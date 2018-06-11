@@ -13,7 +13,7 @@ module.exports = {
     sortBy: {'code':1},
 
     newSource: function(form, relEvents, relSites, relLocations, relMPs, sources, attendantContacts, intervieweeContacts, filesList){
-        return sourcenew = {
+        let sourcenew = {
             "code" : form.code,
             "type": form.type,
             "subtype": form.subtype,
@@ -46,6 +46,7 @@ module.exports = {
             "notes": form.notes,
             "files" : filesList
         };
+        return sourcenew;
     },
 
     updateSource: function(profile, form, relEvents, relSites, relLocations, relMPs, sources, attendantContacts, intervieweeContacts, filesList, uploadError){

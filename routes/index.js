@@ -58,7 +58,6 @@ router.get('/', csrfProtection, function(req, res, next) {
 router.post('/login', loginLimiter, parseForm, csrfProtection, function(req, res){
     const user = req.body.user;
     const pass = req.body.pass;
-    //const ip = req.connection.remoteAddress;
     
     //Validate Fields
     req.check('user', 'User cannot be empty').notEmpty();
@@ -74,22 +73,22 @@ router.post('/login', loginLimiter, parseForm, csrfProtection, function(req, res
      } else {
         /*Connect to the BD*/
         mongoCommon.mongoConnect(user, pass)
-        .then((dbConnection, err)=> {
-            db = dbConnection;
-            req.session.user = user;
-            res.redirect("missing"); 
-        /*Record Login information*/ 
-        }).then(()=> { mongoCommon.recordLogins(user, req)
-        /*Open Change Streams*/       
-        }).then(()=> { mongoCommon.openChangeStreams(user) 
-        }).catch((err) =>{
-            res.render('index', {
-                "errormessage" : err,
-                csrfToken: req.csrfToken()
-            });
-        })
-     }
-    });
+            .then((dbConnection, err)=> {
+                db = dbConnection;
+                req.session.user = user;
+                res.redirect("missing"); 
+            /*Record Login information*/ 
+            }).then(()=> { mongoCommon.recordLogins(user, req)
+            /*Open Change Streams*/       
+            }).then(()=> { mongoCommon.openChangeStreams(user) 
+            }).catch((err) =>{
+                res.render('index', {
+                    "errormessage" : err,
+                    csrfToken: req.csrfToken()
+                });
+            })
+    }
+ });
 });
 
 /* GET list of missing */
@@ -563,13 +562,20 @@ router.post('/addmissing',parseForm, csrfProtection, function(req, res){
                 });
 
              } else {
-              let relEvents = (!req.body.related_events || typeof req.body.related_events == "string") ? [req.body.related_events] : req.body.related_events
-              let relSites = (!req.body.related_sites || typeof req.body.related_sites == "string") ? [req.body.related_sites] : req.body.related_sites
-              let relLocations = (!req.body.related_locations || typeof req.body.related_locations == "string") ? [req.body.related_locations] : req.body.related_locations
-              let relMPs = (!req.body.related_mps || typeof req.body.related_mps== "string") ? [req.body.related_mps] : req.body.related_mps;
-              let contacts = (!req.body.contacts || typeof req.body.contacts == "string") ? [req.body.contacts] : req.body.contacts;
-              let sources = (!req.body.sources || typeof req.body.sources == "string") ? [req.body.sources] : req.body.sources
-              let itinerary_route = (!req.body.itinerary_route || typeof req.body.itinerary_route == "string") ? [req.body.itinerary_route] : req.body.itinerary_route;
+              let relEvents = !req.body.related_events ? []
+                        : typeof req.body.related_events == "string" ? [req.body.related_events] : req.body.related_events
+              let relSites = !req.body.related_sites ? []
+                        : typeof req.body.related_sites == "string" ? [req.body.related_sites] : req.body.related_sites
+              let relLocations = !req.body.related_locations ? []
+                        : typeof req.body.related_locations == "string" ? [req.body.related_locations] : req.body.related_locations
+              let relMPs = !req.body.related_mps ? []
+                        : typeof req.body.related_mps== "string" ? [req.body.related_mps] : req.body.related_mps;
+              let contacts = !req.body.contacts ? []
+                        : typeof req.body.contacts == "string" ? [req.body.contacts] : req.body.contacts;
+              let sources = !req.body.sources ? []
+                        : typeof req.body.sources == "string" ? [req.body.sources] : req.body.sources
+              let itinerary_route = !req.body.itinerary_route ? []
+                        : typeof req.body.itinerary_route == "string" ? [req.body.itinerary_route] : req.body.itinerary_route;
 
               /*if its an edit*/   
               if (req.body._id){  
@@ -692,13 +698,20 @@ router.post('/addevent',parseForm, csrfProtection, function(req, res){
                 });
 
              } else {
-                let relEvents = (!req.body.related_events || typeof req.body.related_events == "string") ? [req.body.related_events] : req.body.related_events
-                let relSites = (!req.body.related_sites || typeof req.body.related_sites == "string") ? [req.body.related_sites] : req.body.related_sites
-                let relLocations = (!req.body.related_locations || typeof req.body.related_locations == "string") ? [req.body.related_locations] : req.body.related_locations
-                let relMPs = (!req.body.related_mps || typeof req.body.related_mps== "string") ? [req.body.related_mps] : req.body.related_mps;
-                let contacts = (!req.body.contacts || typeof req.body.contacts == "string") ? [req.body.contacts] : req.body.contacts;
-                let sources = (!req.body.sources || typeof req.body.sources == "string") ? [req.body.sources] : req.body.sources
-                let groups = (!req.body.groups_responsible || typeof req.body.groups_responsible == "string") ? [req.body.groups_responsible] : req.body.groups_responsible
+                let relEvents = !req.body.related_events ? []
+                                    : typeof req.body.related_events == "string" ? [req.body.related_events] : req.body.related_events
+                let relSites = !req.body.related_sites ? []
+                                    : typeof req.body.related_sites == "string" ? [req.body.related_sites] : req.body.related_sites
+                let relLocations = !req.body.related_locations ? []
+                                    : typeof req.body.related_locations == "string" ? [req.body.related_locations] : req.body.related_locations
+                let relMPs = !req.body.related_mps ? []
+                                    : typeof req.body.related_mps== "string" ? [req.body.related_mps] : req.body.related_mps;
+                let contacts = !req.body.contacts ? []
+                                    : typeof req.body.contacts == "string" ? [req.body.contacts] : req.body.contacts;
+                let sources = !req.body.sources ? []
+                                    : typeof req.body.sources == "string" ? [req.body.sources] : req.body.sources
+                let groups = !req.body.groups_responsible ? []
+                                    : typeof req.body.groups_responsible == "string" ? [req.body.groups_responsible] : req.body.groups_responsible
                 
                  
                 /*if its an edit*/   
@@ -815,13 +828,20 @@ router.post('/addlocation',parseForm, csrfProtection, function(req, res){
                 });
 
              } else {
-                let relEvents = (!req.body.related_events || typeof req.body.related_events == "string") ? [req.body.related_events] : req.body.related_events
-                let relSites = (!req.body.related_sites || typeof req.body.related_sites == "string") ? [req.body.related_sites] : req.body.related_sites
-                let relLocations = (!req.body.related_locations || typeof req.body.related_locations == "string") ? [req.body.related_locations] : req.body.related_locations
-                let relMPs = (!req.body.related_mps || typeof req.body.related_mps== "string") ? [req.body.related_mps] : req.body.related_mps;
-                let contacts = (!req.body.contacts || typeof req.body.contacts == "string") ? [req.body.contacts] : req.body.contacts;
-                let sources = (!req.body.sources || typeof req.body.sources == "string") ? [req.body.sources] : req.body.sources
-                let groups = (!req.body.groups_responsible || typeof req.body.groups_responsible == "string") ? [req.body.groups_responsible] : req.body.groups_responsible
+                let relEvents = !req.body.related_events ? []
+                            : typeof req.body.related_events == "string" ? [req.body.related_events] : req.body.related_events
+                let relSites = !req.body.related_sites ? []
+                            : typeof req.body.related_sites == "string" ? [req.body.related_sites] : req.body.related_sites
+                let relLocations = !req.body.related_locations ? []
+                            : typeof req.body.related_locations == "string" ? [req.body.related_locations] : req.body.related_locations
+                let relMPs = !req.body.related_mps ? []
+                            : typeof req.body.related_mps== "string" ? [req.body.related_mps] : req.body.related_mps;
+                let contacts = !req.body.contacts ? []
+                            : typeof req.body.contacts == "string" ? [req.body.contacts] : req.body.contacts;
+                let sources = !req.body.sources ? []
+                            : typeof req.body.sources == "string" ? [req.body.sources] : req.body.sources
+                let groups = !req.body.groups_responsible ? []
+                            : typeof req.body.groups_responsible == "string" ? [req.body.groups_responsible] : req.body.groups_responsible
                 
            
               /*if its an edit*/     
@@ -955,12 +975,18 @@ router.post('/addsite',parseForm, csrfProtection, function(req, res){
                 });
 
              } else {
-                let relEvents = (!req.body.related_events || typeof req.body.related_events == "string") ? [req.body.related_events] : req.body.related_events
-                let relSites = (!req.body.related_sites || typeof req.body.related_sites == "string") ? [req.body.related_sites] : req.body.related_sites
-                let relLocations = (!req.body.related_locations || typeof req.body.related_locations == "string") ? [req.body.related_locations] : req.body.related_locations
-                let relMPs = (!req.body.related_mps || typeof req.body.related_mps== "string") ? [req.body.related_mps] : req.body.related_mps;
-                let contacts = (!req.body.contacts || typeof req.body.contacts == "string") ? [req.body.contacts] : req.body.contacts;
-                let sources = (!req.body.sources || typeof req.body.sources == "string") ? [req.body.sources] : req.body.sources
+                let relEvents = !req.body.related_events ?[]
+                            : typeof req.body.related_events == "string" ? [req.body.related_events] : req.body.related_events
+                let relSites = !req.body.related_sites ?[]
+                            : typeof req.body.related_sites == "string" ? [req.body.related_sites] : req.body.related_sites
+                let relLocations = !req.body.related_locations ?[]
+                            : typeof req.body.related_locations == "string" ? [req.body.related_locations] : req.body.related_locations
+                let relMPs = !req.body.related_mps ?[]
+                            : typeof req.body.related_mps== "string" ? [req.body.related_mps] : req.body.related_mps;
+                let contacts = !req.body.contacts ?[]
+                            : typeof req.body.contacts == "string" ? [req.body.contacts] : req.body.contacts;
+                let sources = !req.body.sources ?[]
+                            : typeof req.body.sources == "string" ? [req.body.sources] : req.body.sources
                  
               /*if its an edit*/
               if (req.body._id){     
@@ -1155,11 +1181,16 @@ router.post('/addcontact', parseForm, csrfProtection, function(req, res){
                 });
 
              } else {
-                let relEvents = (!req.body.related_events || typeof req.body.related_events == "string") ? [req.body.related_events] : req.body.related_events
-                let relSites = (!req.body.related_sites || typeof req.body.related_sites == "string") ? [req.body.related_sites] : req.body.related_sites
-                let relLocations = (!req.body.related_locations || typeof req.body.related_locations == "string") ? [req.body.related_locations] : req.body.related_locations
-                let relMPs = (!req.body.related_mps || typeof req.body.related_mps== "string") ? [req.body.related_mps] : req.body.related_mps;
-                let sources = (!req.body.sources || typeof req.body.sources == "string") ? [req.body.sources] : req.body.sources
+                let relEvents = !req.body.related_events ? []
+                            : typeof req.body.related_events == "string" ? [req.body.related_events] : req.body.related_events
+                let relSites = !req.body.related_sites ? []
+                            : typeof req.body.related_sites == "string" ? [req.body.related_sites] : req.body.related_sites
+                let relLocations = !req.body.related_locations ? []
+                            : typeof req.body.related_locations == "string" ? [req.body.related_locations] : req.body.related_locations
+                let relMPs = !req.body.related_mps ? []
+                            : typeof req.body.related_mps== "string" ? [req.body.related_mps] : req.body.related_mps;
+                let sources = !req.body.sources ? []
+                            : typeof req.body.sources == "string" ? [req.body.sources] : req.body.sources
                  
                 /*if its an edit*/   
                 if (req.body._id){ 
@@ -1262,13 +1293,20 @@ router.post('/addsource', parseForm, csrfProtection, function(req, res){
             });
         } else {
             common.uploadFile(req, res, function(filesList, uploadError){
-                let relEvents = (!req.body.related_events || typeof req.body.related_events == "string") ? [req.body.related_events] : req.body.related_events
-                let relSites = (!req.body.related_sites || typeof req.body.related_sites == "string") ? [req.body.related_sites] : req.body.related_sites
-                let relLocations = (!req.body.related_locations || typeof req.body.related_locations == "string") ? [req.body.related_locations] : req.body.related_locations
-                let relMPs = (!req.body.related_mps || typeof req.body.related_mps== "string") ? [req.body.related_mps] : req.body.related_mps;
-                let sources = (!req.body.related_sources || typeof req.body.related_sources == "string") ? [req.body.related_sources] : req.body.related_sources
-                let attendantContacts = (!req.body.attendant_contacts || typeof req.body.attendant_contacts == "string") ? [req.body.attendant_contacts] : req.body.attendant_contacts
-                let intervieweeContacts = (!req.body.interviewee_contacts || typeof req.body.interviewee_contacts == "string") ? [req.body.interviewee_contacts] : req.body.interviewee_contacts
+                let relEvents = !req.body.related_events ? []
+                            : typeof req.body.related_events == "string" ? [req.body.related_events] : req.body.related_events
+                let relSites = !req.body.related_sites ? []
+                            : typeof req.body.related_sites == "string" ? [req.body.related_sites] : req.body.related_sites
+                let relLocations = !req.body.related_locations ? []
+                            : typeof req.body.related_locations == "string" ? [req.body.related_locations] : req.body.related_locations
+                let relMPs = !req.body.related_mps ? []
+                            : typeof req.body.related_mps== "string" ? [req.body.related_mps] : req.body.related_mps;
+                let sources = !req.body.related_sources ? []
+                            : typeof req.body.related_sources == "string" ? [req.body.related_sources] : req.body.related_sources
+                let attendantContacts = !req.body.attendant_contacts ? []
+                            : typeof req.body.attendant_contacts == "string" ? [req.body.attendant_contacts] : req.body.attendant_contacts
+                let intervieweeContacts = !req.body.interviewee_contacts ? []
+                            : typeof req.body.interviewee_contacts == "string" ? [req.body.interviewee_contacts] : req.body.interviewee_contacts
                 
                 /*if its an edit*/   
                 if (req.body._id){

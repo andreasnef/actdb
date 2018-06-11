@@ -14,7 +14,7 @@ module.exports = {
     sortBy: {'name.en':1},
 
     newContact: function(form, relEvents, relSites, relLocations, relMPs, sources){
-        return contactnew = {
+        let contactnew = {
             "code" : form.code,
             "confidential": form.confidential,
             "category": form.category,
@@ -62,6 +62,7 @@ module.exports = {
             "contacted_act" : form.contacted_act,
             "notes" : form.notes
          };
+         return contactnew;
     },
 
     updateContact: function(profile, form, relEvents, relSites, relLocations, relMPs, sources){

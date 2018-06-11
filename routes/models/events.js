@@ -15,7 +15,7 @@ module.exports = {
     sortBy: {"name.en":1},
 
     newEvent: function (form, relEvents, relSites, relLocations, relMPs, contacts, sources, groups){
-        return eventnew = {
+        let eventnew = {
             "code" : form.code,
             "public": form.public,
             "type" : form.type,
@@ -56,6 +56,7 @@ module.exports = {
             "contacts" : contacts,    
             "sources" : sources
          }
+         return eventnew;
     },
 
     updateEvent: function(profile, form, relEvents, relSites, relLocations, relMPs, contacts, sources, groups){

@@ -15,7 +15,7 @@ module.exports = {
     sortBy: {"name.ar.last":1},
 
     newMissing: function (form, relEvents, relSites, relLocations, relMPs, contacts, sources, itinerary_route){
-        return missingnew = { 
+        let missingnew = { 
             code : form.code,
             public : form.public,
             name : {
@@ -95,7 +95,8 @@ module.exports = {
                 published : form.fushatamal_published,
                 url : form.fushatamal_url
             }
-        } 
+        }
+        return missingnew; 
     },
     
     updateMissing: function (profile, form, relEvents, relSites, relLocations, relMPs, contacts, sources, itinerary_route){

@@ -13,7 +13,7 @@ module.exports = {
     sortBy: {'name.en':1},
 
     newParty: function(form){
-        return partynew = {
+        let partynew = {
             "code" : form.code,
             "name" : {
                 "ar" : form.name_ar,
@@ -34,6 +34,7 @@ module.exports = {
            },
             "documents" : form.documents
          };
+         return partynew;
     },
 
     updateParty: function(profile, form){
