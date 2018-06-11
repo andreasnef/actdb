@@ -74,26 +74,22 @@ router.post('/login', loginLimiter, parseForm, csrfProtection, function(req, res
      } else {
         /*Connect to the BD*/
         mongoCommon.mongoConnect(user, pass)
-            .then((dbConnection, err)=> {
-                if (err){
-                    res.render('index', {
-                        "errormessage" : err,
-                        csrfToken: req.csrfToken()
-                    });
-                } else {
-                    db = dbConnection;
-                    req.session.user = user;
-                    res.redirect("missing"); 
-                }
-            /*Record Login information*/ 
-            }).then(()=> { mongoCommon.recordLogins(user, req)
-            /*Open Change Streams*/       
-            }).then(()=> { mongoCommon.openChangeStreams(user) 
-            }).catch((error) =>{
-                console.error(error)
-            })
-    }
- });
+        .then((dbConnection, err)=> {
+            db = dbConnection;
+            req.session.user = user;
+            res.redirect("missing"); 
+        /*Record Login information*/ 
+        }).then(()=> { mongoCommon.recordLogins(user, req)
+        /*Open Change Streams*/       
+        }).then(()=> { mongoCommon.openChangeStreams(user) 
+        }).catch((err) =>{
+            res.render('index', {
+                "errormessage" : err,
+                csrfToken: req.csrfToken()
+            });
+        })
+     }
+    });
 });
 
 /* GET list of missing */
