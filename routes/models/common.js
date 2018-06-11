@@ -23,16 +23,30 @@ module.exports = {
         })
     },
 
-    recordLogins: (user, ip) => {
+    recordLogins: (user, req) => {
         //save the login info in the db as admin
-
         MongoClient.connect(process.env.MONGODB_URI, function(err, client){
             if (err){
                 console.log("Unable to log "+user+ " into the database logins record. " + err);
             } else {
                 let adminDB = client.db("Act");
                 let collection = adminDB.collection('logins');
-                let newlongin = {user: user, ip: ip, date: date};
+                let ipAddress;
+                // Amazon EC2 / Heroku workaround to get real client IP
+                let forwardedIpsStr = req.header('x-forwarded-for'); 
+                if (forwardedIpsStr) {
+                    // 'x-forwarded-for' header may return multiple IP addresses in
+                    // the format: "client IP, proxy 1 IP, proxy 2 IP" so take the
+                    // the first one
+                    let forwardedIps = forwardedIpsStr.split(',');
+                    ipAddress = forwardedIps[0];
+                }
+                if (!ipAddress) {
+                    // Ensure getting client IP address still works in
+                    // development environment
+                    ipAddress = req.connection.remoteAddress;
+                }
+                let newlongin = {user: user, ip: ipAddress, date: date};
 
                 collection.insert([newlongin], function(err, result){
                     if (err){

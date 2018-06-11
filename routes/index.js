@@ -58,7 +58,7 @@ router.get('/', csrfProtection, function(req, res, next) {
 router.post('/login', loginLimiter, parseForm, csrfProtection, function(req, res){
     const user = req.body.user;
     const pass = req.body.pass;
-    const ip = req.connection.remoteAddress;
+    //const ip = req.connection.remoteAddress;
     
     //Validate Fields
     req.check('user', 'User cannot be empty').notEmpty();
@@ -86,7 +86,7 @@ router.post('/login', loginLimiter, parseForm, csrfProtection, function(req, res
                     res.redirect("missing"); 
                 }
             /*Record Login information*/ 
-            }).then(()=> { mongoCommon.recordLogins(user, ip)
+            }).then(()=> { mongoCommon.recordLogins(user, req)
             /*Open Change Streams*/       
             }).then(()=> { mongoCommon.openChangeStreams(user) 
             }).catch((error) =>{
