@@ -189,190 +189,189 @@ block content
     </div>
     <hr>
 
-    - if (eventsProfiles && eventsProfiles.length)
-     h5.
-       Related Events
-     each event in eventsProfiles  
-      div.w3-container
-      <table class="w3-table w3-striped w3-white">
-        <tr>
-          <td>Code</td>
-          <td>#{event[0].code} </td>
-        </tr>
-        <tr>
-          <td>Event Name</td>
-          <td>#{event[0].name.en} </td>
-        </tr>
-        <tr>
-          <td>Type</td>
-          <td>#{event[0].type}</td>
-        </tr>
-        <tr>
-          <td>Name in Arabic</td>
-          <td>#{event[0].name.ar}</td>
-        </tr>
-        <tr>
-          <td>Location</td>
-          <td>#{event[0].location.place} #{event[0].location.district} #{event[0].location.governorate} </td>
-        </tr>
-        <tr>
-          <td>Description</td>
-          <td>#{event[0].description}</td>
-        </tr>
-        <tr>
-          <td>Dates</td>
-          - var beg = (event[0].dates.beg)? moment(event[0].dates.beg, 'MMM DD YYYY').format('MMMM DD, YYYY') : "Unknown"
-          - var end = (event[0].dates.end)? moment(event[0].dates.end, 'MMM DD YYYY').format('MMMM DD, YYYY') : "Unknown"
-          <td>From #{beg} to #{end}</td>
-        </tr>
-        <tr>
-          <td>Armed Groups</td>
-          <td>#{event[0].groups_responsible}</td>
-        </tr>
-        <tr>
-          <td>Notes</td>
-          <td>#{event[0].notes}</td>
-        </tr>
-      </table> 
-      <hr>
+        -if(eventsProfiles)
+          h5.
+          Related Events
+          each event in eventsProfiles  
+            div.w3-container
+            <table class="w3-table w3-striped w3-white">
+              <tr>
+                <td>Code</td>
+                <td>#{event[0].code} </td>
+              </tr>
+              <tr>
+                <td>Event Name</td>
+                <td>#{event[0].name.en} </td>
+              </tr>
+              <tr>
+                <td>Type</td>
+                <td>#{event[0].type}</td>
+              </tr>
+              <tr>
+                <td>Name in Arabic</td>
+                <td>#{event[0].name.ar}</td>
+              </tr>
+              <tr>
+                <td>Location</td>
+                <td>#{event[0].location.place} #{event[0].location.district} #{event[0].location.governorate} </td>
+              </tr>
+              <tr>
+                <td>Description</td>
+                <td>#{event[0].description}</td>
+              </tr>
+              <tr>
+                <td>Dates</td>
+                - var beg = (event[0].dates.beg)? moment(event[0].dates.beg, 'MMM DD YYYY').format('MMMM DD, YYYY') : "Unknown"
+                - var end = (event[0].dates.end)? moment(event[0].dates.end, 'MMM DD YYYY').format('MMMM DD, YYYY') : "Unknown"
+                <td>From #{beg} to #{end}</td>
+              </tr>
+              <tr>
+                <td>Armed Groups</td>
+                <td>#{event[0].groups_responsible}</td>
+              </tr>
+              <tr>
+                <td>Notes</td>
+                <td>#{event[0].notes}</td>
+              </tr>
+            </table> 
+            <hr>
+     
+        - if(locationsProfiles)
+          h5.
+          Related Locations
+          each location in locationsProfiles  
+            div.w3-container
+            <table class="w3-table w3-striped w3-white">
+              <tr>
+                <td>Code</td>
+                <td>#{location[0].code} </td>
+              </tr>
+              <tr>
+                <td>Location Name</td>
+                <td>#{location[0].name.en} </td>
+              </tr>
+              <tr>
+                <td>Name in Arabic</td>
+                <td>#{location[0].name.ar}</td>
+              </tr>
+              <tr>
+                <td>Category</td>
+                <td>#{location[0].category}</td>
+              </tr>
+              <tr>
+                <td>Location</td>
+                <td>#{location[0].location.place} #{location[0].location.district} #{location[0].location.governorate} </td>
+              </tr>
+              <tr>
+                <td>Description</td>
+                <td>#{location[0].description}</td>
+              </tr>
+              <tr>
+                <td>Dates</td>
+                - var beg = (location[0].dates.beg)? moment(location[0].dates.beg, 'MMM DD YYYY').format('MMMM DD, YYYY') : "Unknown"
+                - var end = (location[0].dates.end)? moment(location[0].dates.end, 'MMM DD YYYY').format('MMMM DD, YYYY') : "Unknown"
+                <td>From #{beg} to #{end}</td>
+              </tr>
+              <tr>
+                <td>Armed Groups</td>
+                <td>#{location[0].groups_responsible}</td>
+              </tr>
+              <tr>
+                <td>Notes</td>
+                <td>#{location[0].notes}</td>
+              </tr>
+            </table> 
+            <hr>  
 
+        -if (mpsProfiles)
+          h5.
+            Related Missing Persons
+          each mp in mpsProfiles  
+            div.w3-container
+            <table class="w3-table w3-striped w3-white">
+              <tr>
+                <td>Code</td>
+                <td>#{mp[0].code} </td>
+              </tr>
+              <tr>
+                <td>Missing Person Name</td>
+                <td>#{mp[0].name.en.first} #{mp[0].name.en.middle} #{mp[0].name.en.last} </td>
+              </tr>
+              <tr>
+                <td>Name in Arabic</td>
+                <td>#{mp[0].name.ar.first} #{mp[0].name.ar.middle} #{mp[0].name.ar.last}</td>
+              </tr>
+              <tr>
+                <td>Disappearance date</td>
+                - var disap = (mp[0].disappearance.date)? moment(mp[0].disappearance.date, 'MMM DD YYYY').format('MMMM DD, YYYY') : "Unknown"
+                <td>#{disap}</td>
+              </tr>
+              <tr>
+                <td>Disappearance place</td>
+                <td>#{mp[0].disappearance.place.en} #{mp[0].disappearance.place.district} #{mp[0].disappearance.place.governorate} </td>
+              </tr>
+              <tr>
+                <td>Disappearance Circumstances</td>
+                <td>#{mp[0].disappearance.circumstances}</td>
+              </tr>
+              <tr>
+                <td>Itinerary</td>
+                <td>#{mp[0].itinerary}</td>
+              </tr>
+              <tr>
+                <td>Armed Groups</td>
+                <td>#{mp[0].perpetrators}</td>
+              </tr>
+              <tr>
+                <td>Notes</td>
+                <td>#{mp[0].notes}</td>
+              </tr>
+            </table> 
+            <hr> 
 
-    - if (locationsProfiles && locationsProfiles.length)
-     h5.
-       Related Locations
-     each location in locationsProfiles  
-      div.w3-container
-      <table class="w3-table w3-striped w3-white">
-        <tr>
-          <td>Code</td>
-          <td>#{location[0].code} </td>
-        </tr>
-        <tr>
-          <td>Location Name</td>
-          <td>#{location[0].name.en} </td>
-        </tr>
-        <tr>
-          <td>Name in Arabic</td>
-          <td>#{location[0].name.ar}</td>
-        </tr>
-        <tr>
-          <td>Category</td>
-          <td>#{location[0].category}</td>
-        </tr>
-        <tr>
-          <td>Location</td>
-          <td>#{location[0].location.place} #{location[0].location.district} #{location[0].location.governorate} </td>
-        </tr>
-        <tr>
-          <td>Description</td>
-          <td>#{location[0].description}</td>
-        </tr>
-        <tr>
-          <td>Dates</td>
-          - var beg = (location[0].dates.beg)? moment(location[0].dates.beg, 'MMM DD YYYY').format('MMMM DD, YYYY') : "Unknown"
-          - var end = (location[0].dates.end)? moment(location[0].dates.end, 'MMM DD YYYY').format('MMMM DD, YYYY') : "Unknown"
-          <td>From #{beg} to #{end}</td>
-        </tr>
-        <tr>
-          <td>Armed Groups</td>
-          <td>#{location[0].groups_responsible}</td>
-        </tr>
-        <tr>
-          <td>Notes</td>
-          <td>#{location[0].notes}</td>
-        </tr>
-      </table> 
-      <hr>  
-
-    - if (mpsProfiles && mpsProfiles.length)
-     h5.
-        Related Missing Persons
-     each mp in mpsProfiles  
-      div.w3-container
-      <table class="w3-table w3-striped w3-white">
-        <tr>
-          <td>Code</td>
-          <td>#{mp[0].code} </td>
-        </tr>
-        <tr>
-          <td>Missing Person Name</td>
-          <td>#{mp[0].name.en.first} #{mp[0].name.en.middle} #{mp[0].name.en.last} </td>
-        </tr>
-        <tr>
-          <td>Name in Arabic</td>
-          <td>#{mp[0].name.ar.first} #{mp[0].name.ar.middle} #{mp[0].name.ar.last}</td>
-        </tr>
-        <tr>
-          <td>Disappearance date</td>
-          - var disap = (mp[0].disappearance.date)? moment(mp[0].disappearance.date, 'MMM DD YYYY').format('MMMM DD, YYYY') : "Unknown"
-          <td>#{disap}</td>
-        </tr>
-        <tr>
-          <td>Disappearance place</td>
-          <td>#{mp[0].disappearance.place.en} #{mp[0].disappearance.place.district} #{mp[0].disappearance.place.governorate} </td>
-        </tr>
-        <tr>
-          <td>Disappearance Circumstances</td>
-          <td>#{mp[0].disappearance.circumstances}</td>
-        </tr>
-        <tr>
-          <td>Itinerary</td>
-          <td>#{mp[0].itinerary}</td>
-        </tr>
-        <tr>
-          <td>Armed Groups</td>
-          <td>#{mp[0].perpetrators}</td>
-        </tr>
-        <tr>
-          <td>Notes</td>
-          <td>#{mp[0].notes}</td>
-        </tr>
-      </table> 
-      <hr> 
-
-    - if (sitesProfiles && sitesProfiles.length)
-     h5.
-        Related Sites
-     each site in mpsProfiles  
-      div.w3-container
-      <table class="w3-table w3-striped w3-white">
-        <tr>
-          <td>Code</td>
-          <td>#{site[0].code} </td>
-        </tr>
-        <tr>
-          <td>Site Name</td>
-          <td>#{site[0].name.en} </td>
-        </tr>
-        <tr>
-          <td>Name in Arabic</td>
-          <td>#{site[0].name.ar}</td>
-        </tr>
-        <tr>
-          <td>Type</td>
-          <td>#{site[0].type}</td>
-        </tr>
-        <tr>
-          <td>Location</td>
-          <td>#{site[0].location.place} #{site[0].location.district} #{site[0].location.governorate} </td>
-        </tr>
-        <tr>
-          <td>Description</td>
-          <td>#{site[0].description}</td>
-        </tr>
-        <tr>
-          <td>Dates</td>
-          - var beg = (site[0].dates && site[0].dates.beg)? moment(site[0].dates.beg, 'MMM DD YYYY').format('MMMM DD, YYYY') : "Unknown"
-          - var end = (site[0].dates && site[0].dates.end)? moment(site[0].dates.end, 'MMM DD YYYY').format('MMMM DD, YYYY') : "Unknown"
-          <td>From #{beg} to #{end}</td>
-        </tr>
-        <tr>
-          <td>Armed Groups</td>
-          <td>#{site[0].perpetrators}</td>
-        </tr>
-        <tr>
-          <td>Notes</td>
-          <td>#{site[0].notes}</td>
-        </tr>
-      </table> 
-      <hr>      
+        -if (sitesProfiles)
+          h5.
+            Related Sites
+          each site in sitesProfiles  
+            div.w3-container
+            <table class="w3-table w3-striped w3-white">
+              <tr>
+                <td>Code</td>
+                <td>#{site[0].code} </td>
+              </tr>
+              <tr>
+                <td>Site Name</td>
+                <td>#{site[0].name.en} </td>
+              </tr>
+              <tr>
+                <td>Name in Arabic</td>
+                <td>#{site[0].name.ar}</td>
+              </tr>
+              <tr>
+                <td>Type</td>
+                <td>#{site[0].type}</td>
+              </tr>
+              <tr>
+                <td>Location</td>
+                <td>#{site[0].location.place} #{site[0].location.district} #{site[0].location.governorate} </td>
+              </tr>
+              <tr>
+                <td>Description</td>
+                <td>#{site[0].description}</td>
+              </tr>
+              <tr>
+                <td>Dates</td>
+                - var beg = (site[0].dates && site[0].dates.beg)? moment(site[0].dates.beg, 'MMM DD YYYY').format('MMMM DD, YYYY') : "Unknown"
+                - var end = (site[0].dates && site[0].dates.end)? moment(site[0].dates.end, 'MMM DD YYYY').format('MMMM DD, YYYY') : "Unknown"
+                <td>From #{beg} to #{end}</td>
+              </tr>
+              <tr>
+                <td>Armed Groups</td>
+                <td>#{site[0].perpetrators}</td>
+              </tr>
+              <tr>
+                <td>Notes</td>
+                <td>#{site[0].notes}</td>
+              </tr>
+            </table> 
+            <hr>      
