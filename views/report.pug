@@ -189,7 +189,7 @@ block content
     </div>
     <hr>
 
-    - if (eventsProfiles.length)
+    - if (eventsProfiles && eventsProfiles.length)
      h5.
        Related Events
      each event in eventsProfiles  
@@ -237,7 +237,7 @@ block content
       <hr>
 
 
-    - if (locationsProfiles.length)
+    - if (locationsProfiles && locationsProfiles.length)
      h5.
        Related Locations
      each location in locationsProfiles  
@@ -284,7 +284,7 @@ block content
       </table> 
       <hr>  
 
-    - if (mpsProfiles.length)
+    - if (mpsProfiles && mpsProfiles.length)
      h5.
         Related Missing Persons
      each mp in mpsProfiles  
@@ -330,7 +330,7 @@ block content
       </table> 
       <hr> 
 
-    - if (sitesProfiles.length)
+    - if (sitesProfiles && sitesProfiles.length)
      h5.
         Related Sites
      each site in mpsProfiles  
