@@ -8,7 +8,7 @@ module.exports = {
 
     mongoConnect: (user, pass) =>{
         return new Promise((resolve, reject) => {
-            let url = 'mongodb://'+user+':'+pass+'@cluster0-shard-00-00-tey75.mongodb.net:27017,cluster0-shard-00-01-tey75.mongodb.net:27017,cluster0-shard-00-02-tey75.mongodb.net:27017/Act?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin';
+            var url = 'mongodb://'+user+':'+pass+'@cluster0-shard-00-00-tey75.mongodb.net:27017,cluster0-shard-00-01-tey75.mongodb.net:27017,cluster0-shard-00-02-tey75.mongodb.net:27017/Act?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin';
             
             MongoClient.connect(url, {poolSize: 30}, function(err,client){
                 if (err){
@@ -25,6 +25,7 @@ module.exports = {
 
     recordLogins: (user, req) => {
         //save the login info in the db as admin
+
         MongoClient.connect(process.env.MONGODB_URI, function(err, client){
             if (err){
                 console.log("Unable to log "+user+ " into the database logins record. " + err);
@@ -210,16 +211,17 @@ module.exports = {
     getRelatedProfiles: (result, type) => {
         return new Promise((resolve,reject)=> {
             let relatedParameter = result[0].related[type]; 
-            let relatedProfiles = [];
+            //let relatedProfiles = [];
             if (relatedParameter && relatedParameter != "") {
                 if(type=="mps") type = 'missing';
                 const promises = relatedParameter.map(e => new Promise((resolve,reject)=> {
                     module.exports.getByCode(type, e, (resultRelated)=> {
+                        let relatedProfiles = [];
                         relatedProfiles.push(resultRelated[0]);
                         resolve(relatedProfiles);
                     })
                 }))
-                resolve(Promise.all(promises), relatedProfiles);
+                resolve(Promise.all(promises));
             }else{
                 resolve();
             }

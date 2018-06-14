@@ -1,139 +1,378 @@
 extends layout
 
+
 block content
+ link(rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css")
+ link(rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway")
+ link(rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css")
+ 
  each value, i in profile
-  div#reportTitle
-   h3. 
-    #{value.name.en}
-  
-  div#siteProfile.reportLeft
-    h3. 
-      Description
-    span Code:
-    span #{value.code}
-    p 
-    span Name in Arabic: 
-    span #{value.name.ar}
-    p 
-    span Type: 
-    span #{value.type}
-    br
-    p #{value.description}
-      
-    p 
-    span Known Activity Period: 
-    -if(value.dates.beg){
-       - var from = moment(value.dates.beg).utc().format('MMMM Do, YYYY'); 
-       span #{from} 
-    -}else{
-      span Unknown 
-    -} 
-    span to 
-    -if(value.dates.end){
-      - var to = moment(value.dates.end).utc().format('MMMM Do, YYYY');
-      span #{to}
-    -} else {
-      span Unknown
-    -}
-    
-    p 
-    span Group Responsible: 
-    span #{value.perpetrators} 
-    - if(value.perpetrators_name)
-     span (#{value.perpetrators_name})
 
-    p 
-    span Expected number of remains:  
-    span #{value.number_expected}
+  div.w3-main(style="margin-left:300px;margin-top:43px;")
 
-    p
-    span Notes: 
-    span #{value.notes}
-    
-  div#siteIndexes.reportRight
-    span Risk:
-    p #{value.risk.index}
-    p #{value.risk.reasons}
-    
-    span Credibility:
-    p #{value.credibility.index}
-    p #{value.credibility.reasons}
+  <header class="w3-container">
+    <h5><b>#{value.name.en}</b></h5>
+  </header>
 
-    span Sensitivity:
-    p #{value.sensitivity.index}
-    p #{value.sensitivity.reasons}
-  
-  div#exhumation.reportLeft
-    h3.
-      Information on Exhumation and Identification
-    p 
-    span Exhumed: 
-    span #{value.exhumed.status}
-    p 
-    span Date: 
-    span #{value.exhumed.date}
-    p 
-    span Number of Exhumed bodies: 
-    span #{value.exhumed.number}
-    p 
-    span Contact Information: 
-    span #{value.exhumed.contact}
-    p 
-    span Notes on Exhumation: 
-    span #{value.exhumed.notes}
+  <div class="w3-row-padding w3-margin-bottom">
+    <div class="w3-quarter">
+      <div class="w3-container w3-blue w3-padding-16">
+        <div class="w3-left"><i class="fa fa-laptop w3-xxxlarge"></i></div>
+        <div class="w3-right">
+          <h3>#{value.code}</h3>
+        </div>
+        <div class="w3-clear"></div>
+        <h4>Code</h4>
+      </div>
+    </div>
+    <div class="w3-quarter">
+      <div class="w3-container w3-red w3-padding-16">
+        <div class="w3-left"><i class="fa fa-bookmark w3-xxxlarge"></i></div>
+        <div class="w3-right">
+          <h3>#{value.risk.index}</h3>
+        </div>
+        <div class="w3-clear"></div>
+        <h4>Risk</h4>
+      </div>
+    </div>
+    <div class="w3-quarter">
+      <div class="w3-container w3-teal w3-padding-16">
+        <div class="w3-left"><i class="fa fa-share-alt w3-xxxlarge"></i></div>
+        <div class="w3-right">
+          <h3>#{value.credibility.index}</h3>
+        </div>
+        <div class="w3-clear"></div>
+        <h4>Credibility</h4>
+      </div>
+    </div>
+    <div class="w3-quarter">
+      <div class="w3-container w3-yellow w3-text-white w3-padding-16">
+        <div class="w3-left"><i class="fa fa-users w3-xxxlarge"></i></div>
+        <div class="w3-right">
+          <h3>#{value.sensitivity.index}</h3>
+        </div>
+        <div class="w3-clear"></div>
+        <h4>Sensitivity</h4>
+      </div>
+    </div>
+  </div>
 
-    - if(value.identification)
-     p 
-     span Identified bodies: 
-     span #{value.identification.status}
-     p
-     span Date of identification: 
-     span #{value.identification.date}
-     p 
-     span Number of identified bodies: 
-     span #{value.identification.number}
-     p
-     span Notes on identification: 
-     span #{value.identification.notes}
-     p
-     span DNA: 
-     span #{value.identification.dna}
-     p
-     span Contact Information: 
-     span #{value.contacts}
-    
-  div#siteMap
-    h3.
-      Location
-    span #{value.location.place}
-    -if(value.location.district) 
-     span - #{value.location.district}
-    -if(value.location.governorate)
-     span - #{value.location.governorate}
-    p #{value.location.coordinates}
-    <div class="mapouter"><div class="gmap_canvas"><iframe width="300" height="250" id="gmap_canvas" src="https://maps.google.com/maps?q=#{value.location.coordinates[1]}%2C%20#{value.location.coordinates[0]}&t=&z=14&ie=UTF8&iwloc=&output=embed" frameborder="0" scrolling="no" marginheight="0" marginwidth="0"></iframe>google maps <a href="http://www.pureblack.de/google-maps/">pure black</a></div><style>.mapouter{overflow:hidden;height:250px;width:300px;}.gmap_canvas {background:none!important;height:500px;width:600px;}</style></div>
-  
-  
-  div.reportLeft
-    h3.
-      Related Events
-    p #{value.related.events}
-  div.reportLeft
-    h3.
-      Related Locations
-    p #{value.related.locations}
-  div.reportLeft
-    h3.
-     Related Missing Persons
-    p #{value.related.mps}
-  div.reportLeft 
-    h3.
-     Related Sites
-    p #{value.related.sites}
-    
-  div#siteSources.reportRight
-   h3.
-    Sources
-   each source, i in value.sources
-     p #{source}
-   
+  <div class="w3-panel">
+    <div class="w3-row-padding" style="margin:0 -16px">
+      <div class="w3-third">
+        <h5>Location</h5>
+        <div class="mapouter"><div class="gmap_canvas"><iframe width="300" height="250" id="gmap_canvas" src="https://maps.google.com/maps?q=#{value.location.coordinates[1]}%2C%20#{value.location.coordinates[0]}&t=&z=14&ie=UTF8&iwloc=&output=embed" frameborder="0" scrolling="no" marginheight="0" marginwidth="0"></iframe>google maps <a href="http://www.pureblack.de/google-maps/">pure black</a></div><style>.mapouter{overflow:hidden;height:250px;width:300px;}.gmap_canvas {background:none!important;height:500px;width:600px;}</style></div>
+        //<img src="/w3images/region.jpg" style="width:100%" alt="Google Regional Map">
+      </div>
+      <div class="w3-twothird">
+        <h5>Information</h5>
+        <table class="w3-table w3-striped w3-white">
+          <tr>
+            <td><i class="fa fa-user w3-text-blue w3-large"></i></td>
+            <td><i>Code</i></td>
+            <td>S1</td>
+          </tr>
+          <tr>
+            <td><i class="fa fa-bell w3-text-red w3-large"></i></td>
+            <td>Name in Arabic</td>
+            <td><i>#{value.name.ar}</i></td>
+          </tr>
+          <tr>
+            <td><i class="fa fa-users w3-text-yellow w3-large"></i></td>
+            <td>Type</td>
+            <td><i>#{value.type}</i></td>
+          </tr>
+          <tr>
+            <td><i class="fa fa-comment w3-text-red w3-large"></i></td>
+            <td>Known Activity Period</td>
+            - var from = "Unknown"
+            - var to = "Unknown"
+            - if(value.dates.beg) from = moment(value.dates.beg).utc().format('MMMM Do, YYYY'); 
+            - if(value.dates.end) to = moment(value.dates.end).utc().format('MMMM Do, YYYY');
+            <td><i>From #{from} to #{to} </i></td>
+          </tr>
+          <tr>
+            <td><i class="fa fa-bookmark w3-text-blue w3-large"></i></td>
+            <td>Group Responsible</td>
+            <td><i>#{value.perpetrators}</i></td>
+          </tr>
+          <tr>
+            <td><i class="fa fa-laptop w3-text-red w3-large"></i></td>
+            <td>Expected number of remains</td>
+            <td><i>#{value.number_expected}</i></td>
+          </tr>
+          <tr>
+            <td><i class="fa fa-share-alt w3-text-green w3-large"></i></td>
+            <td>Location</td>
+            <td><i>#{value.location.place} #{value.location.district} #{value.location.governorate}</i></td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+  <hr>
+  <div class="w3-container">
+    <h5>Description</h5>
+      p #{value.description}
+  </div>
+  <hr>
+  <div class="w3-container">
+    <h5>Reasons for Risk Index</h5>
+      p #{value.risk.reasons}
+  </div>
+  <hr>
+  <div class="w3-container">
+    <h5>Reasons for Credibility Index</h5>
+      p #{value.credibility.reasons}
+  </div>
+  <hr>
+  <div class="w3-container">
+    <h5>Reasons for Sensitivity Index</h5>
+      p #{value.sensitivity.reasons}
+  </div>
+  <hr>
+
+  div.w3-container
+    h5.
+     Information on Exhumation and Identification
+    <table class="w3-table w3-striped w3-white">
+      <tr>
+        <td>Exhumed</td>
+        <td>#{value.exhumed.status}</td>
+      </tr>
+      <tr>
+        <td>Date</td>
+        <td>#{value.exhumed.date}</td>
+      </tr>
+      <tr>
+        <td>Number of Exhumed bodies</td>
+        <td>#{value.exhumed.number}</td>
+      </tr>
+      <tr>
+        <td>Contact Information</td>
+        <td>#{value.exhumed.contact}</td>
+      </tr>
+      <tr>
+        <td>Notes on Exhumation</td>
+        <td>#{value.exhumed.notes}</td>
+      </tr>
+      <tr>
+        <td>Identified bodies</td>
+        <td>#{value.identification.status}</td>
+      </tr>
+      <tr>
+        <td>Date of identification</td>
+        <td>#{value.identification.date}</td>
+      </tr>
+      <tr>
+        <td>Number of identified bodies</td>
+        <td>#{value.identification.number}</td>
+      </tr>
+      <tr>
+        <td>Notes on identification</td>
+        <td>#{value.identification.notes}</td>
+      </tr>
+      <tr>
+        <td>DNA</td>
+        <td>#{value.identification.dna}</td>
+      </tr>
+      <tr>
+        <td>Contact Information</td>
+        <td>#{value.contacts}</td>
+      </tr>
+    </table> 
+
+    <hr>
+    <div class="w3-container">
+      <h5>Notes</h5>
+        p #{value.notes}
+    </div>
+    <hr>
+
+    - if (eventsProfiles.length)
+     h5.
+       Related Events
+     each event in eventsProfiles  
+      div.w3-container
+      <table class="w3-table w3-striped w3-white">
+        <tr>
+          <td>Code</td>
+          <td>#{event[0].code} </td>
+        </tr>
+        <tr>
+          <td>Event Name</td>
+          <td>#{event[0].name.en} </td>
+        </tr>
+        <tr>
+          <td>Type</td>
+          <td>#{event[0].type}</td>
+        </tr>
+        <tr>
+          <td>Name in Arabic</td>
+          <td>#{event[0].name.ar}</td>
+        </tr>
+        <tr>
+          <td>Location</td>
+          <td>#{event[0].location.place} #{event[0].location.district} #{event[0].location.governorate} </td>
+        </tr>
+        <tr>
+          <td>Description</td>
+          <td>#{event[0].description}</td>
+        </tr>
+        <tr>
+          <td>Dates</td>
+          - var beg = (event[0].dates.beg)? moment(event[0].dates.beg, 'MMM DD YYYY').format('MMMM DD, YYYY') : "Unknown"
+          - var end = (event[0].dates.end)? moment(event[0].dates.end, 'MMM DD YYYY').format('MMMM DD, YYYY') : "Unknown"
+          <td>From #{beg} to #{end}</td>
+        </tr>
+        <tr>
+          <td>Armed Groups</td>
+          <td>#{event[0].groups_responsible}</td>
+        </tr>
+        <tr>
+          <td>Notes</td>
+          <td>#{event[0].notes}</td>
+        </tr>
+      </table> 
+      <hr>
+
+
+    - if (locationsProfiles.length)
+     h5.
+       Related Locations
+     each location in locationsProfiles  
+      div.w3-container
+      <table class="w3-table w3-striped w3-white">
+        <tr>
+          <td>Code</td>
+          <td>#{location[0].code} </td>
+        </tr>
+        <tr>
+          <td>Location Name</td>
+          <td>#{location[0].name.en} </td>
+        </tr>
+        <tr>
+          <td>Name in Arabic</td>
+          <td>#{location[0].name.ar}</td>
+        </tr>
+        <tr>
+          <td>Category</td>
+          <td>#{location[0].category}</td>
+        </tr>
+        <tr>
+          <td>Location</td>
+          <td>#{location[0].location.place} #{location[0].location.district} #{location[0].location.governorate} </td>
+        </tr>
+        <tr>
+          <td>Description</td>
+          <td>#{location[0].description}</td>
+        </tr>
+        <tr>
+          <td>Dates</td>
+          - var beg = (location[0].dates.beg)? moment(location[0].dates.beg, 'MMM DD YYYY').format('MMMM DD, YYYY') : "Unknown"
+          - var end = (location[0].dates.end)? moment(location[0].dates.end, 'MMM DD YYYY').format('MMMM DD, YYYY') : "Unknown"
+          <td>From #{beg} to #{end}</td>
+        </tr>
+        <tr>
+          <td>Armed Groups</td>
+          <td>#{location[0].groups_responsible}</td>
+        </tr>
+        <tr>
+          <td>Notes</td>
+          <td>#{location[0].notes}</td>
+        </tr>
+      </table> 
+      <hr>  
+
+    - if (mpsProfiles.length)
+     h5.
+        Related Missing Persons
+     each mp in mpsProfiles  
+      div.w3-container
+      <table class="w3-table w3-striped w3-white">
+        <tr>
+          <td>Code</td>
+          <td>#{mp[0].code} </td>
+        </tr>
+        <tr>
+          <td>Missing Person Name</td>
+          <td>#{mp[0].name.en.first} #{mp[0].name.en.middle} #{mp[0].name.en.last} </td>
+        </tr>
+        <tr>
+          <td>Name in Arabic</td>
+          <td>#{mp[0].name.ar.first} #{mp[0].name.ar.middle} #{mp[0].name.ar.last}</td>
+        </tr>
+        <tr>
+          <td>Disappearance date</td>
+          - var disap = (mp[0].disappearance.date)? moment(mp[0].disappearance.date, 'MMM DD YYYY').format('MMMM DD, YYYY') : "Unknown"
+          <td>#{disap}</td>
+        </tr>
+        <tr>
+          <td>Disappearance place</td>
+          <td>#{mp[0].disappearance.place.en} #{mp[0].disappearance.place.district} #{mp[0].disappearance.place.governorate} </td>
+        </tr>
+        <tr>
+          <td>Disappearance Circumstances</td>
+          <td>#{mp[0].disappearance.circumstances}</td>
+        </tr>
+        <tr>
+          <td>Itinerary</td>
+          <td>#{mp[0].itinerary}</td>
+        </tr>
+        <tr>
+          <td>Armed Groups</td>
+          <td>#{mp[0].perpetrators}</td>
+        </tr>
+        <tr>
+          <td>Notes</td>
+          <td>#{mp[0].notes}</td>
+        </tr>
+      </table> 
+      <hr> 
+
+    - if (sitesProfiles.length)
+     h5.
+        Related Sites
+     each site in mpsProfiles  
+      div.w3-container
+      <table class="w3-table w3-striped w3-white">
+        <tr>
+          <td>Code</td>
+          <td>#{site[0].code} </td>
+        </tr>
+        <tr>
+          <td>Site Name</td>
+          <td>#{site[0].name.en} </td>
+        </tr>
+        <tr>
+          <td>Name in Arabic</td>
+          <td>#{site[0].name.ar}</td>
+        </tr>
+        <tr>
+          <td>Type</td>
+          <td>#{site[0].type}</td>
+        </tr>
+        <tr>
+          <td>Location</td>
+          <td>#{site[0].location.place} #{site[0].location.district} #{site[0].location.governorate} </td>
+        </tr>
+        <tr>
+          <td>Description</td>
+          <td>#{site[0].description}</td>
+        </tr>
+        <tr>
+          <td>Dates</td>
+          - var beg = (site[0].dates && site[0].dates.beg)? moment(site[0].dates.beg, 'MMM DD YYYY').format('MMMM DD, YYYY') : "Unknown"
+          - var end = (site[0].dates && site[0].dates.end)? moment(site[0].dates.end, 'MMM DD YYYY').format('MMMM DD, YYYY') : "Unknown"
+          <td>From #{beg} to #{end}</td>
+        </tr>
+        <tr>
+          <td>Armed Groups</td>
+          <td>#{site[0].perpetrators}</td>
+        </tr>
+        <tr>
+          <td>Notes</td>
+          <td>#{site[0].notes}</td>
+        </tr>
+      </table> 
+      <hr>      

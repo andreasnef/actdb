@@ -417,7 +417,7 @@ router.get('/report', csrfProtection, function(req, res){
                 mongoCommon.getRelatedProfiles(result, 'mps'),
                 mongoCommon.getRelatedProfiles(result, 'sites')
             ]).then((results)=> {
-                    console.log("results"+JSON.stringify(results[0]));
+                    console.log("results"+JSON.stringify(results[3]));
                     res.render('report', {    
                         title : "Report on "+result[0].name.en,
                         profile : result,
