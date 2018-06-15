@@ -1,4 +1,5 @@
 "use strict";
+var moment = require('moment');
 var multer  = require('multer');
 var fs = require("fs");
 var bodyParser = require('body-parser');
@@ -19,31 +20,29 @@ var upload = multer({ storage : storage}).any();
 module.exports = {
 
     dateConverter: (day, month, year) => {
-        var date;
+        let date;
         if (year != ""){ 
-            if (day == ""){day = "01"};
-            if (month == "") {month = "01"};
+            if (day == "") day = "01";
+            if (month == "") month = "01";
             date = new Date(Date.UTC(year, month-1, day));
         };
         return date;
     },
 
-    ageCalculator: (age, birth, disapp) => {
-        if (age && age == "" && birth && birth!="" && disapp && disapp !=""){
-            var thisYear = 0;
-            if (disapp.getMonth() < birth.getMonth()) {
-                thisYear = 1;
-            } else if ((disapp.getMonth() == birth.getMonth()) && disapp.getDate() < birth.getDate()) {
-                thisYear = 1;
-            }
-            age = disapp.getFullYear() - birth.getFullYear() - thisYear;
+    ageCalculator: (age, birth_day, birth_month, birth_year, disapp_day, disapp_month, disapp_year) => {
+        if(age == "" && birth_year!= "" && disapp_year!= ""){
+            birth_day = (birth_day == "") ? "01" : birth_day
+            birth_month = (birth_month == "") ? "01" : birth_month
+            disapp_day = (disapp_day == "") ? "01" : disapp_day
+            disapp_month = (disapp_month == "") ? "01" : disapp_month
+
+            let momDis = moment([parseInt(disapp_year), parseInt(disapp_month), parseInt(disapp_day)])
+            let momBirth = moment([parseInt(birth_year), parseInt(birth_month), parseInt(birth_day)])
+            return momDis.diff(momBirth, 'year');
         }
-        return age;
-        
     },
 
     calcLastRecord: (list, type)=> {
-        var numbers = [];
         var number;
         var nextrecord;
         if (type == "locations"){
@@ -57,36 +56,20 @@ module.exports = {
             var scenters = [];
             var icenters = [];
             
-            list.forEach(function(doc) {
-                if (doc.code.match(/[a-zA-Z]+|[0-9]+/g)[0] == "B"){
-                    number = parseInt(doc.code.match(/[a-zA-Z]+|[0-9]+/g)[1])
-                    barracks.push(number);
-                }else if (doc.code.match(/[a-zA-Z]+|[0-9]+/g)[0] == "SB"){
-                    number = parseInt(doc.code.match(/[a-zA-Z]+|[0-9]+/g)[1])
-                    sbarracks.push(number);
-                }else if (doc.code.match(/[a-zA-Z]+|[0-9]+/g)[0] == "IB"){
-                    number = parseInt(doc.code.match(/[a-zA-Z]+|[0-9]+/g)[1])
-                    ibarracks.push(number);    
-                }else if (doc.code.match(/[a-zA-Z]+|[0-9]+/g)[0] == "C"){
-                    number = parseInt(doc.code.match(/[a-zA-Z]+|[0-9]+/g)[1])
-                    checkpoints.push(number); 
-                }else if (doc.code.match(/[a-zA-Z]+|[0-9]+/g)[0] == "SC"){
-                    number = parseInt(doc.code.match(/[a-zA-Z]+|[0-9]+/g)[1])
-                    scheckpoints.push(number); 
-                }else if (doc.code.match(/[a-zA-Z]+|[0-9]+/g)[0] == "IC"){
-                    number = parseInt(doc.code.match(/[a-zA-Z]+|[0-9]+/g)[1])
-                    icheckpoints.push(number);  
-                }else if (doc.code.match(/[a-zA-Z]+|[0-9]+/g)[0] == "D"){
-                    number = parseInt(doc.code.match(/[a-zA-Z]+|[0-9]+/g)[1])
-                    centers.push(number);
-                }else if (doc.code.match(/[a-zA-Z]+|[0-9]+/g)[0] == "SD"){
-                    number = parseInt(doc.code.match(/[a-zA-Z]+|[0-9]+/g)[1])
-                    scenters.push(number);    
-                }else {
-                    number = parseInt(doc.code.match(/[a-zA-Z]+|[0-9]+/g)[1])
-                    icenters.push(number); 
-                }
+            list.map((doc)=> {
+                let letter = doc.code.match(/[a-zA-Z]+|[0-9]+/g)[0]
+                let number = parseInt(doc.code.match(/[a-zA-Z]+|[0-9]+/g)[1])
+                if (letter == 'B') barracks.push(number)
+                if (letter == 'SB') sbarracks.push(number)
+                if (letter == 'IB') ibarracks.push(number)
+                if (letter == 'C') checkpoints.push(number)
+                if (letter == 'SC') scheckpoints.push(number)
+                if (letter == 'IC') icheckpoints.push(number)
+                if (letter == 'D') centers.push(number)
+                if (letter == 'SD') scenters.push(number)
+                if (letter == 'ID') icenters.push(number)
             })
+            
             var nextbarrack = "B"+((Math.max.apply(null, barracks))+1);
             var nextsbarrack = "SB"+((Math.max.apply(null, sbarracks))+1);
             var nextibarrack = "IB"+((Math.max.apply(null, ibarracks))+1);
@@ -99,15 +82,8 @@ module.exports = {
             nextrecord = [nextbarrack, nextsbarrack, nextibarrack, nextcheckpoint, nextscheckpoint, nexticheckpoint, nextcenter, nextscenter, nexticenter];
             
         }else {
-            list.forEach(function(doc) {
-                if(doc.code){
-                 number = parseInt(doc.code.match(/[a-zA-Z]+|[0-9]+/g)[1])
-                 numbers.push(number);
-                } else{
-                 console.log("ERROR in record "+JSON.stringify(doc)+" Code missing");   
-                }
-            })
-            nextrecord = (Math.max.apply(null, numbers))+1;
+            let codes = list.map((doc) => parseInt(doc.code.match(/[a-zA-Z]+|[0-9]+/g)[1]))
+            nextrecord = (Math.max.apply(null, codes))+1;
             return nextrecord;             
                          
         }
