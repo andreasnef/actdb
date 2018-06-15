@@ -16,7 +16,8 @@ var app = express();
 app.locals.moment = require('moment');
 
 var config = require('./config.js').get(process.env.NODE_ENV);
-
+console.log("env "+process.env.NODE_ENV)
+console.log(app.get('env'))
 app.use(helmet({
   frameguard: {
     action: 'deny'
@@ -60,10 +61,10 @@ app.use(function(err, req, res, next) {
 });
 
 //use in PRO
-var port = process.env.PORT || 3000;
-app.listen(port, "0.0.0.0", function() {
-  console.log("Listening on Port 3000");
-});
+// var port = process.env.PORT || 3000;
+// app.listen(port, "0.0.0.0", function() {
+//   console.log("Listening on Port 3000");
+// });
 
 var RateLimit = require('express-rate-limit');
  
