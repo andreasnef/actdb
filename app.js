@@ -5,20 +5,17 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var session = require('express-session');
-var MongoStore = require('connect-mongo')(session);
+require('dotenv').config();
 var expressValidator = require('express-validator');
-var jsdom = require('jsdom');
-var async = require('async');
 var moment = require('moment');
 var helmet = require('helmet'); //Helmet helps you secure your Express apps by setting various HTTP headers
 
-var mongo = require('mongodb');
-
 var index = require('./routes/index');
-var users = require('./routes/users');
 
 var app = express();
 app.locals.moment = require('moment');
+
+var config = require('./config.js').get(process.env.NODE_ENV);
 
 app.use(helmet({
   frameguard: {
@@ -41,23 +38,8 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(expressValidator());
 
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(session({
-  secret: "ewjdasnkqwiluyrfgbcnxaiureyfhbca",
-  saveUninitialized: false, 
-  resave: false,
-  proxy : true,
-  store: new MongoStore({ url: process.env.MONGODB_URI, ttl: 12 * 60 * 60 }),
-  cookie: {
-    path: "/",
-    httpOnly: true,
-    sameSite: 'strict',
-    secure: true, 
-    maxAge:  28800000  //8 hours
-  },
-  name: "id"
-}));
+app.use(session(config.session));
 app.use('/', index);
-app.use('/users', users);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -78,20 +60,16 @@ app.use(function(err, req, res, next) {
 });
 
 //use in PRO
-var port = process.env.PORT || 3000;
-app.listen(port, "0.0.0.0", function() {
-  console.log("Listening on Port 3000");
-});
+// var port = process.env.PORT || 3000;
+// app.listen(port, "0.0.0.0", function() {
+//   console.log("Listening on Port 3000");
+// });
 
 var RateLimit = require('express-rate-limit');
  
 app.enable('trust proxy'); // only if you're behind a reverse proxy (Heroku, Bluemix, AWS if you use an ELB, custom Nginx setup, etc) 
  
-var limiter = new RateLimit({
-  windowMs: 15*60*1000, // 15 minutes 
-  max: 30, // limit each IP to 100 requests per windowMs 
-  delayMs: 0 // disable delaying - full speed until the max limit is reached 
-});
+var limiter = new RateLimit(config.limiter);
  
 //  apply to all requests 
 app.use(limiter);
