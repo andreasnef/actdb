@@ -8,7 +8,7 @@ var config = {
         saveUninitialized: false, 
         resave: false,
         proxy : true,
-        store: new MongoStore({ url: 'mongodb://actadmin:TequilaMondays2017@localhost:27017,localhost:27018,localhost:27019/Act?replicaSet=mongo-repl&authSource=admin', ttl: 12 * 60 * 60 }),
+        store: new MongoStore({ url: process.env.MONGODB_URI, ttl: 12 * 60 * 60 }),
         cookie: {
             path: "/",
             httpOnly: true,
@@ -50,6 +50,6 @@ var config = {
     }
   }
   
-  exports.get = function get(env) {
+  exports.get = function get(env) { 
     return config[env] || config.default;
   }

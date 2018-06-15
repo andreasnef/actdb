@@ -16,8 +16,7 @@ var app = express();
 app.locals.moment = require('moment');
 
 var config = require('./config.js').get(process.env.NODE_ENV);
-console.log("env "+process.env.NODE_ENV)
-console.log(app.get('env'))
+
 app.use(helmet({
   frameguard: {
     action: 'deny'
