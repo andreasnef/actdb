@@ -18,7 +18,6 @@ var config = {
         },
         name: "id"    
       },
-      database: 'mongodb://<user>:<pwd>@apollo.modulusmongo.net:27017/db',
       limiter: {
         windowMs: 15*60*1000, // 15 minutes 
         max: 30, // limit each IP to 30 requests per windowMs 
@@ -53,7 +52,6 @@ var config = {
         },
         name: "id"    
       },
-      database: 'mongodb://127.0.0.1:27017/db',
       limiter: {
         windowMs: 15*60*1000, // 15 minutes 
         max: 30, // limit each IP to 30 requests per windowMs 
