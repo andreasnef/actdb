@@ -38,7 +38,9 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(expressValidator());
 
 app.use(express.static(path.join(__dirname, 'public')));
+
 app.use(session(config.session));
+
 app.use('/', index);
 
 // catch 404 and forward to error handler

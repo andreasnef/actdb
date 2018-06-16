@@ -8,21 +8,12 @@ var async = require('async');
 var fs = require("fs");
 var csrf = require('csurf');
 var bodyParser = require('body-parser');
+var config = require('../config.js').get(process.env.NODE_ENV);
 var cloudinary = require('cloudinary');
-cloudinary.config({ 
-    cloud_name: 'hxxbdvyzc', 
-    api_key: '971837284457376', 
-    api_secret: 'q__oUqJiwGAcJhDoYl3zaQjEPx4'
-});
+cloudinary.config(config.cloudinary);
 var RateLimit = require('express-rate-limit');
 app.enable('trust proxy'); // only if you're behind a reverse proxy (Heroku, Bluemix, AWS if you use an ELB, custom Nginx setup, etc) 
-var loginLimiter = new RateLimit({
-    windowMs: 60*60*1000, // 1 hour window 
-    delayAfter: 3, // begin slowing down responses after the first request 
-    delayMs: 3*1000, // slow down subsequent responses by 3 seconds per request 
-    max: 5, // start blocking after 5 requests 
-    message: "You have tried to login more than 5 times, please try again after an hour"
-});
+var loginLimiter = new RateLimit(config.loginLimiter);
 
 const municipalities = require("../public/javascripts/lebanonAdministrativeSimplified70.js");
 const common = require('./common.js');

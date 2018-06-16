@@ -1,6 +1,7 @@
 "use strict";
-var mongodb = require('mongodb');
+let mongodb = require('mongodb');
 let MongoClient = mongodb.MongoClient;
+// let config = require('./config.js').get(process.env.NODE_ENV);
 let date = new Date().toISOString();
 let db;
 
@@ -8,8 +9,8 @@ module.exports = {
 
     mongoConnect: (user, pass) =>{
         return new Promise((resolve, reject) => {
-            var url = 'mongodb://'+user+':'+pass+'@cluster0-shard-00-00-tey75.mongodb.net:27017,cluster0-shard-00-01-tey75.mongodb.net:27017,cluster0-shard-00-02-tey75.mongodb.net:27017/Act?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin';
-            
+            let url = 'mongodb://'+user+':'+pass+process.env.MONGODB_PARTIAL_URI
+
             MongoClient.connect(url, {poolSize: 30}, function(err,client){
                 if (err){
                     console.log("User:"+user+" unable to connect to server", err);
@@ -26,7 +27,7 @@ module.exports = {
     recordLogins: (user, req) => {
         //save the login info in the db as admin
 
-        MongoClient.connect(process.env.MONGODB_URI, function(err, client){
+            MongoClient.connect(process.env.MONGODB_URI, function(err, client){
             if (err){
                 console.log("Unable to log "+user+ " into the database logins record. " + err);
             } else {
