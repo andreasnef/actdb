@@ -1372,17 +1372,18 @@ router.post('/searchmissing', parseForm, csrfProtection, function(req, res){
                 res.send(err);
             } else{
                 req.session.missingResult = result;
-                res.render('missinglist', {
-                    "collList" : result,
-                    title: "List of Missing People",
-                    nextrecord : req.session.nextrecord,
-                    "user": req.session.user,
-                    parties : partiesList,
-                    locations: locationsList, 
-                    events: eventsList, 
-                    sites: sitesList,
-                    csrfToken: req.csrfToken()    
-                }); 
+                if(req.body.caller == "map"){
+                    missingList = result;
+                    res.redirect('/map');
+                } else {
+                    res.render('missinglist', {
+                        "collList" : result,
+                        title: "List of Missing People",
+                        nextrecord : req.session.nextrecord,
+                        "user": req.session.user,
+                        csrfToken: req.csrfToken()    
+                    }); 
+                }
             } 
         });    
                 

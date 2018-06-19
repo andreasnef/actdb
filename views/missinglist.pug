@@ -8,195 +8,197 @@ block content
       if(user!= "public")  
        div(class='btn menu')
         a(href="/newprofile/?type=missing&nextrecord="+nextrecord) Add a Missing Person
-       div(class='btn menu')
-        a(href="#" onclick="toggle_visibility('divSearch');") Advance Search of a Missing Person
+       - var caller = "missingTable";
+       include missingFilter
+      //-  div(class='btn menu')
+      //-   a(href="#" onclick="toggle_visibility('divSearch');") Advance Search of a Missing Person
       
       
-       div#divSearch(class='dropMenu')
-          form#form_search(name="searchmissing", method="post", action="/searchmissing")
-              span Dates of Disappearance: 
-              br
-              span between
-                 span &nbsp;
-                 select(name="from_disappearance_date_day", value=from_disappearance_date_day)
-                   -for(var i = 1;i<32;i++){
-                      - i = ("0" + i).slice(-2)
-                        option(value=i) #{i}
-                   -}
-                 span &nbsp;
-                 select#input_birth_month(name="from_disappearance_date_month", value=from_disappearance_date_month) 
-                   option(value="01")  Jan
-                   option(value="02")  Feb    
-                   option(value="03")  Mar
-                   option(value="04")  Apr
-                   option(value="05")  May
-                   option(value="06")  Jun
-                   option(value="07")  Jul
-                   option(value="08")  Ago
-                   option(value="09")  Sep
-                   option(value="10")  Oct
-                   option(value="11")  Nov
-                   option(value="12")  Dec
-                    span &nbsp;
-                 select(name="from_disappearance_date_year", value=from_disappearance_date_year)
-                   option(value="") Select
-                   -for(var i = 1973;i<2006;i++){
-                        option(value=i) #{i}
-                   -}  
-                 span &nbsp;
+      //-  div#divSearch(class='dropMenu')
+      //-     form#form_search(name="searchmissing", method="post", action="/searchmissing")
+      //-         span Dates of Disappearance: 
+      //-         br
+      //-         span between
+      //-            span &nbsp;
+      //-            select(name="from_disappearance_date_day", value=from_disappearance_date_day)
+      //-              -for(var i = 1;i<32;i++){
+      //-                 - i = ("0" + i).slice(-2)
+      //-                   option(value=i) #{i}
+      //-              -}
+      //-            span &nbsp;
+      //-            select#input_birth_month(name="from_disappearance_date_month", value=from_disappearance_date_month) 
+      //-              option(value="01")  Jan
+      //-              option(value="02")  Feb    
+      //-              option(value="03")  Mar
+      //-              option(value="04")  Apr
+      //-              option(value="05")  May
+      //-              option(value="06")  Jun
+      //-              option(value="07")  Jul
+      //-              option(value="08")  Ago
+      //-              option(value="09")  Sep
+      //-              option(value="10")  Oct
+      //-              option(value="11")  Nov
+      //-              option(value="12")  Dec
+      //-               span &nbsp;
+      //-            select(name="from_disappearance_date_year", value=from_disappearance_date_year)
+      //-              option(value="") Select
+      //-              -for(var i = 1973;i<2006;i++){
+      //-                   option(value=i) #{i}
+      //-              -}  
+      //-            span &nbsp;
 
 
-              span and
-                 span &nbsp;
-                 select(name="to_disappearance_date_day", value=to_disappearance_date_day)
-                   -for(var i = 1;i<32;i++){
-                      - i = ("0" + i).slice(-2)
-                        option(value=i) #{i}
-                   -}
-                 span &nbsp;
-                 select#input_birth_month(name="to_disappearance_date_month", value=to_disappearance_date_month) 
-                   option(value="01")  Jan
-                   option(value="02")  Feb    
-                   option(value="03")  Mar
-                   option(value="04")  Apr
-                   option(value="05")  May
-                   option(value="06")  Jun
-                   option(value="07")  Jul
-                   option(value="08")  Ago
-                   option(value="09")  Sep
-                   option(value="10")  Oct
-                   option(value="11")  Nov
-                   option(value="12")  Dec
-                    span &nbsp;
-                 select(name="to_disappearance_date_year", value=to_disappearance_date_year)
-                   option(value="") Select
-                   -for(var i = 1973;i<2006;i++){
-                        option(value=i) #{i}
-                   -}  
-                 span &nbsp;
-                 span (Both dates must be completed for a range)
+      //-         span and
+      //-            span &nbsp;
+      //-            select(name="to_disappearance_date_day", value=to_disappearance_date_day)
+      //-              -for(var i = 1;i<32;i++){
+      //-                 - i = ("0" + i).slice(-2)
+      //-                   option(value=i) #{i}
+      //-              -}
+      //-            span &nbsp;
+      //-            select#input_birth_month(name="to_disappearance_date_month", value=to_disappearance_date_month) 
+      //-              option(value="01")  Jan
+      //-              option(value="02")  Feb    
+      //-              option(value="03")  Mar
+      //-              option(value="04")  Apr
+      //-              option(value="05")  May
+      //-              option(value="06")  Jun
+      //-              option(value="07")  Jul
+      //-              option(value="08")  Ago
+      //-              option(value="09")  Sep
+      //-              option(value="10")  Oct
+      //-              option(value="11")  Nov
+      //-              option(value="12")  Dec
+      //-               span &nbsp;
+      //-            select(name="to_disappearance_date_year", value=to_disappearance_date_year)
+      //-              option(value="") Select
+      //-              -for(var i = 1973;i<2006;i++){
+      //-                   option(value=i) #{i}
+      //-              -}  
+      //-            span &nbsp;
+      //-            span (Both dates must be completed for a range)
 
-              br
-              span Place of Disappearance:
-              br
-              span District
-              br
-              select#input_disappearance_place_district(name="disappearance_place_district", value=disappearance_place_district)
-                option(value="") Select
-                - var districts = ["Akkar", "Baalbek", "Hermel", "Beirut", "Rashaya", "Western Beqaa", "Zahle", "Aley", "Baabda", "Chouf", "Jbeil", "Keserwan", "Matn", "Batroun", "Bsharri", "Koura", "Miniyeh-Danniyeh", "Tripoli", "Zgharta", "Bint Jbeil", "Hasbaya", "Marjeyoun", "Nabatiyeh", "Sidon", "Jezzine", "Tyre"];
-                each district in districts
-                  option(value=district) #{district}
-              br
-              span Governorate
-              br
-              select#input_disappearance_place_governorate(name="disappearance_place_governorate", value=disappearance_place_governorate)
-                option(value="") Select
-                - var governorates = ["Akkar", "Baalbek-Hermel", "Beirut", "Beqaa", "Mount Lebanon", "Nabatieh", "North", "South"];
-                each governorate in governorates
-                   option(value=governorate) #{governorate}
+      //-         br
+      //-         span Place of Disappearance:
+      //-         br
+      //-         span District
+      //-         br
+      //-         select#input_disappearance_place_district(name="disappearance_place_district", value=disappearance_place_district)
+      //-           option(value="") Select
+      //-           - var districts = ["Akkar", "Baalbek", "Hermel", "Beirut", "Rashaya", "Western Beqaa", "Zahle", "Aley", "Baabda", "Chouf", "Jbeil", "Keserwan", "Matn", "Batroun", "Bsharri", "Koura", "Miniyeh-Danniyeh", "Tripoli", "Zgharta", "Bint Jbeil", "Hasbaya", "Marjeyoun", "Nabatiyeh", "Sidon", "Jezzine", "Tyre"];
+      //-           each district in districts
+      //-             option(value=district) #{district}
+      //-         br
+      //-         span Governorate
+      //-         br
+      //-         select#input_disappearance_place_governorate(name="disappearance_place_governorate", value=disappearance_place_governorate)
+      //-           option(value="") Select
+      //-           - var governorates = ["Akkar", "Baalbek-Hermel", "Beirut", "Beqaa", "Mount Lebanon", "Nabatieh", "North", "South"];
+      //-           each governorate in governorates
+      //-              option(value=governorate) #{governorate}
 
-              br
-              br
-              input#input_km(type="text", placeholder="Distance in meters", name="meters", value=meters)
-              span &nbsp;
-              span from 
-              span &nbsp;
-              input#input_latitude(type="text", placeholder="Latitude", name="latitude", value=latitude)
-              span &nbsp;
-              span ,
-              span &nbsp;
-              input#input_longitude(type="text", placeholder="Longitude", name="longitude", value=longitude)
-              br
-              span Sex
-              br
-              select#input_sex(name="sex", value=sex)
-               option(value="") Select
-               - var sexes = ["M", "F"];
-               each se in sexes
-                option(value=se) #{se}
-              br
-              input#input_keyword(type="text", placeholder="Keyword", name="keyword", value=keyword)
-              br
-              span Age:
-              br
-              span Between 
-              span &nbsp;
-              select(name="age_from", value=age_from)
-                   option(value="") Select
-                   -for(var i = 0;i<101;i++){
-                        option(value=i) #{i}
-                   -} 
-              span &nbsp;
-              span and 
-              span &nbsp;
-              select(name="age_to", value=age_to)
-                   option(value="") Select
-                   -for(var i = 0;i<101;i++){
-                        option(value=i) #{i}
-                   -}
+      //-         br
+      //-         br
+      //-         input#input_km(type="text", placeholder="Distance in meters", name="meters", value=meters)
+      //-         span &nbsp;
+      //-         span from 
+      //-         span &nbsp;
+      //-         input#input_latitude(type="text", placeholder="Latitude", name="latitude", value=latitude)
+      //-         span &nbsp;
+      //-         span ,
+      //-         span &nbsp;
+      //-         input#input_longitude(type="text", placeholder="Longitude", name="longitude", value=longitude)
+      //-         br
+      //-         span Sex
+      //-         br
+      //-         select#input_sex(name="sex", value=sex)
+      //-          option(value="") Select
+      //-          - var sexes = ["M", "F"];
+      //-          each se in sexes
+      //-           option(value=se) #{se}
+      //-         br
+      //-         input#input_keyword(type="text", placeholder="Keyword", name="keyword", value=keyword)
+      //-         br
+      //-         span Age:
+      //-         br
+      //-         span Between 
+      //-         span &nbsp;
+      //-         select(name="age_from", value=age_from)
+      //-              option(value="") Select
+      //-              -for(var i = 0;i<101;i++){
+      //-                   option(value=i) #{i}
+      //-              -} 
+      //-         span &nbsp;
+      //-         span and 
+      //-         span &nbsp;
+      //-         select(name="age_to", value=age_to)
+      //-              option(value="") Select
+      //-              -for(var i = 0;i<101;i++){
+      //-                   option(value=i) #{i}
+      //-              -}
 
-              br
-              span Reported seen again
-              br
-              select#input_last_seen_reported(name="last_seen_reported", value=last_seen_reported)
-                option(value="") Select
-                option(value="Yes") Yes
-                option(value="No") No
+      //-         br
+      //-         span Reported seen again
+      //-         br
+      //-         select#input_last_seen_reported(name="last_seen_reported", value=last_seen_reported)
+      //-           option(value="") Select
+      //-           option(value="Yes") Yes
+      //-           option(value="No") No
 
-              br
-              span Perpetrators
-              br
-              select#input_perpetrators(name="perpetrators", value=perpetrators)
-                option(value="") Select
-                if (parties)
-                 each party, i in parties
-                    option(value=party.name.en) #{party.name.en}
-              br
-              span Fate
-              br
-              select#input_fate(name="fate", value=fate)
-                option(value="") Select
-                - var fates = ["Unknown", "Presumed in Syria", "Presumed in Israel", "Presumed Dead", "Location of remains Presumed", "Confirmed dead", "Remains exhumed", "Released"];
-                each fat in fates
-                    option(value=fat) #{fat}
-              br
-              span Related Event
-              br
-              select#input_perpetrators(name="related_event", value=related_event)
-                option(value="") Select
-                if (events)
-                 each event, i in events
-                     option(value=event.code) #{event.code} - #{event.name.en}
-              br            
-              span Related Location
-              br
-              select#input_perpetrators(name="related_location", value=related_location)
-                option(value="") Select
-                if (locations)
-                 each location, i in locations
-                     option(value=location.code) #{location.code} - #{location.name.en} (#{location.groups_responsible}) 
-              br
-              span Related Site
-              br
-              select#input_perpetrators(name="related_site", value=related_site)
-                option(value="") Select
-                if (sites)
-                 each site, i in sites
-                     option(value=site.code) #{site.code} - #{site.name.en}
-              br
-              span Published in Fushat Amal
-              br
-              select#input_perpetrators(name="fushatamal_published", value=fushatamal_published)
-                option(value="") Select
-                option(value="Yes") Yes
-                option(value="No") No
+      //-         br
+      //-         span Perpetrators
+      //-         br
+      //-         select#input_perpetrators(name="perpetrators", value=perpetrators)
+      //-           option(value="") Select
+      //-           if (parties)
+      //-            each party, i in parties
+      //-               option(value=party.name.en) #{party.name.en}
+      //-         br
+      //-         span Fate
+      //-         br
+      //-         select#input_fate(name="fate", value=fate)
+      //-           option(value="") Select
+      //-           - var fates = ["Unknown", "Presumed in Syria", "Presumed in Israel", "Presumed Dead", "Location of remains Presumed", "Confirmed dead", "Remains exhumed", "Released"];
+      //-           each fat in fates
+      //-               option(value=fat) #{fat}
+      //-         br
+      //-         span Related Event
+      //-         br
+      //-         select#input_perpetrators(name="related_event", value=related_event)
+      //-           option(value="") Select
+      //-           if (events)
+      //-            each event, i in events
+      //-                option(value=event.code) #{event.code} - #{event.name.en}
+      //-         br            
+      //-         span Related Location
+      //-         br
+      //-         select#input_perpetrators(name="related_location", value=related_location)
+      //-           option(value="") Select
+      //-           if (locations)
+      //-            each location, i in locations
+      //-                option(value=location.code) #{location.code} - #{location.name.en} (#{location.groups_responsible}) 
+      //-         br
+      //-         span Related Site
+      //-         br
+      //-         select#input_perpetrators(name="related_site", value=related_site)
+      //-           option(value="") Select
+      //-           if (sites)
+      //-            each site, i in sites
+      //-                option(value=site.code) #{site.code} - #{site.name.en}
+      //-         br
+      //-         span Published in Fushat Amal
+      //-         br
+      //-         select#input_perpetrators(name="fushatamal_published", value=fushatamal_published)
+      //-           option(value="") Select
+      //-           option(value="Yes") Yes
+      //-           option(value="No") No
 
-              br
-              br
-              input(type="hidden" name="_csrf" value=csrfToken)
-              div(class='btn menu')
-               button#search(type="submit" class="buttons") Search
-      br
+      //-         br
+      //-         br
+      //-         input(type="hidden" name="_csrf" value=csrfToken)
+      //-         div(class='btn menu')
+      //-          button#search(type="submit" class="buttons") Search
+      //- br
   
       h3. 
         List of Missing People
@@ -234,6 +236,7 @@ block content
   
   
   script.
+    //- var caller = "missingTable";
     $('#missingList').DataTable( {
         paging: true
         } );

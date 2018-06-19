@@ -36,7 +36,7 @@ var config = {
         message: "You have tried to login more than 5 times, please try again after an hour"
       }
     },
-    default: {
+    development: {
       session: {
         secret: "ewjdasnkqwiluyrfgbcnxaiureyfhbca",
         saveUninitialized: false, 
@@ -73,6 +73,5 @@ var config = {
   }
   
   exports.get = function get(env) { 
-    console.log("env"+env);
-    return config[env] || config.default;
+    return config[env] || config.development;
   }
