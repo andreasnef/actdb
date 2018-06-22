@@ -1,0 +1,114 @@
+extends layout
+
+block content
+
+    div(class='btn menu')
+       a(href="#" onclick="toggle_visibility('divSearchSites');") Advance Search of Sites
+    
+    div#divSearchSites(class='dropMenu')
+          form#form_search(name="searchsites", method="post", action="/searchsites")
+              input#input_keyword(type="text", placeholder="Keyword", name="keyword", value=keyword)
+              span 
+               
+              select#input_location_district(name="location_district", value=location_district)
+                option(value="") District
+                - var districts = ["Akkar", "Baalbek", "Hermel", "Beirut", "Rashaya", "Western Beqaa", "Zahle", "Aley", "Baabda", "Chouf", "Jbeil", "Keserwan", "Matn", "Batroun", "Bsharri", "Koura", "Miniyeh-Danniyeh", "Tripoli", "Zgharta", "Bint Jbeil", "Hasbaya", "Marjeyoun", "Nabatiyeh", "Sidon", "Jezzine", "Tyre"];
+                each district in districts
+                  option(value=district) #{district}
+              
+              span 
+              select#input_location_governorate(name="location_governorate", value=location_governorate)
+                option(value="") Governorate
+                - var governorates = ["Akkar", "Baalbek-Hermel", "Beirut", "Beqaa", "Mount Lebanon", "Nabatieh", "North", "South"];
+                each governorate in governorates
+                   option(value=governorate) #{governorate}
+
+              br
+              
+              input#input_km(type="text", placeholder="distance in meters", name="meters", value=meters)
+              span &nbsp;
+              span from 
+              span &nbsp;
+              input#input_latitude(type="text", placeholder="latitude", name="latitude", value=latitude)
+              span &nbsp;
+              span -
+              span &nbsp;
+              input#input_longitude(type="text", placeholder="longitude", name="longitude", value=longitude)
+              br
+              
+              select#input_type(name="type", value=type)
+               option(value="") Type
+               - var types = ["Bridge", "Buried underground", "Cave", "Cemetries", "Dumpsters", "Garbage heap", "Hospital", "Ocean", "Open land", "River",  "Unknown",   "Well"];
+               each type in types
+                option(value=type) #{type}
+              
+              span 
+              select(name="risk_index", value=risk_index)
+                   option(value="") Risk
+                   -for(var i = 1;i<6;i++){
+                        option(value=i) #{i}
+                   -}
+
+              span 
+              select(name="sensitivity_index", value=sensitivity_index)
+                   option(value="") Sensitivity
+                   -for(var i = 1;i<6;i++){
+                        option(value=i) #{i}
+                   -}
+
+              span 
+              select(name="credibility_index", value=credibility_index)
+                   option(value="") Credibility
+                   -for(var i = 1;i<6;i++){
+                        option(value=i) #{i}
+                   -}
+
+              br
+        
+              select#input_exhumed_status(name="exhumed_status", value=exhumed_status)
+               option(value="") Exhumed
+                - var status = ["Yes", "No", "Partial", "Unknown"];
+                each type in status
+                 option(value=type) #{type}
+             
+              span 
+              select#input_identification_status(name="identification_status", value=identification_status)
+               option(value="") Identified
+                - var status = ["Yes", "No", "Partial", "Unknown"];
+                each type in status
+                 option(value=type) #{type}
+              
+              span 
+              select#input_perpetrators(name="perpetrators", value=perpetrators)
+                option(value="") Perpetrators
+                if (parties)
+                 each party, i in parties
+                    option(value=party.name.en) #{party.name.en}
+              
+              
+              select#input_perpetrators(name="related_event", value=related_event)
+                option(value="") Related Event
+                if (events)
+                 each event, i in events
+                     option(value=event.code) #{event.code} - #{event.name.en}
+                      
+              
+              select#input_perpetrators(name="related_location", value=related_location)
+                option(value="") Related Location
+                if (locations)
+                 each location, i in locations
+                     option(value=location.code) #{location.code} - #{location.name.en} (#{location.groups_responsible}) 
+              
+              
+              select#input_perpetrators(name="related_mps", value=related_mps)
+                option(value="") Related Missing Person
+                if (mps)
+                 each mp, i in mps
+                     option(value=mp.code) #{mp.code} - #{mp.name.ar.last} #{mp.name.ar.first}
+              br
+              br
+              input(type="hidden" name="_csrf" value=csrfToken)
+              input(type="hidden" name="caller" value=caller)
+              div(class='btn menu')
+               button#search(type="submit" class="buttons") Search 
+    br

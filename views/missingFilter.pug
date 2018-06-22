@@ -3,11 +3,13 @@ extends layout
 block content
 
     div(class='btn menu')
-        a(href="#" onclick="toggle_visibility('divSearch');") Filter Missing Persons
+        a(href="#" onclick="toggle_visibility('divSearchMissing');") Filter Missing Persons
         
         
-    div#divSearch(class='dropMenu')
+    div#divSearchMissing(class='dropMenu')
         form#form_search(name="searchmissing", method="post", action="/searchmissing")
+            input#input_keyword(type="text", placeholder="Keyword", name="keyword", value=keyword)
+            br
             span Dates of Disappearance: 
             br
             span between
@@ -73,18 +75,15 @@ block content
             br
             span Place of Disappearance:
             br
-            span District
-            br
+        
             select#input_disappearance_place_district(name="disappearance_place_district", value=disappearance_place_district)
-                option(value="") Select
+                option(value="") District
                 - var districts = ["Akkar", "Baalbek", "Hermel", "Beirut", "Rashaya", "Western Beqaa", "Zahle", "Aley", "Baabda", "Chouf", "Jbeil", "Keserwan", "Matn", "Batroun", "Bsharri", "Koura", "Miniyeh-Danniyeh", "Tripoli", "Zgharta", "Bint Jbeil", "Hasbaya", "Marjeyoun", "Nabatiyeh", "Sidon", "Jezzine", "Tyre"];
                 each district in districts
                     option(value=district) #{district}
-            br
-            span Governorate
-            br
+            span 
             select#input_disappearance_place_governorate(name="disappearance_place_governorate", value=disappearance_place_governorate)
-                option(value="") Select
+                option(value="") Governorate
                 - var governorates = ["Akkar", "Baalbek-Hermel", "Beirut", "Beqaa", "Mount Lebanon", "Nabatieh", "North", "South"];
                 each governorate in governorates
                     option(value=governorate) #{governorate}
@@ -101,19 +100,9 @@ block content
             span &nbsp;
             input#input_longitude(type="text", placeholder="Longitude", name="longitude", value=longitude)
             br
-            span Sex
-            br
-            select#input_sex(name="sex", value=sex)
-                option(value="") Select
-                - var sexes = ["M", "F"];
-                each se in sexes
-                    option(value=se) #{se}
-            br
-            input#input_keyword(type="text", placeholder="Keyword", name="keyword", value=keyword)
-            br
-            span Age:
-            br
-            span Between 
+            
+            
+            span Age Between 
             span &nbsp;
             select(name="age_from", value=age_from)
                 option(value="") Select
@@ -128,60 +117,53 @@ block content
                 -for(var i = 0;i<101;i++){
                     option(value=i) #{i}
                 -}
-
+            span 
+            select#input_sex(name="sex", value=sex)
+                option(value="") Sex
+                - var sexes = ["M", "F"];
+                each se in sexes
+                    option(value=se) #{se}
             br
-            span Reported seen again
-            br
+            
             select#input_last_seen_reported(name="last_seen_reported", value=last_seen_reported)
-                option(value="") Select
+                option(value="") Reported seen again
                 option(value="Yes") Yes
                 option(value="No") No
 
-            br
-            span Perpetrators
-            br
+            
             select#input_perpetrators(name="perpetrators", value=perpetrators)
-                option(value="") Select
+                option(value="") Perpetrators
                 if (parties)
                     each party, i in parties
                         option(value=party.name.en) #{party.name.en}
-            br
-            span Fate
-            br
+            
             select#input_fate(name="fate", value=fate)
-                option(value="") Select
+                option(value="") Fate
                 - var fates = ["Unknown", "Presumed in Syria", "Presumed in Israel", "Presumed Dead", "Location of remains Presumed", "Confirmed dead", "Remains exhumed", "Released"];
                 each fat in fates
                     option(value=fat) #{fat}
             br
-            span Related Event
-            br
+            
             select#input_perpetrators(name="related_event", value=related_event)
-                option(value="") Select
+                option(value="") Related Event
                 if (events)
                     each event, i in events
                         option(value=event.code) #{event.code} - #{event.name.en}
-            br            
-            span Related Location
-            br
+             
             select#input_perpetrators(name="related_location", value=related_location)
-                option(value="") Select
+                option(value="") Related Location
                 if (locations)
                     each location, i in locations
                         option(value=location.code) #{location.code} - #{location.name.en} (#{location.groups_responsible}) 
-            br
-            span Related Site
-            br
+            
             select#input_perpetrators(name="related_site", value=related_site)
-                option(value="") Select
+                option(value="") Related Site
                 if (sites)
                     each site, i in sites
                         option(value=site.code) #{site.code} - #{site.name.en}
-            br
-            span Published in Fushat Amal
-            br
+            
             select#input_perpetrators(name="fushatamal_published", value=fushatamal_published)
-                option(value="") Select
+                option(value="") Published in Fushat Amal
                 option(value="Yes") Yes
                 option(value="No") No
 
@@ -191,4 +173,4 @@ block content
             input(type="hidden" name="caller" value=caller)
             div(class='btn menu')
                 button#search(type="submit" class="buttons") Search
-    br
+    //br

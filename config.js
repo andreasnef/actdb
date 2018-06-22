@@ -47,7 +47,7 @@ var config = {
             path: "/",
             httpOnly: true,
             sameSite: 'strict',
-            secure: true, //uncomment for PRO
+            //secure: true, //uncomment for PRO
             maxAge:  28800000  //8 hours
         },
         name: "id"    
@@ -73,5 +73,5 @@ var config = {
   }
   
   exports.get = function get(env) { 
-    return config[env] || config.development;
+    return config[env] || config.production;
   }

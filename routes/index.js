@@ -195,6 +195,10 @@ router.get('/sites', csrfProtection, function(req, res){
                     title: "List of Sites",
                     nextrecord : nextrecord,
                     user: req.session.user,
+                    parties: partiesList,
+                    events: eventsList,
+                    locations: locationsList,
+                    mps: missingList,
                     csrfToken: req.csrfToken()
                 });   
 
@@ -1401,19 +1405,19 @@ router.post('/searchsites', parseForm, csrfProtection, function(req, res){
                 if (err){
                         res.send(err);
                 } else{
+                    if(req.body.caller == "map"){
+                        sitesList = result;
+                        res.redirect('/map');
+                    } else {
                         sitesResult = result;
                         res.render('siteslist', {
                         "collList" : result,
                         title: "List of Sites",
                         nextrecord : req.session.nextrecord,
                         "user": req.session.user,
-                        parties : partiesList,
-                        locations: locationsList, 
-                        events: eventsList, 
-                        sites: sitesList,
-                        mps: missingList,
                         csrfToken: req.csrfToken()   
                         }); 
+                    }
                 }
             }); 
     } else { 

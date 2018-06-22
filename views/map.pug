@@ -10,6 +10,7 @@ block content
      
     - var caller = "map";
     include missingFilter
+    include sitesFilter
     br
     div
      div#table
@@ -177,10 +178,14 @@ block content
         for(var i = 0; i < sitesArray.length; i++){
           var code = sitesArray[i].code,  //value searched
           name = sitesArray[i].name.en,
-          loc = [sitesArray[i].location.coordinates[1],sitesArray[i].location.coordinates[0]],    //position found
+          loc = [sitesArray[i].location.coordinates[1],sitesArray[i].location.coordinates[0]];   //position found
+          var circle;
+          if(sitesArray[i].risk && sitesArray[i].risk.index && sitesArray[i].risk.index=='5')
+            L.circle([35.5, 33.5], {radius: 200}).addTo(map);
+            //circle =  new L.circleMarker([sitesArray[i].location.coordinates[1],sitesArray[i].location.coordinates[0]], {radius: 200})
           marker = new L.Marker(new L.latLng(loc), {icon: darkgreenMarker, code: code, name: name});//se property searched
           marker.bindPopup("<a href='#' onclick=loadProfile('sites','"+code+"');>"+name+"</a>");
-          sitesLayer.addLayer(marker);
+          sitesLayer.addLayer(marker, circle);
         }
 
         var eventsLayer = new L.LayerGroup();  //layer contain searched elements
